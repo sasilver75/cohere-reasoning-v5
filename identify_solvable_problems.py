@@ -3,6 +3,7 @@ import pandas as pd
 from models import CohereExperimentHelper
 from pathlib import Path
 from tqdm import tqdm
+from time import perf_counter
 
 """
 This is basically a combination of gnerate_straight_shot and generate_solvable_incorrect
@@ -137,5 +138,6 @@ async def main():
 
 if __name__ == "__main__":
     print("Starting...")
+    start = perf_counter()
     asyncio.run(main())
-    print("Done!")
+    print(f"Done! Elapsed: {perf_counter() - start:.2f}s")
