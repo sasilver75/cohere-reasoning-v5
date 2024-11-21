@@ -11,15 +11,20 @@ This is similar to the generate_prefixes_remaining_on_policy.py script from v4, 
 as well as the Helper classes from v5.
 """
 
+# TODO: Does this work with lower=0.0? Upper=1.0? Should it?
+
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()
 SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
-SINK_PATH = Path("datasets/derived/interesting_problems_padded.csv")
+SINK_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
 MAX_SOLUTION_GENERATION_ATTEMPTS = 10  # How many generate-verify loops to try before giving up and generating a single incorrect solution.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
-
+if not (TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM > 0):
+    raise ValueError("TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM must be greater than 0")
+if not (MAX_SOLUTION_GENERATION_ATTEMPTS > 0):
+    raise ValueError("MAX_SOLUTION_GENERATION_ATTEMPTS must be greater than 0")
 # END OF PARAMETER CHECKS
 
 logger = logging.getLogger(__name__)
@@ -54,39 +59,6 @@ async def _persistently_generate_incorrect_solution(base_row: pd.Series, solutio
     new_row["solution_id"] = solution_id
     return new_row
         
-
-
-# async def _pad_incorrect_solutions(df: pd.DataFrame) -> pd.DataFrame:
-#     """
-#     Given a dataframe with partially-completed number of incorrect solutions for each row_id, pad the remaining solutions
-#     with incorrect solutions, using the strong completer.
-#     """
-#     all_padded_solutions: list[dict] = []
-
-#     # TODO: THIS NEEDS TO BE PARALLELIZED
-#     for row_id in tqdm(df["row_id"].unique(), desc="Processing problems"):
-#         # Get the rows for this problem (row_id)
-#         problem_rows = df[df["row_id"] == row_id]
-#         n_existing_solutions = len(problem_rows)
-        
-#         if n_existing_solutions >= TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM:
-#             # Truncate to target count if we have too many solutions
-#             all_padded_solutions.extend(problem_rows.iloc[:TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM].to_dict('records'))
-#         else:
-#             # Add existing solutions
-#             all_padded_solutions.extend(problem_rows.to_dict('records'))
-            
-#             # Generate additional solutions
-#             base_row = problem_rows.iloc[0]
-#             # TODO: THIS NEEDS TO BE PARALLELIZED
-#             for solution_id in range(n_existing_solutions, TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM):
-#                 new_solution = await _persistently_generate_incorrect_solution(base_row, solution_id)
-#                 all_padded_solutions.append(new_solution.to_dict())  # Note: pd.Series doesn't need 'records', just pd.DataFrames do.
-    
-#     # Convert the list of rows into a dataframe and return it, correctly sorted (though it already should be)
-#     padded_df = pd.DataFrame(all_padded_solutions)
-#     return padded_df.sort_values(["row_id", "solution_id"]).reset_index(drop=True)
-
 
 async def _pad_incorrect_solutions(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -145,9 +117,9 @@ async def main():
     print(f"Padded to {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM} solutions per problem. Total solutions: {len(padded_df)} for {padded_df["row_id"].nunique()} problems.")
 
     # Save to sink
-    print(f"Saving to {SINK_PATH}")
+    print(f"Saving results to {SINK_PATH}")
     padded_df.to_csv(SINK_PATH, index=False)
-    print("Done!")
+    print(f"Saved results to {SINK_PATH}")
 
 
 if __name__ == "__main__":

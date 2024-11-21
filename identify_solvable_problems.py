@@ -12,6 +12,8 @@ from the cohere-reasoning-v4 project.
 (Change from v4): Appraise problems until we reach the target number of of solvable problems.
 """
 
+# TODO: Does this work with lower=0.0? Upper=1.0? Should it?
+
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
