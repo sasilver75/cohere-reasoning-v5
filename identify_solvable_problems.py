@@ -2,6 +2,8 @@ import asyncio
 import pandas as pd
 from models import CohereExperimentHelper
 from pathlib import Path
+from tqdm import tqdm
+
 """
 This is basically a combination of gnerate_straight_shot and generate_solvable_incorrect
 from the cohere-reasoning-v4 project.
@@ -14,29 +16,36 @@ HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific model
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems.csv")
 SEED = 42
-TARGET_N_SOLVABLE_PROBLEMS = 100  # The number of solvable problems we want to identify
-N_SOLUTIONS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty
-LOWER_SUCCESS_RATE_BOUND = 0.2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting
-UPPER_SUCCESS_RATE_BOUND = 0.6  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting
+TARGET_N_SOLVABLE_PROBLEMS = 3  # The number of solvable problems we want to identify
+N_SOLUTIONS_PER_PROBLEM = 3  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty
+LOWER_SUCCESS_RATE_BOUND = 0.0  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1)
+UPPER_SUCCESS_RATE_BOUND = .8  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1)
+EPSILON = 1e-10  # To help with floating point division giving .199999 when it really should be .2
+# END OF TUNABLE PARAMETERS
+# PARAMETER CHECKS (Do not change)
+if not (0 <= LOWER_SUCCESS_RATE_BOUND < UPPER_SUCCESS_RATE_BOUND < 1):
+    raise ValueError("Success rate bounds must be in [0, 1) and satisfy LOWER_SUCCESS_RATE_BOUND < UPPER_SUCCESS_RATE_BOUND")
+# END OF CHECKS
+
 
 async def _generate_and_verify_solution(row: pd.Series) -> tuple[bool, pd.Series]:
     """
     Given a row from the source dataframe, generate a solution to the problem and verify it.
     """
     # Get the solution and verification information
-    solution = await HELPER.get_solution(row)
-    verification_result, verification_reasoning = await HELPER.get_verification(row, solution)
+    candidate_solution = await HELPER.get_solution(row)
+    verification_result, verification_reasoning = await HELPER.get_verification(candidate_solution, row)
 
     # Construct a new row with the solution and verification results
     augmented_row = row.copy()
-    augmented_row["candidate_solution"] = solution
-    augmented_row["verification_result"] = verification_result
-    augmented_row["verification_reasoning"] = verification_reasoning
+    augmented_row["candidate_solution"] = candidate_solution
+    augmented_row["candidate_verification_result"] = verification_result
+    augmented_row["candidate_verification_reasoning"] = verification_reasoning
 
     return verification_result, augmented_row
 
 
-async def appraise_problem(row: pd.Series) -> list[pd.Series]:
+async def _appraise_problem(row: pd.Series) -> tuple[bool, list[pd.Series]]:
     """
     Given a problem, appraise it by generating N_SOLUTIONS_PER_PROBLEM solutions and determining whether
     the success rate of the solutions is within the bounds [LOWER_BOUND_FOR_SOLVABLE, UPPER_BOUND_FOR_SOLVABLE].
@@ -44,8 +53,6 @@ async def appraise_problem(row: pd.Series) -> list[pd.Series]:
     If the problem is solvable, return a list of the incorrect solutions so that they can be re-used down the pipeline as 
     on-policy incorrect solutions.
     """
-    incorrect_solutions = []
-
     # Generate N_SOLUTIONS_PER_PROBLEM solutions and collect the incorrect ones
     solution_attempts = [
         _generate_and_verify_solution(row)
@@ -62,11 +69,13 @@ async def appraise_problem(row: pd.Series) -> list[pd.Series]:
     failure_rate = len(incorrect_solutions) / N_SOLUTIONS_PER_PROBLEM
     success_rate = 1 - failure_rate
 
-    # Return the incorrect solutions if the success rate is within the bounds, else an empty (falsy) list
-    if LOWER_SUCCESS_RATE_BOUND <= success_rate <= UPPER_SUCCESS_RATE_BOUND:
-        return incorrect_solutions
-    else:
-        return []
+    print(f"Success rate for row {row["row_id"]}: {success_rate}")
+
+    # Return a tuple of (is_solvable, incorrect_solutions)
+    is_solvable = (LOWER_SUCCESS_RATE_BOUND - EPSILON) <= success_rate <= (UPPER_SUCCESS_RATE_BOUND + EPSILON)
+    return (is_solvable, incorrect_solutions)
+
+
 
 
 
@@ -85,11 +94,29 @@ async def main():
     # ~~~ (2) Appraise Problems ~~~
     # For each problem, appraise it. If it's solvable, add the incorrect solutions to the accumulator.
     # Evaluate problems until we've found the target number of solvable problems.
+
+    # async def _process_problem(row: pd.Series):
+    #     nonlocal n_solvable_problems, incorrect_solutions
+    #     if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
+    #         return
+
+    #     is_solvable, incorrect_solution_rows = await _appraise_problem(row)
+    #     if is_solvable:
+    #         n_solvable_problems += 1
+    #         incorrect_solutions.extend(incorrect_solution_rows)
+    #         print(f"Found {n_solvable_problems}/{TARGET_N_SOLVABLE_PROBLEMS} solvable problems.")
+    # tasks = [process_problem(row) for _, row in shuffled_df.iterrows()]
+    # await atqdm.gather(*tasks)  # Populates `incorrect_solutions` list
+
     print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
+    # Let's choose to do this sequentially for now, until we have enough solutions.
+    pbar = tqdm(total=TARGET_N_SOLVABLE_PROBLEMS, colour="green", desc="Finding solvable problems")
     for _, row in shuffled_df.iterrows():
-        if results := await appraise_problem(row):
+        is_solvable, incorrect_solution_rows = await _appraise_problem(row)
+        if is_solvable:
             n_solvable_problems += 1
-            incorrect_solutions.extend(results)
+            incorrect_solutions.extend(incorrect_solution_rows)
+            pbar.update(1)
 
             if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
                 break
@@ -108,7 +135,7 @@ async def main():
     # ii. Write the incorrect solutions to a CSV
     incorrect_df.to_csv(SINK_PATH, index=False)
     # iii. Write the solvable problem IDs to a text file
-    solvable_problem_row_ids = list(incorrect_df["row_id"])
+    solvable_problem_row_ids = set(incorrect_df["row_id"])
     with open(SINK_PATH.with_suffix(".txt"), "w") as f:
         for row_id in solvable_problem_row_ids:
             f.write(f"{row_id}\n")
@@ -118,12 +145,7 @@ async def main():
     
 
 
-
-        
-
-
-
-
 if __name__ == "__main__":
+    print("Starting...")
     asyncio.run(main())
-
+    print("Done!")

@@ -8,7 +8,7 @@ import pandas as pd
 import prompts
 import logging
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
-from utils import extract_verification_result
+from utils import extract_verification_from_response
 
 
 # Logger
@@ -79,8 +79,8 @@ class CohereExperimentHelper(Helper):
         if "COHERE_API_KEY" not in os.environ:
             raise ValueError("COHERE_API_KEY must be set in the environment")
 
-        # Cohere chat endpoints have a 500/min rate limit
-        self.cohere_bucket = TokenBucket(rate=500, capacity=450)
+        # Cohere chat endpoints have a 500/min rate limit; let's be conservative!
+        self.cohere_bucket = TokenBucket(capacity=400, report_every=10)
         self.sync_client = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
         self.async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY")) # For full solutions, we can use the new V2 Asnyc Client
         self.strong_verifier = strong_verifier
@@ -153,7 +153,7 @@ class CohereExperimentHelper(Helper):
             ),
             timeout=60,
         )
-        return extract_verification_result(response.message.content[0].text)
+        return extract_verification_from_response(response.message.content[0].text)
 
         
 
