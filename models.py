@@ -34,6 +34,7 @@ class Helper(ABC):
         args:
             model_name: str - The name of the model under evaluation. Used for file naming, etc.
         """
+        # TODO: Do I really want to use this for anything?
         self.model_name = model_name  # Used for files, etc.
 
     @abstractmethod
@@ -58,7 +59,9 @@ class Helper(ABC):
         ...
 
 
-    
+class DummyExperimentHelper(Helper):
+    # TODO: It might be nice to have a helper that just returns dummy data (with realistic "latencies" on requests). This could be nice to test with.
+    ...
 
 
 
@@ -67,12 +70,12 @@ class CohereExperimentHelper(Helper):
     Helper for a scenario in which we use Cohere models as the Strong, Weak, and Verifier models.
     This should expose methods to enable all functionality we need from Cohere.
     """
-    def __init__(self, bucket_capacity: int = 400, report_every: int = 10):
+    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, strong_completer: str = "command-r-plus-08-2024"):
         """
         args:
-            weak_completer: str - The name of the Cohere model to use for weak completions
+            bucket_capacity: int - The capacity of the token bucket for rate limiting (this should be a conservative interpretation of the per-minute rate limit for provider)
+            report_every: int - How often to report the state of the token bucket
             strong_completer: str - The name of the Cohere model to use for strong completions
-            strong_verifier: str - The name of the Cohere model to use for strong verifications
         """
         super().__init__(strong_completer)  # Use the strong completer's name
 
