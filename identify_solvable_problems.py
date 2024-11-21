@@ -111,8 +111,9 @@ async def main():
                 break
     print(f"Found {n_solvable_problems} solvable problems.")
     
-    # Create a dataframe from the incorrect solutions
+    # Create a dataframe from the incorrect solutions and make sure it's correctly sorted
     incorrect_df = pd.DataFrame(incorrect_solutions)
+    incorrect_df = incorrect_df.sort_values(["row_id", "solution_id"]).reset_index(drop=True)
 
     # Reorder the columns of the dataframe (and discard redundant columns from the original dataframe)
     incorrect_df = incorrect_df[["row_id", "problem", "solution", "solution_id", "candidate_solution", "candidate_verification_reasoning", "candidate_verification_result"]]
