@@ -6,6 +6,13 @@ from dotenv import load_dotenv
 import asyncio
 import pandas as pd
 import prompts
+import logging
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
+from utils import extract_verification_result
+
+
+# Logger
+logger = logging.getLogger(__name__)
 
 
 # Load dotenv; this is used for API keys, which are used in these Helper classes
@@ -80,59 +87,75 @@ class CohereExperimentHelper(Helper):
         self.strong_completer = strong_completer
         self.weak_completer = weak_completer
     
-    # TODO: Wrap these in retries and such too
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
     async def get_solution(self, row: pd.Series) -> str:
         """
         Given a row from the source dataframe, generate a "straight-shot" solution from our model under evaluation.
         args:
             row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
+        returns:
+            solution: str - The generated solution
+        """
+        await self.cohere_bucket.acquire()
+        response = await asyncio.wait_for(
+            self.async_client.chat(
+                model=self.strong_completer,
+                messages=[{
+                    "role": "user",
+                    "content": prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(
+                        problem=row["problem"]
+                    ),
+                }],
+                temperature=0.3,
+            ),
+            timeout=60,
+        )
+        return response.message.content[0].text
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
+        """
+        Given a candidate solution and a row from the source dataframe, verify the candidate solution.
+        args:
+            candidate_solution: str - The candidate solution to verify
+            row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
+        returns:
+            verified: bool - Whether the candidate solution was verified as correct
+            verification_reasoning: str - The reasoning for the verification result
         """
         problem = row["problem"]
-        row_id = row["row_id"]  # Is this ID?
+        solution = row["solution"]
+        await self.cohere_bucket.acquire()
+        response = await asyncio.wait_for(
+            self.async_client.chat(
+                model=self.strong_verifier,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompts.VERIFY_SOLUTION_PROMPT.format(
+                            problem=problem,
+                            solution=solution,
+                            candidate_solution=candidate_solution,
+                        ),
+                    }
+                ],
+                temperature=0.0,
+            ),
+            timeout=60,
+        )
+        return extract_verification_result(response.message.content[0].text)
 
-        retries_remaining = 20
-        while retries_remaining:
-            try:
-                response = await asyncio.wait_for(
-                    self.async_client.chat(
-                        model=self.strong_completer,
-                        messages=[
-                            {
-                                "role": "user",
-                                "content": prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(
-                                    problem=problem
-                                ),
-                            }
-                        ],
-                        temperature=0.3,  # We want to use a "normal" t=.3 for this, because we want to evaluate how difficult problems are.
-                    ),
-                    timeout=60,
-                )
-                return response.message.content[0].text
-            except asyncio.TimeoutError as e:
-                retries_remaining -= 1
-                print(
-                    f"Timeout occurred when generating solution for problem {row_id}. Retries remaining now {retries_remaining}."
-                )
-                if retries_remaining:
-                    print(f"Retrying with {retries_remaining} retries remaining.")
-                else:
-                    # If this ever happens (which it shouldn't), let's raise the error so that everything falls over and I can complain to Eddie.
-                    print(f"Fatal: Ran out of retries, reraising error.")
-                    raise e
-            except Exception as e:
-                retries_remaining -= 1
-                print(
-                    f"Non-timeout exception occurred when generating solution for problem {row_id}. Retries remaining now {retries_remaining}. Error: {e}"
-                )
-                if retries_remaining:
-                    print(f"Retrying with {retries_remaining} retries remaining.")
-                else:
-                    print(f"Fatal: Ran out of retries, teraising error.")
-                    raise e
-
-    async def get_verification(self, prompt: str) -> tuple[bool, str]:
-        ...
+        
 
     async def get_completion(self, prompt: str) -> str:
         ...

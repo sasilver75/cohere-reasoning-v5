@@ -59,13 +59,16 @@ def get_naive_prefix(solution: str) -> str:
 
 def extract_verification_from_response(
     verification_response: str,
-    row_id: int,
-    solution_idx: int,
-    completion_idx: Optional[int] = 0  # This is only relevant for verifying completions, not solutions.
-) -> VerificationResult:
+) -> tuple[str, bool]:
     """
     Given a verification response, return whether the verifiation response indicates that the candidate solution was correct.
     There shouldn't be any extraction errors. If there's a problem, we should raise an exception (which, outside, will trigger a retry).
+
+    args:
+        verification_response: str - The response from the completer model
+    returns:
+        verified: bool - Whether the candidate solution was verified as correct
+        verification_reasoning: str - The reasoning for the verification result
     """
     # Extract REASONING
     verification_reasoning_pattern = (
@@ -89,10 +92,4 @@ def extract_verification_from_response(
         )
     verified = match.group(1).strip().lower() == "correct"
 
-    return VerificationResult(
-        row_id=row_id,
-        solution_idx=solution_idx,
-        verification_reasoning=verification_reasoning,
-        verification=verified,
-        completion_idx=completion_idx,
-    )
+    return verified, verification_reasoning

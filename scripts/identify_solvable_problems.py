@@ -10,30 +10,30 @@ from the cohere-reasoning-v4 project.
 """
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()
+HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems.csv")
-TARGET_N_SOLVABLE_PROBLEMS = 100
 SEED = 42
-N_SOLUTIONS_PER_PROBLEM = 10
-LOWER_SUCCESS_RATE_BOUND = 0.2
-UPPER_SUCCESS_RATE_BOUND = 0.6
+TARGET_N_SOLVABLE_PROBLEMS = 100  # The number of solvable problems we want to identify
+N_SOLUTIONS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty
+LOWER_SUCCESS_RATE_BOUND = 0.2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting
+UPPER_SUCCESS_RATE_BOUND = 0.6  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting
 
 async def _generate_and_verify_solution(row: pd.Series) -> tuple[bool, pd.Series]:
     """
     Given a row from the source dataframe, generate a solution to the problem and verify it.
     """
+    # Get the solution and verification information
     solution = await HELPER.get_solution(row)
     verification_result, verification_reasoning = await HELPER.get_verification(row, solution)
 
+    # Construct a new row with the solution and verification results
     augmented_row = row.copy()
     augmented_row["candidate_solution"] = solution
     augmented_row["verification_result"] = verification_result
     augmented_row["verification_reasoning"] = verification_reasoning
-    
-    # Construct a new row with the solution and verification results
 
-    return verification_result, pd.Series(row.append(solution, verification_reasoning))
+    return verification_result, augmented_row
 
 
 async def appraise_problem(row: pd.Series) -> list[pd.Series]:
@@ -52,8 +52,12 @@ async def appraise_problem(row: pd.Series) -> list[pd.Series]:
         for _ in range(N_SOLUTIONS_PER_PROBLEM)
     ]
     results = await asyncio.gather(*solution_attempts)
-    incorrect_solutions = [attempt_data for attempt_success, attempt_data in results if not attempt_success]
+    incorrect_solutions: list[pd.Series] = [attempt_data for attempt_success, attempt_data in results if not attempt_success]
     
+    # Augment the incorrect solutions with the solution_ids
+    for idx, augmented_row in enumerate(incorrect_solutions):
+        augmented_row["solution_id"] = idx
+
     # Did we find the appropriate number of incorrect solutions?
     failure_rate = len(incorrect_solutions) / N_SOLUTIONS_PER_PROBLEM
     success_rate = 1 - failure_rate
@@ -70,6 +74,7 @@ async def main():
     n_solvable_problems = 0
     incorrect_solutions = []
 
+    # ~~~ (1) Load Problems and Shuffle ~~~
     print(f"Loading problems from {SOURCE_PATH}...")
     df = pd.read_csv(SOURCE_PATH)
     print(f"Loaded {len(df)} problems.")
@@ -80,6 +85,7 @@ async def main():
     # ~~~ (2) Appraise Problems ~~~
     # For each problem, appraise it. If it's solvable, add the incorrect solutions to the accumulator.
     # Evaluate problems until we've found the target number of solvable problems.
+    print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
     for _, row in shuffled_df.iterrows():
         if results := await appraise_problem(row):
             n_solvable_problems += 1
@@ -87,11 +93,16 @@ async def main():
 
             if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
                 break
+    print(f"Found {n_solvable_problems} solvable problems.")
     
     # Create a dataframe from the incorrect solutions
     incorrect_df = pd.DataFrame(incorrect_solutions)
 
+    # Reorder the columns of the dataframe (and discard redundant columns from the original dataframe)
+    incorrect_df = incorrect_df[["row_id", "problem", "solution", "solution_id", "candidate_solution", "candidate_verification_reasoning", "candidate_verification_result"]]
+
     # ~~~ (3) Save Results ~~~
+    print(f"Saving results to {SINK_PATH} and {SINK_PATH.with_suffix('.txt')}...")
     # i. Make sure the output directory exists
     SINK_PATH.parent.mkdir(parents=True, exist_ok=True)
     # ii. Write the incorrect solutions to a CSV
@@ -101,7 +112,7 @@ async def main():
     with open(SINK_PATH.with_suffix(".txt"), "w") as f:
         for row_id in solvable_problem_row_ids:
             f.write(f"{row_id}\n")
-    
+    print(f"Saved results to {SINK_PATH} and {SINK_PATH.with_suffix('.txt')}.")
 
 
     

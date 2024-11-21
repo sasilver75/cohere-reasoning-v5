@@ -26,9 +26,9 @@ df = df[df["source"] == "cn_k12"]
 print("Shuffling dataframe...")
 df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
-# Set an explicit "id" column (since the dataset doesn't have one)
-print("Setting id column...")
-df["id"] = range(len(df))
+# Set an explicit "row_id" column (since the dataset doesn't have one)
+print("Setting row_id column...")
+df["row_id"] = range(len(df))
 
 # Save to csv
 if not os.path.exists(dataset_directory):
