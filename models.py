@@ -10,7 +10,8 @@ import logging
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 from utils import extract_verification_from_response, get_naive_prefix
 from concurrent.futures import ThreadPoolExecutor
-
+from typing import Optional
+import random
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -61,8 +62,70 @@ class Helper(ABC):
 
 
 class DummyExperimentHelper(Helper):
-    # TODO: It might be nice to have a helper that just returns dummy data (with realistic "latencies" on requests). This could be nice to test with.
-    ...
+    """
+    A dummy helper that simulates network latencies, rate limiting, and occasional failures
+    without making actual API calls. Useful for testing the overall flow of experiments.
+    """
+    def __init__(self, 
+                 min_latency: float = 0.5, 
+                 max_latency: float = 2.0,
+                 bucket_capacity: int = 400,
+                 bucket_rate: Optional[float] = None,
+                 failure_rate: float = 0.1):  # 10% chance of failure
+        """
+        args:
+            min_latency: float - Minimum simulated latency in seconds
+            max_latency: float - Maximum simulated latency in seconds
+            bucket_capacity: int - Capacity of the token bucket
+            bucket_rate: Optional[float] - Rate of token replenishment
+            failure_rate: float - Probability of request failure (0-1)
+        """
+        super().__init__("dummy-model")
+        self.min_latency = min_latency
+        self.max_latency = max_latency
+        self.failure_rate = failure_rate
+        self.token_bucket = TokenBucket(capacity=bucket_capacity, rate=bucket_rate)
+
+    async def _simulate_latency(self):
+        """Simulate a random network latency and possible failure"""
+        delay = random.uniform(self.min_latency, self.max_latency)
+        await asyncio.sleep(delay)
+        
+        if random.random() < self.failure_rate:
+            raise Exception("Simulated API failure")
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_solution(self, row: pd.Series) -> str:
+        await self.token_bucket.acquire()
+        await self._simulate_latency()
+        return "<DummySolution>"
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
+        await self.token_bucket.acquire()
+        await self._simulate_latency()
+        return random.choice([True, False]), "<DummyVerificationReasoning>"
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_prefix_and_completion(self, row: pd.Series) -> tuple[str, str]:
+        await self.token_bucket.acquire()
+        await self._simulate_latency()
+        return "<DummyPrefix>", "<DummyCompletion>"
 
 
 
@@ -71,7 +134,7 @@ class CohereExperimentHelper(Helper):
     Helper for a scenario in which we use Cohere models as the Strong, Weak, and Verifier models.
     This should expose methods to enable all functionality we need from Cohere.
     """
-    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, strong_completer: str = "command-r-plus-08-2024", prefix_size: float = 0.7):
+    def __init__(self, bucket_capacity: int = 400, bucket_rate: Optional[float] = None, bucket_report_every: int = 50, bucket_verbose: bool = False, strong_completer: str = "command-r-plus-08-2024", prefix_size: float = 0.7):
         """
         args:
             bucket_capacity: int - The capacity of the token bucket for rate limiting (this should be a conservative interpretation of the per-minute rate limit for provider)
@@ -84,7 +147,7 @@ class CohereExperimentHelper(Helper):
             raise ValueError("COHERE_API_KEY must be set in the environment")
 
         # Cohere chat endpoints have a 500/min rate limit; let's be conservative!
-        self.cohere_bucket = TokenBucket(capacity=bucket_capacity, report_every=report_every)  # Used to handle rate limiting/concurrency
+        self.cohere_bucket = TokenBucket(capacity=bucket_capacity, rate=bucket_rate, report_every=bucket_report_every, verbose=bucket_verbose)  # Used to handle rate limiting/concurrency
         self.sync_client = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
         self.async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY")) # For full solutions, we can use the new V2 Asnyc Client
         self.strong_verifier = "command-r-plus-08-2024"

@@ -18,8 +18,8 @@ from the cohere-reasoning-v4 project.
 HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems.csv")
-TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify
-N_SOLUTION_ATTEMPTS_PER_PROBLEM = 4  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
+TARGET_N_SOLVABLE_PROBLEMS = 30  # The number of solvable problems we want to identify
+N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = 0.2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1)
 UPPER_SUCCESS_RATE_BOUND = .6  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1)
 EPSILON = 1e-10  # To help with floating point division giving .199999 when it really should be .2

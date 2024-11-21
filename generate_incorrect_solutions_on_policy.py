@@ -14,7 +14,7 @@ as well as the Helper classes from v5.
 # TODO: Does this work with lower=0.0? Upper=1.0? Should it?
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()
+HELPER = CohereExperimentHelper()  # Testing bucket capacity of 5 to see if rate limiting works :eyes:
 SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.

@@ -26,8 +26,8 @@ async def _generate_completions(df: pd.DataFrame) -> pd.DataFrame:
         """Helper function to process a single completion"""
         # Generate the prefix and completion
         prefix, completion = await HELPER.get_prefix_and_completion(row)
-        # Generate the verification of the completion
-        verification_result, verification_reasoning = await HELPER.get_verification(completion, row)
+        # Generate the verification of the completion of the f"{prefix}{completion}"
+        verification_result, verification_reasoning = await HELPER.get_verification(f"{prefix}{completion}", row)
         
         # Create new row with the completion data
         new_row = row.copy()

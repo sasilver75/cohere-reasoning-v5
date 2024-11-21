@@ -5,7 +5,7 @@ import re
 import pandas as pd
 
 class TokenBucket:
-    def __init__(self, capacity: int, report_every: int | None = None):
+    def __init__(self, capacity: int, rate: Optional[float] = None,report_every: int | None = None, verbose: bool = False):
         """
         A simple token bucket rate limiter.
         args:
@@ -16,7 +16,7 @@ class TokenBucket:
         # Core bucket attributes
         self.capacity = capacity  # Maximum number of tokens in bucket
         self.tokens = capacity  # Current number of tokens in bucket
-        self.rate = capacity / 60  # Tokens/second added to bucket
+        self.rate = rate if rate is not None else capacity / 60  # Tokens/second added to bucket (capped at capacity)
         self.last_update = time.time()  # Last time tokens were added to the bucket
 
         # Lock for mutual exclusion if this ever to be used in a multithreaded context
@@ -25,6 +25,7 @@ class TokenBucket:
         # For reporting
         self.request_count = 0  # I can't imagine that this would realistically overflow
         self.report_every = report_every
+        self.verbose = verbose
 
     async def acquire(self):
         """Acquire a token, waiting if necessary."""
@@ -39,14 +40,18 @@ class TokenBucket:
             # If we need tokens, wait for them to be added, then update token counts
             if self.tokens < 1:
                 wait_time = (1 - self.tokens) / self.rate
+                if self.verbose:
+                    print(f"Sleeping for {wait_time:.2f} seconds to wait for tokens to be added")
                 await asyncio.sleep(wait_time)
                 # Recalculate tokens after sleep
                 now = time.time()
                 new_tokens = (now - self.last_update) * self.rate
-                self.tokens = min(self.capacity, new_tokens)
+                self.tokens = min(self.capacity, self.tokens + new_tokens)
                 self.last_update = now
 
             # "Spend" a token
+            if self.verbose:
+                print(f"Spending a token: {self.tokens} before spending")
             self.tokens -= 1
             self.request_count += 1
 
