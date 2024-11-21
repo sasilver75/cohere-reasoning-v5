@@ -64,10 +64,10 @@ class Helper(ABC):
 
 class CohereExperimentHelper(Helper):
     """
-    Helper for a scenario in which we use Cohere models.
+    Helper for a scenario in which we use Cohere models as the Strong, Weak, and Verifier models.
     This should expose methods to enable all functionality we need from Cohere.
     """
-    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, weak_completer: str = "command-r-03-2024", strong_completer: str = "command-r-plus-08-2024", strong_verifier: str = "command-r-plus-08-2024"):
+    def __init__(self, bucket_capacity: int = 400, report_every: int = 10):
         """
         args:
             weak_completer: str - The name of the Cohere model to use for weak completions
@@ -83,9 +83,9 @@ class CohereExperimentHelper(Helper):
         self.cohere_bucket = TokenBucket(capacity=bucket_capacity, report_every=report_every)  # Used to handle rate limiting/concurrency
         self.sync_client = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
         self.async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY")) # For full solutions, we can use the new V2 Asnyc Client
-        self.strong_verifier = strong_verifier
-        self.strong_completer = strong_completer
-        self.weak_completer = weak_completer
+        self.strong_verifier = "command-r-plus-08-2024"
+        self.strong_completer = "command-r-plus-08-2024"
+        self.weak_completer =  "command-r-03-2024"
     
     @retry(
         stop=stop_after_attempt(20),
@@ -156,6 +156,37 @@ class CohereExperimentHelper(Helper):
         return extract_verification_from_response(response.message.content[0].text)
 
         
+
+    async def get_completion(self, prompt: str) -> str:
+        # TODO: Write me!
+        # The tricky part is that this is actually a synchronous call for the Cohere V1 Client... which isn't the case for any other model.
+        # I can "spoof" the fact that it's not really async
+        # But I really ant to get some speed, I'm going to have to multiprocess (see v4). And I'm not sure how I can hide that in this scenario.
+        # It might be the case that I just have to slowly churn through these, for Cohere, if I want to have the same interface between experiments.
+        ...
+
+
+class OpenRouterExpeirmentalHelper(Helper):
+    """
+    Helper for a variety of experimental scenarios in which we use a model frmo OpenRouter as the strong verifier, 
+    and models from Cohere as the weak completer and strong verifier.
+    
+    Encapsulates the logic for interacting with the OpenRouter API, as well as the logic for rate limiting.
+    """
+    def __init__(self, strong_completer: str, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, openrouter_bucket_capacity: int = 400, openrouter_report_every: int = 10):
+        super().__init__(strong_completer)
+        self.strong_completer = strong_completer
+        self.strong_verifier = "command-r-plus-08-2024"
+        self.weak_completer = "command-r-03-2024"
+        self.cohere_bucket = TokenBucket(capacity=cohere_bucket_capacity, report_every=cohere_report_every)
+        self.openrouter_bucket = TokenBucket(capacity=openrouter_bucket_capacity, report_every=openrouter_report_every)
+        # TODO: Clients for each?
+    
+    async def get_solution(self, row: pd.Series) -> str:
+        ...
+    
+    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
+        ...
 
     async def get_completion(self, prompt: str) -> str:
         ...
