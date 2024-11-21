@@ -36,5 +36,6 @@ if not os.path.exists(dataset_directory):
 if not os.path.exists(os.path.join(dataset_directory, dataset_subdirectory)):
     os.makedirs(os.path.join(dataset_directory, dataset_subdirectory))
 
+print(f"Saving to csv at {file_path}...")
 df.to_csv(file_path, index=False)
 print(f"Saved to csv at {file_path}")
