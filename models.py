@@ -273,8 +273,16 @@ class OpenRouterExperimentalHelper(Helper):
     
     Encapsulates the logic for interacting with the OpenRouter API, as well as the logic for rate limiting.
     """
-    def __init__(self, strong_completer: str, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, openrouter_bucket_capacity: int = 400, openrouter_report_every: int = 10):
+    def __init__(self, strong_completer: str = "llamba3.2B FIX ME", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, openrouter_bucket_capacity: int = 400, openrouter_report_every: int = 10):
         super().__init__(strong_completer)
+
+        if "COHERE_API_KEY" not in os.environ:
+            raise ValueError("COHERE_API_KEY must be set in the environment")
+
+        if "OPENROUTER_API_KEY" not in os.environ:
+            raise ValueError("OPENROUTER_API_KEY must be set in the environment")
+        
+
         self.strong_completer = strong_completer
         self.strong_verifier = "command-r-plus-08-2024"
         self.weak_completer = "command-r-03-2024"
