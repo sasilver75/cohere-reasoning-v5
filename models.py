@@ -67,7 +67,7 @@ class CohereExperimentHelper(Helper):
     Helper for a scenario in which we use Cohere models.
     This should expose methods to enable all functionality we need from Cohere.
     """
-    def __init__(self, weak_completer: str = "command-r-03-2024", strong_completer: str = "command-r-plus-08-2024", strong_verifier: str = "command-r-plus-08-2024"):
+    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, weak_completer: str = "command-r-03-2024", strong_completer: str = "command-r-plus-08-2024", strong_verifier: str = "command-r-plus-08-2024"):
         """
         args:
             weak_completer: str - The name of the Cohere model to use for weak completions
@@ -80,7 +80,7 @@ class CohereExperimentHelper(Helper):
             raise ValueError("COHERE_API_KEY must be set in the environment")
 
         # Cohere chat endpoints have a 500/min rate limit; let's be conservative!
-        self.cohere_bucket = TokenBucket(capacity=400, report_every=10)
+        self.cohere_bucket = TokenBucket(capacity=bucket_capacity, report_every=report_every)  # Used to handle rate limiting/concurrency
         self.sync_client = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
         self.async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY")) # For full solutions, we can use the new V2 Asnyc Client
         self.strong_verifier = strong_verifier

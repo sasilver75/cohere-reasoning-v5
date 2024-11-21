@@ -98,7 +98,7 @@ async def main():
     print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
     
     # Let's choose to do this sequentially for now, until we have enough solutions.
-    # TODO: This is too slow. We need to parallelize this, but also not make too many calls needlessly. 
+    # TODO: This is far too slow. We need to parallelize this, but also not make too many calls needlessly. Should we just rely on the bucket and its settings to save us?
     # For small N, we don't want to exhaust our bucket for no reason ($); we can use semaphores, or batching, or...
     pbar = tqdm(total=TARGET_N_SOLVABLE_PROBLEMS, colour="green", desc="Finding solvable problems")
     for _, row in shuffled_df.iterrows():

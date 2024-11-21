@@ -2,9 +2,9 @@ import asyncio
 from models import CohereExperimentHelper
 from pathlib import Path
 import pandas as pd
-from tqdm import tqdm
 import logging
 from time import perf_counter
+from tqdm.asyncio import tqdm_asyncio as atqdm
 
 """
 This is similar to the generate_prefixes_remaining_on_policy.py script from v4, but uses a Token Bucket strategy instead,
@@ -119,7 +119,7 @@ async def _pad_incorrect_solutions(df: pd.DataFrame) -> pd.DataFrame:
         process_problem(df[df["row_id"] == row_id])
         for row_id in df["row_id"].unique()
     ]
-    all_padded_solutions: list[list[dict]] = await asyncio.gather(*problem_tasks)
+    all_padded_solutions: list[list[dict]] = await atqdm.gather(*problem_tasks, desc=f"Padding solutions for {df['row_id'].nunique()} problems", total=df["row_id"].nunique(), colour="green")
     
     # Flatten the list of lists and convert to DataFrame
     padded_df = pd.DataFrame([
@@ -137,7 +137,7 @@ async def main():
     # Load source data
     print(f"Loading problems from {SOURCE_PATH}")
     df = pd.read_csv(SOURCE_PATH)
-    print(f"Loaded {df["row_id"].nunique()} problems, with {len(df)} total solutions; padding to {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM} solutions per problem (for {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM * df["row_id"].nunique()} total solutions)")
+    print(f"Loaded {df["row_id"].nunique()} problems with {len(df)} total solutions; padding to {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM} solutions per problem (for {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM * df["row_id"].nunique()} total solutions)")
 
     # Pad solutions
     print(f"Padding solutions...")
@@ -155,3 +155,16 @@ if __name__ == "__main__":
     start = perf_counter()
     asyncio.run(main())
     print(f"Done! Elapsed: {perf_counter() - start:.2f}s")
+
+
+
+
+
+
+
+
+
+
+
+
+
