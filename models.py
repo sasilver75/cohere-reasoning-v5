@@ -3,6 +3,10 @@ import os
 from utils import TokenBucket
 import cohere
 from dotenv import load_dotenv
+import asyncio
+import pandas as pd
+import prompts
+
 
 # Load dotenv; this is used for API keys, which are used in these Helper classes
 load_dotenv()
@@ -25,6 +29,19 @@ class Helper(ABC):
         """
         self.model_name = model_name  # Used for files, etc.
 
+    @abstractmethod
+    async def get_solution(self, prompt: str) -> str:
+        """
+        Return a straight shot solution from the model.
+        """
+        ...
+    
+    @abstractmethod
+    async def get_verification(self, prompt: str) -> tuple[bool, str]:
+        """
+        Given a solution, return a verification from the model.
+        """
+        ...
     
     @abstractmethod
     async def get_completion(self, prompt: str) -> str:
@@ -33,19 +50,7 @@ class Helper(ABC):
         """
         ...
 
-    @abstractmethod
-    async def get_solution(self, prompt: str) -> str:
-        """
-        Return a straight shot solution from the model.
-        """
-        ...
 
-    @abstractmethod
-    async def get_verification(self, prompt: str) -> str:
-        """
-        Given a solution, return a verification from the model.
-        """
-        ...
     
 
 
@@ -75,10 +80,58 @@ class CohereExperimentHelper(Helper):
         self.strong_completer = strong_completer
         self.weak_completer = weak_completer
     
-    async def get_solution(self, prompt: str) -> str:
-        ...
+    # TODO: Wrap these in retries and such too
+    async def get_solution(self, row: pd.Series) -> str:
+        """
+        Given a row from the source dataframe, generate a "straight-shot" solution from our model under evaluation.
+        args:
+            row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
+        """
+        problem = row["problem"]
+        row_id = row["row_id"]  # Is this ID?
 
-    async def get_verification(self, prompt: str) -> str:
+        retries_remaining = 20
+        while retries_remaining:
+            try:
+                response = await asyncio.wait_for(
+                    self.async_client.chat(
+                        model=self.strong_completer,
+                        messages=[
+                            {
+                                "role": "user",
+                                "content": prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(
+                                    problem=problem
+                                ),
+                            }
+                        ],
+                        temperature=0.3,  # We want to use a "normal" t=.3 for this, because we want to evaluate how difficult problems are.
+                    ),
+                    timeout=60,
+                )
+                return response.message.content[0].text
+            except asyncio.TimeoutError as e:
+                retries_remaining -= 1
+                print(
+                    f"Timeout occurred when generating solution for problem {row_id}. Retries remaining now {retries_remaining}."
+                )
+                if retries_remaining:
+                    print(f"Retrying with {retries_remaining} retries remaining.")
+                else:
+                    # If this ever happens (which it shouldn't), let's raise the error so that everything falls over and I can complain to Eddie.
+                    print(f"Fatal: Ran out of retries, reraising error.")
+                    raise e
+            except Exception as e:
+                retries_remaining -= 1
+                print(
+                    f"Non-timeout exception occurred when generating solution for problem {row_id}. Retries remaining now {retries_remaining}. Error: {e}"
+                )
+                if retries_remaining:
+                    print(f"Retrying with {retries_remaining} retries remaining.")
+                else:
+                    print(f"Fatal: Ran out of retries, teraising error.")
+                    raise e
+
+    async def get_verification(self, prompt: str) -> tuple[bool, str]:
         ...
 
     async def get_completion(self, prompt: str) -> str:

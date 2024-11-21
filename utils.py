@@ -1,6 +1,7 @@
 import asyncio
 import time
-
+from typing import Optional
+import re
 
 class TokenBucket:
     def __init__(self, capacity: int, report_every: int | None = None):
@@ -55,3 +56,43 @@ class TokenBucket:
 def get_naive_prefix(solution: str) -> str:
     ... # 0.7
 
+
+def extract_verification_from_response(
+    verification_response: str,
+    row_id: int,
+    solution_idx: int,
+    completion_idx: Optional[int] = 0  # This is only relevant for verifying completions, not solutions.
+) -> VerificationResult:
+    """
+    Given a verification response, return whether the verifiation response indicates that the candidate solution was correct.
+    There shouldn't be any extraction errors. If there's a problem, we should raise an exception (which, outside, will trigger a retry).
+    """
+    # Extract REASONING
+    verification_reasoning_pattern = (
+        r"<verification_reasoning>(.*?)</verification_reasoning>"
+    )
+    match = re.search(verification_reasoning_pattern, verification_response, re.DOTALL)
+    if not match:
+        print(f"Could not parse verification reasoning for {verification_response}")
+        raise Exception(
+            f"Could not parse verification reasoning for {verification_response}"
+        )
+    verification_reasoning = match.group(1).strip()
+
+    # Extract RESULT
+    verification_pattern = r"<verification_result>(.*?)</verification_result>"
+    match = re.search(verification_pattern, verification_response, re.DOTALL)
+    if not match:
+        print(f"Could not parse verification result for {verification_response}")
+        raise Exception(
+            f"Could not parse verification result for {verification_response}"
+        )
+    verified = match.group(1).strip().lower() == "correct"
+
+    return VerificationResult(
+        row_id=row_id,
+        solution_idx=solution_idx,
+        verification_reasoning=verification_reasoning,
+        verification=verified,
+        completion_idx=completion_idx,
+    )
