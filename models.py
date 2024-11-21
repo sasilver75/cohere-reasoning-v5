@@ -8,14 +8,15 @@ import pandas as pd
 import prompts
 import logging
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
-from utils import extract_verification_from_response
+from utils import extract_verification_from_response, get_naive_prefix
+from concurrent.futures import ThreadPoolExecutor
 
 
 # Logger
 logger = logging.getLogger(__name__)
 
 
-# Load dotenv; this is used for API keys, which are used in these Helper classes
+# Load dotenv; this is used for API keys via python-dotenv; Keys are used in these Helper classes
 load_dotenv()
 
 
@@ -52,7 +53,7 @@ class Helper(ABC):
         ...
     
     @abstractmethod
-    async def get_completion(self, prompt: str) -> str:
+    async def get_prefix_and_completion(self, row: pd.Series) -> tuple[str, str]:
         """
         Given a partially-completed solution, return the completed solution from the model.
         """
@@ -70,14 +71,14 @@ class CohereExperimentHelper(Helper):
     Helper for a scenario in which we use Cohere models as the Strong, Weak, and Verifier models.
     This should expose methods to enable all functionality we need from Cohere.
     """
-    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, strong_completer: str = "command-r-plus-08-2024"):
+    def __init__(self, bucket_capacity: int = 400, report_every: int = 10, strong_completer: str = "command-r-plus-08-2024", prefix_size: float = 0.7):
         """
         args:
             bucket_capacity: int - The capacity of the token bucket for rate limiting (this should be a conservative interpretation of the per-minute rate limit for provider)
             report_every: int - How often to report the state of the token bucket
             strong_completer: str - The name of the Cohere model to use for strong completions
         """
-        super().__init__(strong_completer)  # Use the strong completer's name
+        super().__init__(strong_completer) # Use the strong completer's name
 
         if "COHERE_API_KEY" not in os.environ:
             raise ValueError("COHERE_API_KEY must be set in the environment")
@@ -89,6 +90,7 @@ class CohereExperimentHelper(Helper):
         self.strong_verifier = "command-r-plus-08-2024"
         self.strong_completer = "command-r-plus-08-2024"
         self.weak_completer =  "command-r-03-2024"
+        self.prefix_size = prefix_size
     
     @retry(
         stop=stop_after_attempt(20),
@@ -159,17 +161,49 @@ class CohereExperimentHelper(Helper):
         return extract_verification_from_response(response.message.content[0].text)
 
         
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_prefix_and_completion(self, row: pd.Series) -> tuple[str, str]:
+        """
+        Get a prefix from the incorrect solution and generate a completion using the sync Cohere API.
+        Use ThreadPoolExecutor to prevent the synchronous Cohere API call from blocking the event loop.
 
-    async def get_completion(self, prompt: str) -> str:
-        # TODO: Write me!
-        # The tricky part is that this is actually a synchronous call for the Cohere V1 Client... which isn't the case for any other model.
-        # I can "spoof" the fact that it's not really async
-        # But I really ant to get some speed, I'm going to have to multiprocess (see v4). And I'm not sure how I can hide that in this scenario.
-        # It might be the case that I just have to slowly churn through these, for Cohere, if I want to have the same interface between experiments.
-        ...
+        TODO: It's possible that we might be making too many threads here. Watch to see how much memory is used.
+        If the memory usage is too high, we could create a single threadpool in the __init__ with a limit on the number of 
+        threads that we make, and then use that same threadpool here to limit memory usage.
+        """
+        prefix = get_naive_prefix(row["candidate_solution"], self.prefix_size)
+        
+        user_turn = prompts.COMPLETION_PROMPT_USER.format(problem=row["problem"])
+        assistant_turn = prompts.COMPLETION_PROMPT_ASSISTANT.format(prefix=prefix)
+        
+        await self.cohere_bucket.acquire()
 
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor() as executor:
+            completion_response = await asyncio.wait_for(
+                loop.run_in_executor(
+                    executor,
+                    lambda: self.sync_client.chat(
+                        model=self.weak_completer,
+                        message=prompts.COMPLETION_TEMPLATE.format(
+                            user_turn=user_turn,
+                            assistant_turn=assistant_turn,
+                        ),
+                        temperature=0.3,
+                        raw_prompting=True,
+                    )
+                ),
+                timeout=60
+            )
+            
+        return prefix, completion_response.text
 
-class OpenRouterExpeirmentalHelper(Helper):
+class OpenRouterExperimentalHelper(Helper):
     """
     Helper for a variety of experimental scenarios in which we use a model frmo OpenRouter as the strong verifier, 
     and models from Cohere as the weak completer and strong verifier.

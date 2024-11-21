@@ -54,8 +54,19 @@ class TokenBucket:
                 print(f"TokenBucket request count: {self.request_count}")
 
 
-def get_naive_prefix(solution: str) -> str:
-    ... # 0.7
+def get_naive_prefix(solution: str, prefix_size: float) -> str:
+    """
+    Given a solution, return a prefix of the solution that is `prefix_size` proportion of the solution.
+    args:
+        solution: str - The solution to get a prefix of
+        prefix_size: float - The proportion of the solution to use as a prefix (eg 0.0 to 1.0)
+    returns:
+        prefix: str - The prefix of the solution
+    """
+    words = solution.split()
+    n_words = len(words)
+    n_words_to_take = max(1, int(prefix_size * n_words))
+    return " ".join(words[:n_words_to_take])
 
 
 def extract_verification_from_response(

@@ -3,26 +3,73 @@ import asyncio
 from pathlib import Path
 from models import CohereExperimentHelper
 import pandas as pd
+from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_completed.csv")
 N_COMPLETIONS_PER_PREFIX = 2  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
-PREFIX_SIZE = 0.7  # The proportion of the incorrect solution to use as a reaosning stub from which to complete.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
 if not (N_COMPLETIONS_PER_PREFIX > 0):
     raise ValueError("N_COMPLETIONS_PER_PREFIX must be greater than 0")
-if not (0 <= PREFIX_SIZE <= 1):
-    raise ValueError("PREFIX_SIZE must be in [0, 1]")
 # END OF CHECKS
 
 
 
 async def _generate_completions(df: pd.DataFrame) -> pd.DataFrame:
-    # TODO: Write me!
-    ...
+    """
+    Generate completions for each incorrect solution in the DataFrame.
+    """
+    async def process_completion(row: pd.Series, completion_id: int) -> dict:
+        """Helper function to process a single completion"""
+        # Generate the prefix and completion
+        prefix, completion = await HELPER.get_prefix_and_completion(row)
+        # Generate the verification of the completion
+        verification_result, verification_reasoning = await HELPER.get_verification(completion, row)
+        
+        # Create new row with the completion data
+        new_row = row.copy()
+        new_row["completion_id"] = completion_id
+        new_row["prefix"] = prefix
+        new_row["completion"] = completion
+        new_row["completion_verification_result"] = verification_result
+        new_row["completion_verification_reasoning"] = verification_reasoning
+        
+        return new_row.to_dict()
+
+    async def process_completions(row: pd.Series) -> list[dict]:
+        """
+        Helper function to orchestrate the generation of multiple completions for a single incorrect solution"""
+        completion_tasks = [
+            process_completion(row, completion_id)
+            for completion_id in range(N_COMPLETIONS_PER_PREFIX)
+        ]
+        return await asyncio.gather(*completion_tasks)
+
+    # Generate all incorrect solutions in parallel, across all row_ids.
+    solution_tasks = [
+        process_completions(row)
+        for _, row in df.iterrows()
+    ]
+    
+    # Gather all completions
+    all_completions = await atqdm.gather(
+        *solution_tasks, 
+        desc=f"Generating completions for {len(df)} solutions", 
+        total=len(df), 
+        colour="green"
+    )
+    
+    # Flatten the list of lists and convert to DataFrame
+    completions_df = pd.DataFrame([
+        completion 
+        for solution_completions in all_completions 
+        for completion in solution_completions
+    ])
+    
+    return completions_df.sort_values(["row_id", "solution_id", "completion_id"]).reset_index(drop=True)
 
 async def main():
     # Read the input data
@@ -31,7 +78,7 @@ async def main():
     print(f"Loaded {df["row_id"].nunique()} problems, with {max(df["solution_id"])+1} solutions per problem.")
 
     # Generate completions
-    print(f"Generating {N_COMPLETIONS_PER_PREFIX} completions (and verifications) per incorrect solution, using a prefix size of {PREFIX_SIZE}")
+    print(f"Generating {N_COMPLETIONS_PER_PREFIX} completions (and verifications) per incorrect solution, using a prefix size of {HELPER.prefix_size}")
     completed_df = await _generate_completions(df)
     print(f"Generated {len(completed_df)} completions and verifications.")
 
