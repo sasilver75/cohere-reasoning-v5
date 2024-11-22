@@ -1,12 +1,12 @@
 from time import perf_counter
 import asyncio
 from pathlib import Path
-from models import CohereExperimentHelper
+from models import CohereExperimentHelper, DummyExperimentHelper
 import pandas as pd
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
+HELPER = CohereExperimentHelper() # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_completed.csv")
 N_COMPLETIONS_PER_PREFIX = 2  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
@@ -78,7 +78,7 @@ async def main():
     print(f"Loaded {df["row_id"].nunique()} problems, with {max(df["solution_id"])+1} solutions per problem.")
 
     # Generate completions
-    print(f"Generating {N_COMPLETIONS_PER_PREFIX} completions (and verifications) per incorrect solution, using a prefix size of {HELPER.prefix_size}")
+    print(f"Generating {N_COMPLETIONS_PER_PREFIX} completions (and verifications) per incorrect solution")
     completed_df = await _generate_completions(df)
     print(f"Generated {len(completed_df)} completions and verifications.")
 

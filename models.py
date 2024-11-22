@@ -71,7 +71,7 @@ class DummyExperimentHelper(Helper):
                  max_latency: float = 2.0,
                  bucket_capacity: int = 400,
                  bucket_rate: Optional[float] = None,
-                 failure_rate: float = 0.1):  # 10% chance of failure
+                 failure_rate: float = 0.1):  # 10% chance of failure on API clals
         """
         args:
             min_latency: float - Minimum simulated latency in seconds

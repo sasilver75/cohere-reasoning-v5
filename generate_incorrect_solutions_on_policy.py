@@ -1,5 +1,5 @@
 import asyncio
-from models import CohereExperimentHelper
+from models import CohereExperimentHelper, DummyExperimentHelper
 from pathlib import Path
 import pandas as pd
 import logging
@@ -12,10 +12,10 @@ as well as the Helper classes from v5.
 """
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()  # Testing bucket capacity of 5 to see if rate limiting works :eyes:
+HELPER = CohereExperimentHelper()
 SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
-TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
+TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 5  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
 MAX_SOLUTION_GENERATION_ATTEMPTS = 5  # How many generate-verify loops to try before giving up (and reusing an existing incorrect solution) when trying to generate a single incorrect solution.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
