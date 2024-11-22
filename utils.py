@@ -110,30 +110,3 @@ def extract_verification_from_response(
     verified = match.group(1).strip().lower() == "correct"
 
     return verified, verification_reasoning
-
-def read_specific_rows(
-    source_filename: str, row_ids: set, chunksize: int = 10000
-) -> Optional[pd.DataFrame]:
-    # TODO: Do I really even need to use this? Now that I'm shuffling my data earlier to select interesting problems, I'm gonna have to read in the entire dataset anyways.
-    # And if it all fits in memory (as it has to earlier in the pipeline), then this RSR function might just needlessly be adding complexity.
-    """
-    Reads specific rows from a CSV based on row_ids and writes them to a new CSV.
-
-    Args:
-        source_filename (str): Path to the source CSV file.
-        target_filename (str): Path to save the filtered CSV.
-        row_ids (set): Set of row_ids to filter.
-        chunksize (int, optional): Number of rows per chunk. Defaults to 10000.
-    """
-    # Initialize a list to collect filtered chunks
-    filtered_chunks = []
-
-    # Iterate over the CSV file in chunks
-    for chunk in pd.read_csv(source_filename, chunksize=chunksize):
-        # Filter rows where 'row_id' is in the specified set (id in base csv == row_id in later csvs)
-        filtered = chunk[chunk["row_id"].isin(row_ids)]
-        if not filtered.empty:
-            filtered_chunks.append(filtered)
-
-    # Concatenate all filtered chunks
-    return pd.concat(filtered_chunks, ignore_index=True) if filtered_chunks else None

@@ -6,11 +6,6 @@ from models import CohereExperimentHelper
 import logging
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
-"""
-This is like... from v4
-TODO: Write me!
-"""
-
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()
 ORIGINAL_DATASET_PATH = Path("datasets/original/cn_k12_math_problems.csv")

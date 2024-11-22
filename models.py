@@ -235,9 +235,9 @@ class CohereExperimentHelper(Helper):
         Get a prefix from the incorrect solution and generate a completion using the sync Cohere API.
         Use ThreadPoolExecutor to prevent the synchronous Cohere API call from blocking the event loop.
 
-        TODO: It's possible that we might be making too many threads here. Watch to see how much memory is used.
+        TODO: It's possible that we might be making too many threads here?. Watch to see how much memory is used.
         If the memory usage is too high, we could create a single threadpool in the __init__ with a limit on the number of 
-        threads that we make, and then use that same threadpool here to limit memory usage.
+        threads that we make, and then use that same threadpool here to limit memory usage. Edit: It doesn't seem like an issue so far.
         """
         prefix = get_naive_prefix(row["candidate_solution"], self.prefix_size)
         
