@@ -16,7 +16,7 @@ HELPER = CohereExperimentHelper()  # Testing bucket capacity of 5 to see if rate
 SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
-MAX_SOLUTION_GENERATION_ATTEMPTS = 10  # How many generate-verify loops to try before giving up and generating a single incorrect solution.
+MAX_SOLUTION_GENERATION_ATTEMPTS = 5  # How many generate-verify loops to try before giving up (and reusing an existing incorrect solution) when trying to generate a single incorrect solution.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
 if not (TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM > 0):

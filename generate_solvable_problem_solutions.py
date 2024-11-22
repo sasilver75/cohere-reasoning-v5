@@ -18,11 +18,11 @@ from the cohere-reasoning-v4 project.
 HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_test.csv")
-TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify
-N_SOLUTION_ATTEMPTS_PER_PROBLEM = 5  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
-LOWER_SUCCESS_RATE_BOUND = 0  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1)
-UPPER_SUCCESS_RATE_BOUND = .5  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1)
-EPSILON = 1e-10  # To help with floating point division giving .199999 when it really should be .2
+TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
+N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
+LOWER_SUCCESS_RATE_BOUND = .2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
+UPPER_SUCCESS_RATE_BOUND = .6  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
+EPSILON = 1e-5  # To help with floating point division giving .199999 when it really should be .2. I don't think theres' really a reason to tune this.
 SEED = 42  # Random seed for dataset shuffling; We'll iterate through rows of this shuffled dataset until we identify the target number of solvable problems.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
