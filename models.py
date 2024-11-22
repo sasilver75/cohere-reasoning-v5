@@ -40,14 +40,14 @@ class Helper(ABC):
         self.model_name = model_name  # Used for files, etc.
 
     @abstractmethod
-    async def get_solution(self, prompt: str) -> str:
+    async def get_solution(self, row: pd.Series, use_weak_completer: bool = False) -> str:
         """
         Return a straight shot solution from the model.
         """
         ...
     
     @abstractmethod
-    async def get_verification(self, prompt: str) -> tuple[bool, str]:
+    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
         """
         Given a solution, return a verification from the model.
         """
@@ -100,7 +100,7 @@ class DummyExperimentHelper(Helper):
         retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
         before_sleep=before_sleep_log(logger, logging.WARNING)
     )
-    async def get_solution(self, row: pd.Series) -> str:
+    async def get_solution(self, row: pd.Series, use_weak_completer: bool = False) -> str:
         await self.token_bucket.acquire()
         await self._simulate_latency()
         return "<DummySolution>"
@@ -161,7 +161,7 @@ class CohereExperimentHelper(Helper):
         retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
         before_sleep=before_sleep_log(logger, logging.WARNING)
     )
-    async def get_solution(self, row: pd.Series) -> str:
+    async def get_solution(self, row: pd.Series, use_strong_completer: bool = True) -> str:
         """
         Given a row from the source dataframe, generate a "straight-shot" solution from our model under evaluation.
         args:
@@ -172,7 +172,7 @@ class CohereExperimentHelper(Helper):
         await self.cohere_bucket.acquire()
         response = await asyncio.wait_for(
             self.async_client.chat(
-                model=self.strong_completer,
+                model=self.strong_completer if use_strong_completer else self.weak_completer,
                 messages=[{
                     "role": "user",
                     "content": prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(

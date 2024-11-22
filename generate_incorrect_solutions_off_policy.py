@@ -38,8 +38,8 @@ async def _generate_incorrect_solutions(problem_df: pd.DataFrame) -> pd.DataFram
         while attempts < MAX_SOLUTION_GENERATION_ATTEMPTS:
             attempts += 1
             
-            # Generate and verify a candidate solution
-            candidate_solution = await HELPER.get_solution(row)
+            # Generate and verify a candidate solution using the weak completer
+            candidate_solution = await HELPER.get_solution(row, use_strong_completer=False)
             verification_result, verification_reasoning = await HELPER.get_verification(candidate_solution, row)
 
             # If we found an incorrect solution, return it

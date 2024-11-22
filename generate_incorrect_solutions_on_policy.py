@@ -11,8 +11,6 @@ This is similar to the generate_prefixes_remaining_on_policy.py script from v4, 
 as well as the Helper classes from v5.
 """
 
-# TODO: Does this work with lower=0.0? Upper=1.0? Should it?
-
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()  # Testing bucket capacity of 5 to see if rate limiting works :eyes:
 SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
@@ -38,7 +36,7 @@ async def _persistently_generate_incorrect_solution(base_row: pd.Series, solutio
     while attempts < MAX_SOLUTION_GENERATION_ATTEMPTS:
         attempts += 1
 
-        # Generate and verify a candidate solution
+        # Generate and verify a candidate solution using the strong completer
         candidate_solution = await HELPER.get_solution(base_row)
         verification_result, verification_reasoning = await HELPER.get_verification(candidate_solution, base_row)
 
