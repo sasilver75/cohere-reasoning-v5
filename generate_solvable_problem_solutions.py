@@ -18,10 +18,11 @@ from the cohere-reasoning-v4 project.
 HELPER = CohereExperimentHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path("datasets/derived/interesting_problems_test.csv")
-TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
-N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
+TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
+N_SOLUTION_ATTEMPTS_PER_PROBLEM = 3  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = .2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
-UPPER_SUCCESS_RATE_BOUND = .6  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
+UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
+MAX_CONCURRENT_PROBLEMS = 10  # The maximum number of problems we'll evaluate concurrently.
 EPSILON = 1e-5  # To help with floating point division giving .199999 when it really should be .2. I don't think theres' really a reason to tune this.
 SEED = 42  # Random seed for dataset shuffling; We'll iterate through rows of this shuffled dataset until we identify the target number of solvable problems.
 # END OF TUNABLE PARAMETERS
@@ -33,7 +34,8 @@ if not (0 <= LOWER_SUCCESS_RATE_BOUND < UPPER_SUCCESS_RATE_BOUND < 1):
 
 async def _generate_and_verify_solution(row: pd.Series) -> tuple[bool, pd.Series]:
     """
-    Given a row from the source dataframe, generate a solution to the problem and verify it.
+    Given a row from the source
+      dataframe, generate a solution to the problem and verify it.
     """
     # Get the solution and verification information
     candidate_solution = await HELPER.get_solution(row)
@@ -85,6 +87,7 @@ async def _appraise_problem(row: pd.Series) -> tuple[bool, list[pd.Series]]:
 async def main():
     n_solvable_problems = 0
     incorrect_solutions = []
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_PROBLEMS)
 
     # ~~~ (1) Load Problems and Shuffle ~~~
     print(f"Loading problems from {SOURCE_PATH}...")
@@ -97,21 +100,91 @@ async def main():
     # ~~~ (2) Appraise Problems ~~~
     # For each problem, appraise it. If it's solvable, add the incorrect solutions to the accumulator.
     # Evaluate problems until we've found the target number of solvable problems.
-    print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
+    # print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
+
+    # Limits the number of problems that we're concurrently evaluating (and then there's a token bucket)
+    async def appraise_problem_with_semaphore(row: pd.Series):
+        async with semaphore:
+            return await _appraise_problem(row)
     
     # Let's choose to do this sequentially for now, until we have enough solutions.
     # TODO: This is far too slow. We need to parallelize this, but also not make too many calls needlessly. Should we just rely on the bucket and its settings to save us?
     # For small N, we don't want to exhaust our bucket for no reason ($); we can use semaphores, or batching, or...
-    pbar = tqdm(total=TARGET_N_SOLVABLE_PROBLEMS, colour="green", desc="Finding solvable problems")
-    for _, row in shuffled_df.iterrows():
-        is_solvable, incorrect_solution_rows = await _appraise_problem(row)
-        if is_solvable:
-            n_solvable_problems += 1
-            incorrect_solutions.extend(incorrect_solution_rows)
-            pbar.update(1)
+    # pbar = tqdm(total=TARGET_N_SOLVABLE_PROBLEMS, colour="green", desc="Finding solvable problems")
 
-            if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
+    # tasks = {
+    #     asyncio.create_task(process_row(row))
+    #     for _, row in shuffled_df.iterrows()
+    # }
+    # pending = task.copy()
+    # for task in asyncio.as_completed(tasks):
+    #     try:
+    #         is_solvable, incorrect_solution_rows = await task
+    #         pending.remove(task)
+
+    #         if is_solvable:
+    #             n_solvable_problems += 1
+    #             incorrect_solutions.extend(incorrect_solution_rows)
+    #             pbar.update(1)
+
+    #             if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
+    #                 # Cancel remaining tasks
+    #                 for t in pending:
+    #                     t.cancel()
+    #                 break
+    #     except asyncio.CancelledError:
+    #         pass
+
+    print(f"Appraising problems until we've found {TARGET_N_SOLVABLE_PROBLEMS} solvable problems...")
+    pbar = tqdm(total=TARGET_N_SOLVABLE_PROBLEMS, colour="green", desc="Finding solvable problems")
+
+    # Create tasks for processing rows
+    tasks = set()
+    row_iter = iter(shuffled_df.iterrows())
+    
+    # Helper to add new tasks up to our concurrent limit
+    def add_tasks():
+        while len(tasks) < MAX_CONCURRENT_PROBLEMS:
+            try:
+                _, row = next(row_iter)
+                task = asyncio.create_task(_appraise_problem(row))
+                tasks.add(task)
+            except StopIteration:
                 break
+
+    # Initial task creation
+    add_tasks()
+    
+    while tasks and n_solvable_problems < TARGET_N_SOLVABLE_PROBLEMS:
+        # Wait for any task to complete
+        done, pending = await asyncio.wait(
+            tasks,
+            return_when=asyncio.FIRST_COMPLETED
+        )
+        
+        # Process completed tasks
+        for task in done:
+            tasks.remove(task)
+            try:
+                is_solvable, incorrect_solution_rows = await task
+                if is_solvable:
+                    n_solvable_problems += 1
+                    incorrect_solutions.extend(incorrect_solution_rows)
+                    pbar.update(1)
+                    
+                    if n_solvable_problems >= TARGET_N_SOLVABLE_PROBLEMS:
+                        # Cancel remaining tasks
+                        for t in tasks:
+                            t.cancel()
+                        tasks.clear()
+                        break
+            except Exception as e:
+                print(f"Error processing task: {e}")
+        
+        # Add new tasks to replace completed ones
+        if n_solvable_problems < TARGET_N_SOLVABLE_PROBLEMS:
+            add_tasks()
+
     print(f"Found {n_solvable_problems} solvable problems.")
     
     # Create a dataframe from the incorrect solutions and make sure it's correctly sorted

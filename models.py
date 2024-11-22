@@ -181,7 +181,7 @@ class CohereExperimentHelper(Helper):
                 }],
                 temperature=0.3,
             ),
-            timeout=60,
+            timeout=45,
         )
         return response.message.content[0].text
 
@@ -219,7 +219,7 @@ class CohereExperimentHelper(Helper):
                 ],
                 temperature=0.0,
             ),
-            timeout=60,
+            timeout=45,
         )
         return extract_verification_from_response(response.message.content[0].text)
 
@@ -261,7 +261,7 @@ class CohereExperimentHelper(Helper):
                         raw_prompting=True,
                     )
                 ),
-                timeout=60
+                timeout=45
             )
             
         return prefix, completion_response.text
