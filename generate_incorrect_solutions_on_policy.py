@@ -1,5 +1,5 @@
 import asyncio
-from models import CohereExperimentHelper, DummyExperimentHelper, Qwen2572BHelper
+from models import CohereExperimentHelper, DummyExperimentHelper, OpenRouterExperimentHelper
 from pathlib import Path
 import pandas as pd
 import logging
@@ -12,8 +12,8 @@ as well as the Helper classes from v5.
 """
 
 # TUNABLE PARAMETERS
-HELPER = Qwen2572BHelper()
-EXPERIMENT_NAME = "test-qwen"
+HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct")
+EXPERIMENT_NAME = "test-l3.3-70b"
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 5  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.

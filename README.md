@@ -34,5 +34,5 @@ This environment variable file is git-ignored, so your precious credentials won'
 - There are additionally some experiment-level hyperparmeters (like the number of solutions per problem, when evaluating problem difficulty level) that can be configured for each of the files in the "Scripts" subsection above.
 
 ## Viewing results
-- You can use the `view_completions.py` script to manually review the result of the `generate_completions.py` script. Change the `csv_path` variable to the path to the CSV file you want to view. This is a Flask app, so you can run the script and view the results in your browser.
+- You can use the `view_completions.py` script to manually review the result of the `generate_completions.py` script. Change the `EXPERIMENT_NAME` variable to the path to the name of your most recent experiment. This is a Flask app, so you can run the script and view the results in your browser.
 - This script is useful to have a qualitative understanding of the apparent recoveries. It's the case that there is "noise" in the recovery rates, because our naive truncation/prefixing strategy for incorrect solutions doesn't always capture the flaw in reasoning that resulted in an incorrect solution.

@@ -10,7 +10,7 @@ import base64
 app = Flask(__name__)
 
 # Load the CSV file
-EXPERIMENT_NAME = "test-qwen"
+EXPERIMENT_NAME = "test-l3.3-70b"
 csv_path = f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_completed.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
@@ -22,25 +22,75 @@ except Exception as e:
     print(f"Error reading CSV file: {e}")
     exit(1)
 
-def create_plot(correct_completions, incorrect_completions):
-    plt.figure(figsize=(10, 6))
-    bars = plt.bar(['Incorrect Completions', 'Correct Completions'], 
-                  [incorrect_completions, correct_completions],
-                  color=['lightcoral', 'lightgreen'])
+def create_plots(correct_completions, incorrect_completions, per_problem_stats):
+    # Increase figure size
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 8))
     
-    # Add value labels on top of each bar
+    # Set larger font sizes
+    plt.rcParams.update({'font.size': 14})
+    
+    # First subplot - Completion Results Distribution
+    bars = ax1.bar(['Incorrect Completions', 'Correct Completions'], 
+                [incorrect_completions, correct_completions],
+                color=['lightcoral', 'lightgreen'])
+    
     for bar in bars:
         height = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width()/2., height,
+        ax1.text(bar.get_x() + bar.get_width()/2., height,
                 f'{int(height)}',
-                ha='center', va='bottom')
+                ha='center', va='bottom',
+                fontsize=14)
     
-    plt.title('Completion Results Distribution')
-    plt.ylabel('Count')
+    ax1.set_title('Completion Results Distribution', fontsize=16, pad=20)
+    ax1.set_ylabel('Count', fontsize=14)
+    ax1.tick_params(axis='both', which='major', labelsize=12)
+    
+    # Second subplot - Recovery Rates Histogram
+    bin_edges = np.linspace(-5, 105, 12)  # 11 edges for 10 bins, with padding
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2  # Calculate bin centers explicitly
+    
+    counts, bins, patches = ax2.hist(per_problem_stats['recovery_rate'], 
+                                   bins=bin_edges,
+                                   color='skyblue', 
+                                   edgecolor='black',
+                                   weights=np.ones(len(per_problem_stats)) / len(per_problem_stats) * 100,
+                                   align='mid',
+                                   rwidth=0.8)
+    
+    # Set the x-ticks to be at the bin centers, excluding the padding bins
+    ax2.set_xticks(bin_centers[1:-1])  # Exclude first and last bin centers
+    ax2.set_xticklabels([f'{int(x)}' for x in bin_centers[1:-1]], fontsize=12)
+    
+    # Add count labels on top of each bar
+    for count, bin_center in zip(counts, bin_centers):
+        actual_count = int(count * len(per_problem_stats) / 100)
+        if actual_count > 0:
+            ax2.text(bin_center, count, str(actual_count),
+                    ha='center', va='bottom', fontsize=12)
+    
+    ax2.set_title('Distribution of Recovery Rates', fontsize=16, pad=20)
+    ax2.set_xlabel('Recovery Rate', fontsize=14)
+    ax2.set_ylabel('Percentage of Problems', fontsize=14)
+    
+    # Format both axes to show percentage symbol
+    ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0f}%'.format(y)))
+    ax2.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: '{:.0f}%'.format(x)))
+    
+    # Set y-axis to go from 0 to 100%
+    ax2.set_ylim(0, 100)
+    
+    # Set x-axis limits with padding
+    ax2.set_xlim(0, 100)
+    
+    # Add gridlines
+    ax2.grid(True, axis='y', linestyle='--', alpha=0.7)
+    
+    # Adjust layout
+    plt.tight_layout(pad=3.0)
     
     # Convert plot to base64 string
     img = io.BytesIO()
-    plt.savefig(img, format='png', bbox_inches='tight')
+    plt.savefig(img, format='png', bbox_inches='tight', dpi=120)
     img.seek(0)
     plt.close()
     
@@ -66,8 +116,8 @@ def stats():
     # Convert recovery rate to percentage
     per_problem_stats['recovery_rate'] = per_problem_stats['recovery_rate'] * 100
     
-    # Create the plot
-    plot_url = create_plot(correct_completions, incorrect_completions)
+    # Create the plots
+    plot_url = create_plots(correct_completions, incorrect_completions, per_problem_stats)
     
     return render_template_string(
         """
@@ -106,8 +156,9 @@ def stats():
                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 }
                 .chart-container {
-                    margin-top: 30px;
+                    margin: 30px auto;
                     text-align: center;
+                    max-width: 90%;
                 }
                 .chart-container img {
                     max-width: 100%;
@@ -123,9 +174,15 @@ def stats():
                     background-color: #007bff;
                     padding: 10px 20px;
                     border-radius: 4px;
+                    display: inline-block;
+                    min-width: 200px;
+                    text-align: center;
+                    margin: 5px;
+                    line-height: 1.5;
                 }
                 .navigation a:hover {
                     background-color: #0056b3;
+                    transition: background-color 0.2s;
                 }
                 .problem-stats-container {
                     margin-top: 30px;
@@ -203,6 +260,7 @@ def stats():
         <body>
             <div class="header">
                 <h1>Completion Statistics Overview</h1>
+                <h3 style="margin-top: 0; color: #666;">Experiment: {{ experiment_name }}</h3>
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <form class="jump-form" action="{{ url_for('view_completions') }}" method="get">
                         <label for="row_id">Jump to Row ID:</label>
@@ -253,7 +311,7 @@ def stats():
                             <td class="problem-text" title="{{ row['problem'] }}">{{ row['problem'] }}</td>
                             <td>{{ row['attempts'] }}</td>
                             <td>{{ row['recoveries'] }}</td>
-                            <td>{{ "%.1f"|format(row['recovery_rate']) }}</td>
+                            <td>{{ "%.1f%%"|format(row['recovery_rate']) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -310,7 +368,8 @@ def stats():
         correct_completions=correct_completions,
         incorrect_completions=incorrect_completions,
         plot_url=plot_url,
-        problem_stats=per_problem_stats
+        problem_stats=per_problem_stats,
+        experiment_name=EXPERIMENT_NAME
     )
 
 @app.route("/completions")
@@ -454,6 +513,7 @@ def view_completions():
     <body>
         <div class="header">
             <h1>Math Problem Completion Viewer ({{ page }}/{{ total_pages }})</h1>
+            <h3 style="margin-top: 0; color: #666;">Experiment: {{ experiment_name }}</h3>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <form class="jump-form" action="{{ url_for('view_completions') }}" method="get">
                     <label for="row_id">Jump to Row ID:</label>
@@ -513,6 +573,7 @@ def view_completions():
         completion_data=completion_data,
         page=page,
         total_pages=len(df),
+        experiment_name=EXPERIMENT_NAME
     )
 
 # Custom JSON encoder to handle numpy types
