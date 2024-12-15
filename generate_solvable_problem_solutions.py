@@ -25,6 +25,7 @@ UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solu
 MAX_CONCURRENT_PROBLEMS = 10  # The maximum number of problems we'll evaluate concurrently.
 EPSILON = 1e-5  # To help with floating point division giving .199999 when it really should be .2. I don't think theres' really a reason to tune this.
 SEED = 42  # Random seed for dataset shuffling; We'll iterate through rows of this shuffled dataset until we identify the target number of solvable problems. NOTE: This doesn't totally control the problems that end up in the resulting set. It determines the order of the datatframe, but then we asynchronously evalute problems concurrently until we find the target number... so the order of the asynchronous problem resolution might be different (and different problems might "make it in" to the final set. This is mostly important just for the last few problems).
+EXPERIMENT_NAME = "test-cohere"  # The name of the experiment; used for directory naming for results.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
 if not (0 <= LOWER_SUCCESS_RATE_BOUND < UPPER_SUCCESS_RATE_BOUND < 1):

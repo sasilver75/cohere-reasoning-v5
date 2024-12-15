@@ -48,14 +48,15 @@ class TokenBucket:
                 self.tokens = min(self.capacity, self.tokens + new_tokens)
                 self.last_update = now
 
-            # "Spend" a token
-            if self.verbose:
-                print(f"Spending a token: {self.tokens} before spending")
-            self.tokens -= 1
-            self.request_count += 1
+            # Only increment the request count and update tokens if we actually give out access
+            if self.tokens >= 1:
+                if self.verbose:
+                    print(f"Spending a token: {self.tokens} before spending")
+                self.tokens -= 1
+                self.request_count += 1
 
-            if self.report_every and self.request_count % self.report_every == 0:
-                print(f"TokenBucket request count: {self.request_count}")
+                if self.report_every and self.request_count % self.report_every == 0:
+                    print(f"TokenBucket request count: {self.request_count}")
 
 
 def get_naive_prefix(solution: str, prefix_size: float) -> str:
