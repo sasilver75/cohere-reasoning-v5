@@ -13,8 +13,8 @@ as well as the Helper classes from v5.
 
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()
-SOURCE_PATH = Path("datasets/derived/interesting_problems.csv")
 EXPERIMENT_NAME = "test-cohere"
+SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 5  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
 MAX_SOLUTION_GENERATION_ATTEMPTS = 5  # How many generate-verify loops to try before giving up (and reusing an existing incorrect solution) when trying to generate a single incorrect solution.

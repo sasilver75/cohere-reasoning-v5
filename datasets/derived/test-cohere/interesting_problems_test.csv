@@ -1,0 +1,386 @@
+row_id,problem,solution,solution_id,candidate_solution,candidate_verification_reasoning,candidate_verification_result
+115435,"Among the following functions $f(x)$, the one that satisfies ""for any $x\_1$, $x\_2 \in (-\infty, 0)$, when $x\_1 < x\_2$, there is always $f(x\_1) < f(x\_2)$"" is $(\ $ $\ \)$
+A: $f(x) = 4 - 2x$
+B: $f(x) = \frac{1}{x - 2}$
+C: $f(x) = x^2 - 2x - 2$
+D: $f(x) = -|x|$","From ""for any $x\_1$, $x\_2 \in (-\infty, 0)$, when $x\_1 < x\_2$, there is always $f(x\_1) < f(x\_2)$"",
+we can deduce that the function $f(x)$ is increasing on $(-\infty, 0)$.
+
+Since $f(x) = 4 - 2x$ is a decreasing function, option A is eliminated;
+
+Since $f(x) = \frac{1}{x - 2}$ is a decreasing function on $(-\infty, 0)$, option B is eliminated;
+
+Since $f(x) = x^2 - 2x - 2 = (x - 1)^2 - 3$ is a decreasing function on $(-\infty, 0)$, option C is eliminated;
+
+Since $f(x) = |x|$ is an increasing function on $(-\infty, 0)$, it satisfies the condition,
+
+Hence, the answer is $\boxed{D}$.
+
+From the problem, we can deduce that the function $f(x)$ is increasing on $(-\infty, 0)$. By examining each option one by one, we can reach the conclusion. This problem primarily tests the application of a function's monotonicity, which is a basic concept.",0,"We are looking for a function that is strictly increasing on the interval $(-\infty, 0)$.
+
+For option A, $f(x) = 4 - 2x$:
+- The function is linear and has a positive slope, so it is increasing on the entire real line, including the interval $(-\infty, 0)$.
+
+For option B, $f(x) = \frac{1}{x - 2}$:
+- This function has an asymptote at $x = 2$ and is not defined for $x = 2$. Since $2$ is within the interval $(-\infty, 0)$, this function does not satisfy the condition.
+
+For option C, $f(x) = x^2 - 2x - 2$:
+- This function is a quadratic polynomial. We can find its axis of symmetry, which is the line $x = \frac{-b}{2a} = 1$. Since the coefficient of $x^2$ is positive, the parabola opens upward, and the function is increasing to the right of the axis of symmetry, which is the interval $(1, \infty)$. Therefore, it is not increasing on the interval $(-\infty, 0)$.
+
+For option D, $f(x) = -|x|$:
+- This function is a reflection of the absolute value function across the x-axis. It is decreasing on the entire real line, including the interval $(-\infty, 0)$.
+
+Therefore, the correct answer is **boxed**: **A: $f(x) = 4 - 2x$**.","The final answer from the ground truth solution is D.
+
+The candidate solution's final answer is A.
+
+The candidate solution is incorrect as it states that option A is the correct answer, while the ground truth solution indicates that option D is the correct choice. The candidate solution's reasoning for option A is flawed because it incorrectly assumes that the function is increasing on the entire real line, including the interval $(-\infty, 0)$. However, the function $f(x) = 4 - 2x$ is decreasing on the interval $(-\infty, 0)$, as the slope is negative for all values of $x$ in that interval. This is a critical error in the candidate solution's reasoning.",False
+148210,"Convert the polar coordinates $(2, \frac{\pi}{6})$ into Cartesian coordinates.","Given the polar coordinates $(2, \frac{\pi}{6})$,  
+we have $x = 2\cos\left(\frac{\pi}{6}\right) = \sqrt{3}$, and $y = 2\sin\left(\frac{\pi}{6}\right) = 1$.  
+Therefore, converting the polar coordinates $(2, \frac{\pi}{6})$ into Cartesian coordinates gives us $(\sqrt{3}, 1)$.  
+Hence, the answer is $\boxed{(\sqrt{3}, 1)}$.  
+This problem involves converting between polar and Cartesian coordinates, which is a basic skill. It tests the ability to reason, compute, and apply the concept of transformation, making it a foundational question.",0,"To convert the polar coordinates $(2, \frac{\pi}{6})$ into Cartesian coordinates (x, y), we can use the following formulas:
+
+- $x = r \cdot \cos(\theta)$
+- $y = r \cdot \sin(\theta)$
+
+Where:
+- $r$ is the radial coordinate (distance from the origin)
+- $\theta$ is the angular coordinate (angle from the positive x-axis)
+
+Given:
+- $r = 2$
+- $\theta = \frac{\pi}{6}$
+
+Let's calculate x and y:
+
+- $x = 2 \cdot \cos(\frac{\pi}{6})$
+- $x \approx 2 \cdot 0.866$
+- $x \approx 1.732$
+
+- $y = 2 \cdot \sin(\frac{\pi}{6})$
+- $y \approx 2 \cdot 0.5$
+- $y \approx 1$
+
+So, the Cartesian coordinates are:
+
+\begin{equation*}
+\boxed{(x, y) \approx (1.732, 1)}
+\end{equation*}","The final answer provided in the ground truth solution is $(\sqrt{3}, 1)$.
+
+The candidate solution provides the answer $(1.732, 1)$, which is an approximation of the correct answer. The candidate solution is close to the correct answer but does not provide the exact value.
+
+The candidate solution's approach is correct, as it uses the appropriate conversion formulas for polar to Cartesian coordinates. However, the solution should have provided the exact value for $x$ as $\sqrt{3}$ instead of approximating it as $1.732$. The candidate solution could have avoided this by leaving the answer in exact form or providing a more precise approximation.",False
+174230,Solve for the set of $x$ in the inequality $x^2 - x - 5 > 3x$.,"First, we bring all terms to the left side of the inequality, to obtain:
+\[ x^2 - x - 5 - 3x > 0 \]
+Simplifying the inequality, we have:
+\[ x^2 - 4x - 5 > 0 \]
+Next, we factor the quadratic expression on the left side of the inequality:
+\[ (x - 5)(x + 1) > 0 \]
+For the product of two terms to be greater than zero, both terms must be greater than zero, or both must be less than zero. Therefore, we divide our analysis into two cases:
+
+1. Both terms are positive:
+   For the first term $(x-5) > 0$, the solution is $x > 5$.
+   For the second term $(x+1) > 0$, the solution is $x > -1$. 
+   The common solution is the intersection of these two, which is $x > 5$.
+
+2. Both terms are negative:
+   For the first term $(x-5) < 0$, the solution is $x < 5$.
+   For the second term $(x+1) < 0$, the solution is $x < -1$.
+   The common solution is the intersection of these two, which is $x < -1$.
+
+Combining these two cases, the solution set for the inequality is the union of the intervals $x > 5$ and $x < -1$:
+\[ \boxed{\{x | x > 5 \text{ or } x < -1\}} \]",0,"We can solve this problem as follows:
+
+$$
+\begin{align*}
+x^2 - x - 5 &> 3x\\
+x^2 - 4x - 5 &> 0\\
+(x - 5)(x + 1) &> 0
+\end{align*}
+$$
+
+The expression $(x - 5)(x + 1)$ is positive when either both factors are positive or both are negative.
+
+- If $x - 5 > 0$ and $x + 1 > 0$, then $x > 5$ and $x > -1$. So, $x > 5$.
+- If $x - 5 < 0$ and $x + 1 < 0$, then $x < 5$ and $x < -1$. There is no solution for this case as no number can be less than $-1$ and $5$ at the same time.
+
+Therefore, the solution set is **$\boxed{x > 5}$**.","The final answer provided by the ground truth solution is the set of $x$ values: $\{x | x > 5 \text{ or } x < -1\}$. This is the union of the intervals $x > 5$ and $x < -1$, indicating that the solution set includes values greater than $5$ or less than $-1$.
+
+The candidate solution, however, provides a different final answer: $x > 5$. This solution is incorrect because it only considers the case where both factors are positive, ignoring the case where both factors are negative. By neglecting the second case, the candidate solution fails to account for the full solution set.
+
+The error in the candidate solution occurs in the analysis of the factors. It correctly identifies that the product of the factors is positive when both factors are positive or both are negative. However, it only considers the case where both factors are positive, leading to the incorrect conclusion that the solution is $x > 5$. The candidate solution should have also analyzed the case where both factors are negative, which would have led to the correct solution set.",False
+174230,Solve for the set of $x$ in the inequality $x^2 - x - 5 > 3x$.,"First, we bring all terms to the left side of the inequality, to obtain:
+\[ x^2 - x - 5 - 3x > 0 \]
+Simplifying the inequality, we have:
+\[ x^2 - 4x - 5 > 0 \]
+Next, we factor the quadratic expression on the left side of the inequality:
+\[ (x - 5)(x + 1) > 0 \]
+For the product of two terms to be greater than zero, both terms must be greater than zero, or both must be less than zero. Therefore, we divide our analysis into two cases:
+
+1. Both terms are positive:
+   For the first term $(x-5) > 0$, the solution is $x > 5$.
+   For the second term $(x+1) > 0$, the solution is $x > -1$. 
+   The common solution is the intersection of these two, which is $x > 5$.
+
+2. Both terms are negative:
+   For the first term $(x-5) < 0$, the solution is $x < 5$.
+   For the second term $(x+1) < 0$, the solution is $x < -1$.
+   The common solution is the intersection of these two, which is $x < -1$.
+
+Combining these two cases, the solution set for the inequality is the union of the intervals $x > 5$ and $x < -1$:
+\[ \boxed{\{x | x > 5 \text{ or } x < -1\}} \]",1,"We can solve this problem as follows:
+
+$$
+\begin{align*}
+x^2 - x - 5 &> 3x \\
+x^2 - 4x - 5 &> 0 \\
+(x - 5)(x + 1) &> 0 \, .
+\end{align*}
+$$
+
+The expression $(x - 5)(x + 1)$ is positive when either both factors are positive or both are negative.
+
+- If $x - 5 > 0$ and $x + 1 > 0$, then $x > 5$ and $x > -1$. So, $x > 5$.
+- If $x - 5 < 0$ and $x + 1 < 0$, then $x < 5$ and $x < -1$. There is no solution for this case.
+
+Therefore, the solution set is **$x > 5$**.","The final answer provided by the ground truth solution is the set of x values: $\{x | x > 5 \text{ or } x < -1\}$. This is the union of the intervals $x > 5$ and $x < -1$, indicating that the solution set includes values greater than 5 and values less than -1.
+
+The candidate solution, however, states that the solution set is **$x > 5$**. This is incorrect because it only considers the case where both factors are positive and ignores the case where both factors are negative. By neglecting the second case, the candidate solution fails to capture the full solution set.",False
+194964,Calculate:<br/>$(1)\sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3}$;<br/>$(2)\frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8$.,"### Problem 1:
+
+Calculate $\sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3}$.
+
+#### Step-by-step Solution:
+
+1. Simplify each term:
+
+   - $\sqrt{27} = 3\sqrt{3}$, because $27 = 3^3$ and $\sqrt{3^3} = 3\sqrt{3}$.
+   - $\sqrt{\frac{1}{3}} = \frac{\sqrt{3}}{3}$, because $\frac{1}{3} = 3^{-1}$ and $\sqrt{3^{-1}} = \frac{\sqrt{3}}{3}$.
+   - $\sqrt{3}$ remains as is.
+
+2. Combine the terms:
+
+   - $3\sqrt{3} - \frac{\sqrt{3}}{3} + \sqrt{3} = 3\sqrt{3} - \frac{1}{3}\sqrt{3} + \frac{3}{3}\sqrt{3}$.
+   - This simplifies to $\frac{9\sqrt{3}}{3} - \frac{\sqrt{3}}{3} + \frac{3\sqrt{3}}{3} = \frac{11\sqrt{3}}{3}$.
+
+Final Answer: $\boxed{\frac{11\sqrt{3}}{3}}$.
+
+### Problem 2:
+
+Calculate $\frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8$.
+
+#### Step-by-step Solution:
+
+1. Simplify the numerator:
+
+   - $\sqrt{32} = 4\sqrt{2}$, because $32 = 2^5$ and $\sqrt{2^5} = 4\sqrt{2}$.
+   - $\sqrt{18} = 3\sqrt{2}$, because $18 = 2 \cdot 3^2$ and $\sqrt{2 \cdot 3^2} = 3\sqrt{2}$.
+
+2. Combine the terms in the numerator and simplify the fraction:
+
+   - $\frac{4\sqrt{2} + 3\sqrt{2}}{\sqrt{2}} = \frac{7\sqrt{2}}{\sqrt{2}}$.
+   - Since $\frac{\sqrt{2}}{\sqrt{2}} = 1$, this simplifies to $7$.
+
+3. Subtract 8 from the simplified fraction:
+
+   - $7 - 8 = -1$.
+
+Final Answer: $\boxed{-1}$.",0,"Here is the step-by-step solution to the problem:
+
+(1) $\sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3}$
+
+$=3\sqrt{3}-\sqrt{3}+3\sqrt{3}$
+
+$=3\sqrt{3}+3\sqrt{3}$
+
+$=6\sqrt{3}$.
+
+(2) $\frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8$
+
+$=\frac{4\sqrt{2}+3\sqrt{2}}{\sqrt{2}}-8$
+
+$=7\sqrt{2}-8$.
+
+So, the answers are:
+
+(1) $6\sqrt{3}$;
+(2) $7\sqrt{2}-8$.","The final answer for the ground truth solution is:
+- Problem 1: $\frac{11\sqrt{3}}{3}$
+- Problem 2: -1
+
+The final answer for the candidate solution is:
+- Problem 1: $6\sqrt{3}$
+- Problem 2: $7\sqrt{2}-8$
+
+The candidate solution is incorrect for both problems. 
+
+For Problem 1, the candidate solution simplifies the expression incorrectly. The correct simplification should be $\frac{11\sqrt{3}}{3}$, as shown in the ground truth solution. The candidate solution's simplification of $6\sqrt{3}$ is incorrect because it does not account for the negative term $-\sqrt{\frac{1}{3}}$. 
+
+For Problem 2, the candidate solution simplifies the expression correctly up to a certain point, but then fails to subtract 8 from the simplified fraction. The correct final answer should be -1, as shown in the ground truth solution.",False
+194964,Calculate:<br/>$(1)\sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3}$;<br/>$(2)\frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8$.,"### Problem 1:
+
+Calculate $\sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3}$.
+
+#### Step-by-step Solution:
+
+1. Simplify each term:
+
+   - $\sqrt{27} = 3\sqrt{3}$, because $27 = 3^3$ and $\sqrt{3^3} = 3\sqrt{3}$.
+   - $\sqrt{\frac{1}{3}} = \frac{\sqrt{3}}{3}$, because $\frac{1}{3} = 3^{-1}$ and $\sqrt{3^{-1}} = \frac{\sqrt{3}}{3}$.
+   - $\sqrt{3}$ remains as is.
+
+2. Combine the terms:
+
+   - $3\sqrt{3} - \frac{\sqrt{3}}{3} + \sqrt{3} = 3\sqrt{3} - \frac{1}{3}\sqrt{3} + \frac{3}{3}\sqrt{3}$.
+   - This simplifies to $\frac{9\sqrt{3}}{3} - \frac{\sqrt{3}}{3} + \frac{3\sqrt{3}}{3} = \frac{11\sqrt{3}}{3}$.
+
+Final Answer: $\boxed{\frac{11\sqrt{3}}{3}}$.
+
+### Problem 2:
+
+Calculate $\frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8$.
+
+#### Step-by-step Solution:
+
+1. Simplify the numerator:
+
+   - $\sqrt{32} = 4\sqrt{2}$, because $32 = 2^5$ and $\sqrt{2^5} = 4\sqrt{2}$.
+   - $\sqrt{18} = 3\sqrt{2}$, because $18 = 2 \cdot 3^2$ and $\sqrt{2 \cdot 3^2} = 3\sqrt{2}$.
+
+2. Combine the terms in the numerator and simplify the fraction:
+
+   - $\frac{4\sqrt{2} + 3\sqrt{2}}{\sqrt{2}} = \frac{7\sqrt{2}}{\sqrt{2}}$.
+   - Since $\frac{\sqrt{2}}{\sqrt{2}} = 1$, this simplifies to $7$.
+
+3. Subtract 8 from the simplified fraction:
+
+   - $7 - 8 = -1$.
+
+Final Answer: $\boxed{-1}$.",1,"Here are the step-by-step solutions to the two problems:
+
+**Problem 1:**
+
+$$
+\begin{align*}
+& \sqrt{27}-\sqrt{\frac{1}{3}}+\sqrt{3} \\
+= \, & 3\sqrt{3}-\sqrt{3}+3\sqrt{3} && \text{(simplifying the square roots)}\\
+= \, & 5\sqrt{3} \, .
+\end{align*}
+$$
+
+**Problem 2:**
+
+$$
+\begin{align*}
+& \frac{\sqrt{32}+\sqrt{18}}{\sqrt{2}}-8 \\
+= \, & \frac{4\sqrt{2}+3\sqrt{2}}{\sqrt{2}}-8 && \text{(simplifying the square roots)}\\
+= \, & 7\sqrt{2}-8 \, .
+\end{align*}
+$$
+
+So, the final answers are:
+
+- **Problem 1:** $\boxed{5\sqrt{3}}$
+- **Problem 2:** $\boxed{7\sqrt{2}-8}$","**Ground Truth Solution:**
+
+- Problem 1: $\frac{11\sqrt{3}}{3}$
+- Problem 2: -1
+
+**Candidate Solution:**
+
+- Problem 1: $5\sqrt{3}$
+- Problem 2: $7\sqrt{2}-8$
+
+The candidate solution is incorrect for both problems. 
+
+For Problem 1, the candidate solution simplifies the square roots correctly but makes an error in combining the terms. The correct combination should be $3\sqrt{3} - \frac{\sqrt{3}}{3} + \sqrt{3}$, which equals $\frac{11\sqrt{3}}{3}$, not $5\sqrt{3}$. This error likely occurred due to a mistake in adding the terms with different coefficients. 
+
+For Problem 2, the candidate solution simplifies the square roots correctly but does not simplify the fraction before subtracting 8. The correct simplification is $\frac{7\sqrt{2}}{\sqrt{2}} = 7$, and then subtracting 8 gives the final answer of -1. The candidate solution missed this final simplification step.",False
+239483,"The equation for a circle that passes through the origin, with its center on the negative x-axis and a radius equal to 2, is __________.","Let's denote the center of the circle as $(a, 0)$, with $a < 0$. 
+Since the radius of the circle is 2, the equation of the circle is $(x - a)^2 + y^2 = 4$.
+
+Moreover, since the origin $O(0, 0)$ lies on the circle, by substituting these coordinates into the circle's equation, we get:
+$$(0 - a)^2 + 0^2 = 4.$$
+Hence, we have $a^2 = 4$. Solving for $a$ yields $a = -2$ (the positive root is disregarded as $a$ is negative according to the problem statement).
+
+Consequently, the equation of the circle is given by:
+$$(x + 2)^2 + y^2 = 4.$$
+So, the answer is:
+$$\boxed{(x+2)^2+y^2=4}.$$
+
+The problem requires determining the standard equation of a circle based on given conditions, focusing on the knowledge of the circle's standard equation and the relationship between points and the circle's position. This is considered a basic-level question.",0,"Let's break down the problem and solve it systematically.
+
+We are given that the circle passes through the origin, which means $(0,0)$ is a point on the circle.
+
+The center of the circle is on the negative x-axis, which means the x-coordinate of the center is negative, and the y-coordinate is $0$. Let's denote the center as $(-a, 0)$, where $a$ is a positive number since it is on the negative x-axis.
+
+The radius of the circle is given as $2$.
+
+Now, we can use the standard equation of a circle, which is:
+
+$$
+\begin{equation*}
+    (x - h)^2 + (y - k)^2 = r^2
+\end{equation*}
+$$
+
+where $(h, k)$ are the coordinates of the center, and $r$ is the radius.
+
+Plugging in the values, we get:
+
+$$
+\begin{align*}
+    (x + a)^2 + y^2 & = 2^2 \\
+    x^2 + 2ax + a^2 + y^2 & = 4 \\
+    2ax + a^2 & = 4 - x^2 - y^2 
+\end{align*}
+$$
+
+Since the circle passes through the origin, we can set $x = 0$ and $y = 0$ to find the value of $a$:
+
+$$
+\begin{align*}
+    2a(0) + a^2 & = 4 - 0^2 - 0^2 \\
+    a^2 & = 4 \\
+    a & = \pm 2
+\end{align*}
+$$
+
+We know that $a$ is positive, so $a = 2$.
+
+Now, we can plug $a$ back into the equation:
+
+$$
+\begin{equation*}
+    x^2 + 2(2)x + 2^2 + y^2 = 4
+\end{equation*}
+$$
+
+Simplifying, we get:
+
+$$
+\begin{equation*}
+    x^2 + 4x + 4 + y^2 = 4
+\end{equation*}
+$$
+
+Further simplifying, we have:
+
+$$
+\begin{equation*}
+    x^2 + 4x + y^2 = 0
+\end{equation*}
+$$
+
+Therefore, the equation of the circle is:
+
+$$
+\boxed{x^2 + 4x + y^2 = 0}
+$$","The final answer provided in the ground truth solution is:
+$$\boxed{(x+2)^2+y^2=4}.$$
+
+The candidate solution provides the following final answer:
+$$\boxed{x^2 + 4x + y^2 = 0}.$$
+
+The candidate solution is incorrect. The mistake occurs when determining the value of $a$. In the candidate solution, the equation $a^2 = 4$ is incorrectly solved as $a = \pm 2$, disregarding the negative value. However, since $a$ represents the x-coordinate of the center, which is on the negative x-axis, the negative value should be considered, making $a = -2$. This error leads to an incorrect final equation for the circle.",False

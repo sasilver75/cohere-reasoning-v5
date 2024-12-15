@@ -9,8 +9,8 @@ from tqdm.asyncio import tqdm_asyncio as atqdm
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper()
 ORIGINAL_DATASET_PATH = Path("datasets/original/cn_k12_math_problems.csv")
-SOURCE_PATH = Path("datasets/derived/interesting_problems.txt")
 EXPERIMENT_NAME = "test-cohere"
+SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.txt")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_off_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 2  # Number of incorrect solutions to generate per problem.
 MAX_SOLUTION_GENERATION_ATTEMPTS = 10  # How many generate-verify loops to try before giving up when trying to generate a single incorrect solution.
