@@ -17,7 +17,8 @@ from the cohere-reasoning-v4 project.
 # TUNABLE PARAMETERS
 HELPER = CohereExperimentHelper(bucket_report_every=1)  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
-SINK_PATH = Path("datasets/derived/interesting_problems_test.csv")
+EXPERIMENT_NAME = "test-cohere"  # The name of the experiment; used for directory naming for results.
+SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_test.csv")  # The path to save the file to
 TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
 N_SOLUTION_ATTEMPTS_PER_PROBLEM = 3  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = .2  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
@@ -25,7 +26,6 @@ UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solu
 MAX_CONCURRENT_PROBLEMS = 10  # The maximum number of problems we'll evaluate concurrently.
 EPSILON = 1e-5  # To help with floating point division giving .199999 when it really should be .2. I don't think theres' really a reason to tune this.
 SEED = 42  # Random seed for dataset shuffling; We'll iterate through rows of this shuffled dataset until we identify the target number of solvable problems. NOTE: This doesn't totally control the problems that end up in the resulting set. It determines the order of the datatframe, but then we asynchronously evalute problems concurrently until we find the target number... so the order of the asynchronous problem resolution might be different (and different problems might "make it in" to the final set. This is mostly important just for the last few problems).
-EXPERIMENT_NAME = "test-cohere"  # The name of the experiment; used for directory naming for results.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
 if not (0 <= LOWER_SUCCESS_RATE_BOUND < UPPER_SUCCESS_RATE_BOUND < 1):

@@ -10,7 +10,8 @@ from tqdm.asyncio import tqdm_asyncio as atqdm
 HELPER = CohereExperimentHelper()
 ORIGINAL_DATASET_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SOURCE_PATH = Path("datasets/derived/interesting_problems.txt")
-SINK_PATH = Path("datasets/derived/interesting_problems_off_policy_solutions.csv")
+EXPERIMENT_NAME = "test-cohere"
+SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_off_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 2  # Number of incorrect solutions to generate per problem.
 MAX_SOLUTION_GENERATION_ATTEMPTS = 10  # How many generate-verify loops to try before giving up when trying to generate a single incorrect solution.
 # END OF TUNABLE PARAMETERS
@@ -99,7 +100,7 @@ async def main():
     incorrect_solutions_df = await _generate_incorrect_solutions(solvable_problem_df)
     print(f"Generated {len(incorrect_solutions_df)} incorrect solutions ({incorrect_solutions_df['row_id'].nunique()} problems, {TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM} solutions per problem).")
 
-    # Save the output
+    # Save the output; We assume that the directories have been created by generate_solvable_problem_solutions.py
     print(f"Saving results to {SINK_PATH}...")
     incorrect_solutions_df.to_csv(SINK_PATH, index=False)
     print(f"Saved results to {SINK_PATH}.")
