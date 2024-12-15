@@ -18,6 +18,16 @@ of "<Placeholder Solution>" and "<Placeholder Reasoning>". I'm not sure if this 
 
 
 Running a cohere test through end to end to make sure it all works.
+Looks like it did!
+I pimped out the view_completions script to allow for jumping to a specific row_id, displaying initial statistics, etc.
 
+~~~~
+
+Now let's pick another model to try and evaluate!
+
+Maybe let's look at...
+
+- L3 405B
+- L3.3 70B?
 
 --------------

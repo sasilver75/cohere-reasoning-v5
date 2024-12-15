@@ -4,7 +4,7 @@ from typing import Optional
 import re
 
 class TokenBucket:
-    def __init__(self, capacity: int, rate: Optional[float] = None,report_every: int | None = None, verbose: bool = False):
+    def __init__(self, capacity: int, name:str = "TokenBucket", rate: Optional[float] = None, report_every: int | None = None, verbose: bool = False):
         """
         A simple token bucket rate limiter.
         args:
@@ -13,6 +13,7 @@ class TokenBucket:
             report_every: int | None - If provided, will print the number of requests that have beenmade every `report_every` requests
         """
         # Core bucket attributes
+        self.name = name
         self.capacity = capacity  # Maximum number of tokens in bucket
         self.tokens = capacity  # Current number of tokens in bucket
         self.rate = rate if rate is not None else capacity / 60  # Tokens/second added to bucket (capped at capacity)
@@ -40,7 +41,7 @@ class TokenBucket:
             if self.tokens < 1:
                 wait_time = (1 - self.tokens) / self.rate
                 if self.verbose:
-                    print(f"Sleeping for {wait_time:.2f} seconds to wait for tokens to be added")
+                    print(f"{self.name}: Sleeping for {wait_time:.2f} seconds to wait for tokens to be added")
                 await asyncio.sleep(wait_time)
                 # Recalculate tokens after sleep
                 now = time.time()
@@ -51,12 +52,12 @@ class TokenBucket:
             # Only increment the request count and update tokens if we actually give out access
             if self.tokens >= 1:
                 if self.verbose:
-                    print(f"Spending a token: {self.tokens} before spending")
+                    print(f"{self.name}: Spending a token: {self.tokens} before spending")
                 self.tokens -= 1
                 self.request_count += 1
 
                 if self.report_every and self.request_count % self.report_every == 0:
-                    print(f"TokenBucket request count: {self.request_count}")
+                    print(f"{self.name}: TokenBucket request count: {self.request_count}")
 
 
 def get_naive_prefix(solution: str, prefix_size: float) -> str:

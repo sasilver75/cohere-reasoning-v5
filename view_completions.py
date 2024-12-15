@@ -10,7 +10,7 @@ import base64
 app = Flask(__name__)
 
 # Load the CSV file
-EXPERIMENT_NAME = "test-cohere"
+EXPERIMENT_NAME = "test-qwen"
 csv_path = f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_completed.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")

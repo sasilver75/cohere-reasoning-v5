@@ -12,6 +12,8 @@ from utils import extract_verification_from_response, get_naive_prefix
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 import random
+import requests
+import aiohttp
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -19,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 # Load dotenv; this is used for API keys via python-dotenv; Keys are used in these Helper classes
 load_dotenv()
+
+OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 
 
 class Helper(ABC):
@@ -147,7 +151,7 @@ class CohereExperimentHelper(Helper):
             raise ValueError("COHERE_API_KEY must be set in the environment")
 
         # Cohere chat endpoints have a 500/min rate limit; let's be conservative!
-        self.cohere_bucket = TokenBucket(capacity=bucket_capacity, rate=bucket_rate, report_every=bucket_report_every, verbose=bucket_verbose)  # Used to handle rate limiting/concurrency
+        self.cohere_bucket = TokenBucket(capacity=bucket_capacity, name="CohereBucket", rate=bucket_rate, report_every=bucket_report_every, verbose=bucket_verbose)  # Used to handle rate limiting/concurrency
         self.sync_client = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
         self.async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY")) # For full solutions, we can use the new V2 Asnyc Client
         self.strong_verifier = "command-r-plus-08-2024"
@@ -161,7 +165,7 @@ class CohereExperimentHelper(Helper):
         retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
         before_sleep=before_sleep_log(logger, logging.WARNING)
     )
-    async def get_solution(self, row: pd.Series, use_strong_completer: bool = True) -> str:
+    async def get_solution(self, row: pd.Series, use_weak_completer: bool = False) -> str:
         """
         Given a row from the source dataframe, generate a "straight-shot" solution from our model under evaluation.
         args:
@@ -172,7 +176,7 @@ class CohereExperimentHelper(Helper):
         await self.cohere_bucket.acquire()
         response = await asyncio.wait_for(
             self.async_client.chat(
-                model=self.strong_completer if use_strong_completer else self.weak_completer,
+                model=self.strong_completer if not use_weak_completer else self.weak_completer,
                 messages=[{
                     "role": "user",
                     "content": prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(
@@ -265,15 +269,19 @@ class CohereExperimentHelper(Helper):
             )
             
         return prefix, completion_response.text
-
-class OpenRouterExperimentalHelper(Helper):
-    """
-    Helper for a variety of experimental scenarios in which we use a model frmo OpenRouter as the strong verifier, 
-    and models from Cohere as the weak completer and strong verifier.
     
-    Encapsulates the logic for interacting with the OpenRouter API, as well as the logic for rate limiting.
+
+class Qwen2572BHelper(Helper):
     """
-    def __init__(self, strong_completer: str = "llamba3.2B FIX ME", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, openrouter_bucket_capacity: int = 400, openrouter_report_every: int = 10):
+    Helper for a scenario in which we use the following models:
+    - Qwen 2.5 72B Instruct as the strong completer (model under evaluation)
+    - Cohere Command R Plus 08 2024 as the strong verifier
+    - Cohere Command R 03 2024 as the weak completer
+
+    Enscapsulates logic for interacting both with the Cohere API and the OpenRouter API, thorugh whic we access Qwen 2.5.
+    Note that the "provider" is going to be fixed to DeepInfra, which serves Qwen 2.5 72B Instruct in its original bf16 precision.
+    """
+    def __init__(self, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 400, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7, strong_completer: str = "qwen/qwen-2.5-72b-instruct"):
         super().__init__(strong_completer)
 
         if "COHERE_API_KEY" not in os.environ:
@@ -281,20 +289,157 @@ class OpenRouterExperimentalHelper(Helper):
 
         if "OPENROUTER_API_KEY" not in os.environ:
             raise ValueError("OPENROUTER_API_KEY must be set in the environment")
-        
 
         self.strong_completer = strong_completer
         self.strong_verifier = "command-r-plus-08-2024"
         self.weak_completer = "command-r-03-2024"
-        self.cohere_bucket = TokenBucket(capacity=cohere_bucket_capacity, report_every=cohere_report_every)
-        self.openrouter_bucket = TokenBucket(capacity=openrouter_bucket_capacity, report_every=openrouter_report_every)
-        # TODO: Clients for each?
-    
-    async def get_solution(self, row: pd.Series) -> str:
-        ...
-    
-    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
-        ...
 
-    async def get_completion(self, prompt: str) -> str:
-        ...
+        # Note that Cohere's rate limit for chat endpoints is 500/min; We set conservatively at 400/minute.
+        self.cohere_bucket = TokenBucket(capacity=cohere_bucket_capacity, name="CohereBucket", report_every=cohere_report_every, verbose=cohere_bucket_verbose)
+        # Note that OpenRouter's rate limit is dynamic based on the number of credits in your account (lol), at 1 request/second per $ in your account. Let's conservatively set it at 300/minute.
+        self.openrouter_bucket = TokenBucket(capacity=openrouter_bucket_capacity, name="OpenRouterBucket", report_every=openrouter_report_every, verbose=openrouter_bucket_verbose)
+
+        self.cohere_async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY"))  # Needed for verification
+
+        self.prefix_size = prefix_size
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def _request_openrouter_solution(self, prompt: str) -> str:
+        # Get permission to send a request
+        await self.openrouter_bucket.acquire()
+
+        # Send request with timeout
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url=OPENROUTER_ENDPOINT,
+                headers={
+                    "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                    "Content-Type": "application_json"
+                },
+                json={
+                    "model": self.strong_completer,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "provider": {
+                        "order": ["DeepInfra"],
+                        "allow_fallbacks": False,
+                    }
+                },
+                timeout=45
+            ) as response:
+                response = await response.json()
+                return response["choices"][0]["message"]["content"]
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def _request_openrouter_completion(self, user_turn: str, assistant_turn: str) -> str:
+        # Get permission to send a request
+        await self.openrouter_bucket.acquire()
+
+        async with aiohttp.ClientSession() as session:
+            # Send the request with timeout
+            async with session.post(
+                url=OPENROUTER_ENDPOINT,
+                headers={
+                    "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": self.strong_completer,
+                    "messages": [
+                        {"role": "user", "content": user_turn},
+                        {"role": "assistant", "content": assistant_turn}
+                    ],
+                    "provider": {
+                        "order": ["DeepInfra"],
+                        "allow_fallbacks": False,
+                    }
+                },
+                timeout=45
+            ) as response:
+                response_json = await response.json()
+                return response_json["choices"][0]["message"]["content"]
+
+        
+
+    async def get_solution(self, row: pd.Series, use_weak_completer: bool = False) -> str:
+        """
+        Given a row from the source dataframe, generate a "straight-shot" solution from our model under evaluation.
+        args:
+            row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
+        returns:
+            solution: str - The generated solution
+        """
+        # Prepare information
+        problem = row["problem"]
+
+        # TODO: Split here whether we're using use_weak_completer or not. The weak completer ones should use CR via CohereAPI; Make a new helper function for that.
+
+        # Robustly get and return solution
+        return await self._request_openrouter_solution(prompts.STRAIGHT_SHOT_SOLUTION_PROMPT.format(problem=problem))
+
+
+    async def get_prefix_and_completion(self, row: pd.Series) -> tuple[str, str]:
+        """
+        Get a prefix from the incorrect solution and generate a completion using our strong completer.
+        """
+        # Prepare information
+        prefix = get_naive_prefix(row["candidate_solution"], self.prefix_size)
+        user_turn = prompts.COMPLETION_PROMPT_USER.format(problem=row["problem"])
+        assistant_turn = prompts.COMPLETION_PROMPT_ASSISTANT.format(prefix=prefix)
+
+        # Robustly get the completion
+        completion = await self._request_openrouter_completion(user_turn, assistant_turn)
+
+        # Return information
+        return prefix, completion
+    
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
+        """
+        Given a candidate solution and a row from the source dataframe, verify the candidate solution.
+        args:
+            candidate_solution: str - The candidate solution to verify
+            row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
+        returns:
+            verified: bool - Whether the candidate solution was verified as correct
+            verification_reasoning: str - The reasoning for the verification result
+
+        Note: This is a copy-paste of the CohereExperimentHelper get_verification method.
+        """
+        problem = row["problem"]
+        solution = row["solution"]
+        await self.cohere_bucket.acquire()
+        response = await asyncio.wait_for(
+            self.cohere_async_client.chat(
+                model=self.strong_verifier,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompts.VERIFY_SOLUTION_PROMPT.format(
+                            problem=problem,
+                            solution=solution,
+                            candidate_solution=candidate_solution,
+                        ),
+                    }
+                ],
+                temperature=0.0,
+            ),
+            timeout=45,
+        )
+        return extract_verification_from_response(response.message.content[0].text)

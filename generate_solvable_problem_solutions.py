@@ -1,6 +1,6 @@
 import asyncio
 import pandas as pd
-from models import CohereExperimentHelper
+from models import CohereExperimentHelper, Qwen2572BHelper
 from pathlib import Path
 from tqdm import tqdm
 from time import perf_counter
@@ -15,9 +15,9 @@ from the cohere-reasoning-v4 project.
 # TODO: Does this work with lower=0.0? Upper=1.0? Should it?
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper(bucket_report_every=5)  # Encapsulates logic about the specific models we're using
+HELPER = Qwen2572BHelper()  # Encapsulates logic about the specific models we're using
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
-EXPERIMENT_NAME = "test-cohere"  # The name of the experiment; used for directory naming for results.
+EXPERIMENT_NAME = "test-qwen"  # The name of the experiment; used for directory naming for results.
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
 TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
 N_SOLUTION_ATTEMPTS_PER_PROBLEM = 3  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.

@@ -1,5 +1,5 @@
 import asyncio
-from models import CohereExperimentHelper, DummyExperimentHelper
+from models import CohereExperimentHelper, DummyExperimentHelper, Qwen2572BHelper
 from pathlib import Path
 import pandas as pd
 import logging
@@ -12,8 +12,8 @@ as well as the Helper classes from v5.
 """
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper(bucket_report_every=5)
-EXPERIMENT_NAME = "test-cohere"
+HELPER = Qwen2572BHelper()
+EXPERIMENT_NAME = "test-qwen"
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 5  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
