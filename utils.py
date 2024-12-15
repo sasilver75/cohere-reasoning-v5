@@ -2,7 +2,6 @@ import asyncio
 import time
 from typing import Optional
 import re
-import pandas as pd
 
 class TokenBucket:
     def __init__(self, capacity: int, rate: Optional[float] = None,report_every: int | None = None, verbose: bool = False):

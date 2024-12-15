@@ -17,7 +17,6 @@ It also handles things like automatic fallbacks and routing to the best availabl
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 
-
 # API endpoint
 url = "https://openrouter.ai/api/v1/chat/completions"
 
