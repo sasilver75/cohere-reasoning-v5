@@ -7,7 +7,7 @@ import logging
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()
+HELPER = CohereExperimentHelper(bucket_report_every=5)
 ORIGINAL_DATASET_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 EXPERIMENT_NAME = "test-cohere"
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.txt")
@@ -48,9 +48,10 @@ async def _generate_incorrect_solutions(problem_df: pd.DataFrame) -> pd.DataFram
                 return new_row.to_dict()
             
             if attempts > (.8 * MAX_SOLUTION_GENERATION_ATTEMPTS):
-                logger.warning(f"Reached {attempts}/{MAX_SOLUTION_GENERATION_ATTEMPTS} attempts without finding an incorrect solution for problem {row['row_id']}, solution {solution_id}.")
+                logger.warning(f"Warning: Reached {attempts}/{MAX_SOLUTION_GENERATION_ATTEMPTS} attempts without finding an incorrect solution for problem {row['row_id']}, solution {solution_id}.")
         
         # If we didn't find an incorrect solution after MAX_SOLUTION_GENERATION_ATTEMPTS attempts, return placeholder (The weak completer is so weak that I imagine this will rarely happen)
+        logger.warning(f"Warning: Reached all {MAX_SOLUTION_GENERATION_ATTEMPTS} attempts without finding an incorrect solution for problem {row['row_id']}, solution {solution_id}.")
         new_row = row.copy()
         new_row["solution_id"] = solution_id
         new_row["candidate_solution"] = "<Placeholder Solution>"

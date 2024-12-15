@@ -12,7 +12,7 @@ as well as the Helper classes from v5.
 """
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper()
+HELPER = CohereExperimentHelper(bucket_report_every=5)
 EXPERIMENT_NAME = "test-cohere"
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")

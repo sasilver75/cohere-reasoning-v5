@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
-HELPER = CohereExperimentHelper() # Encapsulates logic about the specific models we're using
+HELPER = CohereExperimentHelper(bucket_report_every=5) # Encapsulates logic about the specific models we're using
 EXPERIMENT_NAME = "test-cohere"
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_completed.csv")
