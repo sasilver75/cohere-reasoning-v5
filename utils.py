@@ -75,14 +75,14 @@ def get_naive_prefix(solution: str, prefix_size: float) -> str:
 
 
 def extract_verification_from_response(
-    verification_response: str,
+    response: str,
 ) -> tuple[str, bool]:
     """
     Given a verification response, return whether the verifiation response indicates that the candidate solution was correct.
     There shouldn't be any extraction errors. If there's a problem, we should raise an exception (which, outside, will trigger a retry).
 
     args:
-        verification_response: str - The response from the completer model
+        response: str - The response from the completer model
     returns:
         verified: bool - Whether the candidate solution was verified as correct
         verification_reasoning: str - The reasoning for the verification result
@@ -91,21 +91,21 @@ def extract_verification_from_response(
     verification_reasoning_pattern = (
         r"<verification_reasoning>(.*?)</verification_reasoning>"
     )
-    match = re.search(verification_reasoning_pattern, verification_response, re.DOTALL)
+    match = re.search(verification_reasoning_pattern, response, re.DOTALL)
     if not match:
-        print(f"Could not parse verification reasoning for {verification_response}")
+        print(f"Could not parse verification reasoning for {response}")
         raise Exception(
-            f"Could not parse verification reasoning for {verification_response}"
+            f"Could not parse verification reasoning for {response}"
         )
     verification_reasoning = match.group(1).strip()
 
     # Extract RESULT
     verification_pattern = r"<verification_result>(.*?)</verification_result>"
-    match = re.search(verification_pattern, verification_response, re.DOTALL)
+    match = re.search(verification_pattern, response, re.DOTALL)
     if not match:
-        print(f"Could not parse verification result for {verification_response}")
+        print(f"Could not parse verification result for {response}")
         raise Exception(
-            f"Could not parse verification result for {verification_response}"
+            f"Could not parse verification result for {response}"
         )
     verified = match.group(1).strip().lower() == "correct"
 
