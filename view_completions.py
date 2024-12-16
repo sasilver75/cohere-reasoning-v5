@@ -311,7 +311,7 @@ def stats():
                             <td class="problem-text" title="{{ row['problem'] }}">{{ row['problem'] }}</td>
                             <td>{{ row['attempts'] }}</td>
                             <td>{{ row['recoveries'] }}</td>
-                            <td>{{ "%.1f%%"|format(row['recovery_rate']) }}</td>
+                            <td>{{ "%.1f %%"|format(row['recovery_rate']) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

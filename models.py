@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 import os
 from utils import TokenBucket
 import cohere
@@ -271,6 +272,11 @@ class CohereExperimentHelper(Helper):
         return prefix, completion_response.text
     
 
+class OpenRouterProvider(Enum):
+    DEEPINFRA = "DeepInfra"
+
+
+# TODO: I should probably be passing a "provider" argument here, so that we can make sure that the provider that we use for agiven model is in original precision.
 class OpenRouterExperimentHelper(Helper):
     """
     Helper for a scenario in which we use the following models:
@@ -281,7 +287,7 @@ class OpenRouterExperimentHelper(Helper):
     Enscapsulates logic for interacting both with the Cohere API and the OpenRouter API, thorugh whic we access Qwen 2.5.
     Note that the "provider" is going to be fixed to DeepInfra, which serves Qwen 2.5 72B Instruct in its original bf16 precision.
     """
-    def __init__(self, strong_completer: str, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
+    def __init__(self, strong_completer: str, provider: OpenRouterProvider, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
         super().__init__(strong_completer)
 
         if "COHERE_API_KEY" not in os.environ:
@@ -302,6 +308,7 @@ class OpenRouterExperimentHelper(Helper):
         self.cohere_async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY"))  # Needed for verification
 
         self.prefix_size = prefix_size
+        self.provider = provider
 
     @retry(
         stop=stop_after_attempt(20),
@@ -327,7 +334,7 @@ class OpenRouterExperimentHelper(Helper):
                         {"role": "user", "content": prompt}
                     ],
                     "provider": {
-                        "order": ["DeepInfra"],
+                        "order": [self.provider.value],
                         "allow_fallbacks": False,
                     }
                 },
