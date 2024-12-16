@@ -1,5 +1,5 @@
 import asyncio
-from models import CohereExperimentHelper, DummyExperimentHelper, OpenRouterExperimentHelper
+from models import CohereExperimentHelper, DummyExperimentHelper, OpenRouterExperimentHelper, OpenRouterProvider
 from pathlib import Path
 import pandas as pd
 import logging
@@ -12,12 +12,12 @@ as well as the Helper classes from v5.
 """
 
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct")
-EXPERIMENT_NAME = "test-l3.3-70b"
+HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
+EXPERIMENT_NAME = "test-l3.3-70b-10-12_15_2024"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
-TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 5  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
-MAX_SOLUTION_GENERATION_ATTEMPTS = 5  # How many generate-verify loops to try before giving up (and reusing an existing incorrect solution) when trying to generate a single incorrect solution.
+TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.
+MAX_SOLUTION_GENERATION_ATTEMPTS = 10  # How many generate-verify loops to try before giving up (and reusing an existing incorrect solution) when trying to generate a single incorrect solution.
 # END OF TUNABLE PARAMETERS
 # PARAMETER CHECKS (Do not change)
 if not (TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM > 0):

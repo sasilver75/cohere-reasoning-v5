@@ -3,6 +3,10 @@ import time
 from typing import Optional
 import re
 
+from matplotlib import pyplot as plt
+import numpy as np
+import pandas as pd
+
 class TokenBucket:
     def __init__(self, capacity: int, name:str = "TokenBucket", rate: Optional[float] = None, report_every: int | None = None, verbose: bool = False):
         """
@@ -111,3 +115,77 @@ def extract_verification_from_response(
     verified = match.group(1).strip().lower() == "correct"
 
     return verified, verification_reasoning
+
+
+def plot_recovery_figures(df: pd.DataFrame):
+    """
+    Plot the recovery figures for a given experiment, given the "interesting_problems_completed.csv" dataframe
+    """
+    # Calculate overall recovery statistics
+    total_completions = len(df)
+    correct_completions = df['completion_verification_result'].sum()
+    incorrect_completions = total_completions - correct_completions
+
+    # Calculate per-problem recovery rates
+    per_problem_stats = df.groupby('row_id')['completion_verification_result'].agg(
+        recovery_rate=lambda x: 100 * x.mean()  # Convert to percentage
+    ).reset_index()
+
+    # Create figure and subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 8))
+    plt.rcParams.update({'font.size': 14})
+
+    # Left subplot - Overall recovery counts
+    bars = ax1.bar(['Incorrect', 'Correct'],
+                  [incorrect_completions, correct_completions],
+                  color=['lightcoral', 'lightgreen'])
+
+    # Add count labels on bars
+    for bar in bars:
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width()/2., height,
+                f'{int(height)}',
+                ha='center', va='bottom',
+                fontsize=14)
+
+    ax1.set_title('Recovery Results Distribution', fontsize=16, pad=20)
+    ax1.set_ylabel('Count', fontsize=14)
+    ax1.tick_params(axis='both', which='major', labelsize=12)
+
+    # Right subplot - Recovery rates histogram
+    bin_edges = [-5, 5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105]  # Shifted bins to center bars
+    
+    counts, bins, patches = ax2.hist(per_problem_stats['recovery_rate'],
+                                   bins=bin_edges,
+                                   color='skyblue',
+                                   edgecolor='black', 
+                                   weights=np.ones(len(per_problem_stats)) / len(per_problem_stats) * 100,
+                                   rwidth=0.6)  # Reduced bar width
+
+    # Set evenly spaced ticks for all values 0 through 100
+    tick_positions = list(range(0, 101, 10))
+    tick_labels = [str(x) for x in tick_positions]
+    ax2.set_xticks(tick_positions)
+    ax2.set_xticklabels(tick_labels, fontsize=12)
+
+    # Add count labels on histogram bars
+    bin_centers = [(bins[i] + bins[i+1])/2 for i in range(len(bins)-1)]
+    for count, x in zip(counts, bin_centers):
+        actual_count = int(count * len(per_problem_stats) / 100)
+        if actual_count > 0:
+            ax2.text(x, count + 2, str(actual_count),
+                    ha='center', va='bottom', fontsize=12)
+
+    ax2.set_title('Distribution of Recovery Rates', fontsize=16, pad=20)
+    ax2.set_xlabel('Recovery Rate (%)', fontsize=14)
+    ax2.set_ylabel('Percentage of Problems (%)', fontsize=14)
+
+    # Format axes to show percentages
+    ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0f}%'.format(y)))
+
+    ax2.set_ylim(0, 100)
+    ax2.set_xlim(-5, 105)  # Give some padding on both sides
+    ax2.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+    plt.tight_layout(pad=3.0)
+    plt.show()

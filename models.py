@@ -274,6 +274,8 @@ class CohereExperimentHelper(Helper):
 
 class OpenRouterProvider(Enum):
     DEEPINFRA = "DeepInfra"
+    HYPERBOLIC = "Hyperbolic"
+    NOVITA = "Novita"
 
 
 # TODO: I should probably be passing a "provider" argument here, so that we can make sure that the provider that we use for agiven model is in original precision.
