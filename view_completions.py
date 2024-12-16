@@ -352,11 +352,32 @@ def view_completions():
         page = 1
 
     row = df.iloc[page - 1]
+    
+    # Calculate recovery rate for this problem
+    problem_df = df[df['row_id'] == row['row_id']]
+    problem_stats = problem_df['completion_verification_result']
+    problem_recovery_rate = problem_stats.mean() * 100  # Convert to percentage
+    
+    # Calculate total solutions and completions for this problem
+    total_solutions = len(problem_df['solution_id'].unique())
+    solution_ids = sorted(problem_df['solution_id'].unique())
+    current_solution_num = solution_ids.index(row['solution_id'])
+    
+    completions_for_solution = problem_df[problem_df['solution_id'] == row['solution_id']]
+    total_completions = len(completions_for_solution['completion_id'].unique())
+    completion_ids = sorted(completions_for_solution['completion_id'].unique())
+    current_completion_num = completion_ids.index(row['completion_id'])
+    
     completion_data = {
         "row_id": int(row.get("row_id", 0)),
         "solution_id": int(row.get("solution_id", 0)),
+        "total_solutions": total_solutions - 1,
+        "solution_number": current_solution_num,
         "completion_id": int(row.get("completion_id", 0)),
-        "problem_difficulty": float(row.get("row_id_success_rate", 0)) * 100,  # Convert to percentage
+        "total_completions": total_completions - 1,
+        "completion_number": current_completion_num,
+        "problem_difficulty": float(row.get("row_id_success_rate", 0)) * 100,
+        "problem_recovery_rate": problem_recovery_rate,
         "problem": str(row.get("problem", "N/A")),
         "solution": str(row.get("solution", "N/A")),
         "candidate_solution": str(row.get("candidate_solution", "N/A")),
@@ -495,9 +516,15 @@ def view_completions():
                 </div>
             </div>
         </div>
-        <h2>Row ID: {{ completion_data.row_id }} | Solution ID: {{ completion_data.solution_id }} | 
-            Completion ID: {{ completion_data.completion_id }} | 
-            Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }}</h2>
+        <h2 style="background-color: {{ 'lightgreen' if completion_data.completion_verification_result else 'lightcoral' }}; 
+                  padding: 15px; 
+                  border-radius: 4px;">
+            Row ID: {{ completion_data.row_id }} | 
+            Solution ID: {{ completion_data.solution_number }}/{{ completion_data.total_solutions }} | 
+            Completion ID: {{ completion_data.completion_number }}/{{ completion_data.total_completions }} | 
+            Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }} |
+            Recovery Rate: {{ "%.1f%%"|format(completion_data.problem_recovery_rate) }}
+        </h2>
         <div class="completion">
             <div class="section">
                 <h2>Problem:</h2>
