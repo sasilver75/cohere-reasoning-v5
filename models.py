@@ -186,7 +186,7 @@ class CohereExperimentHelper(Helper):
                 }],
                 temperature=0.3,
             ),
-            timeout=45,
+            timeout=90,
         )
         return response.message.content[0].text
 
@@ -224,7 +224,7 @@ class CohereExperimentHelper(Helper):
                 ],
                 temperature=0.0,
             ),
-            timeout=45,
+            timeout=90,
         )
         return extract_verification_from_response(response.message.content[0].text)
 
@@ -266,7 +266,7 @@ class CohereExperimentHelper(Helper):
                         raw_prompting=True,
                     )
                 ),
-                timeout=45
+                timeout=90
             )
             
         return prefix, completion_response.text
@@ -340,7 +340,7 @@ class OpenRouterExperimentHelper(Helper):
                         "allow_fallbacks": False,
                     }
                 },
-                timeout=45
+                timeout=90
             ) as response:
                 response = await response.json()
                 return response["choices"][0]["message"]["content"]
@@ -374,7 +374,7 @@ class OpenRouterExperimentHelper(Helper):
                         "allow_fallbacks": False,
                     }
                 },
-                timeout=45
+                timeout=90
             ) as response:
                 response_json = await response.json()
                 return response_json["choices"][0]["message"]["content"]
@@ -449,6 +449,6 @@ class OpenRouterExperimentHelper(Helper):
                 ],
                 temperature=0.0,
             ),
-            timeout=45,
+            timeout=90,
         )
         return extract_verification_from_response(response.message.content[0].text)
