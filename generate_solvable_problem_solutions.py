@@ -1,4 +1,5 @@
 import asyncio
+import math
 import pandas as pd
 from models import CohereExperimentHelper, OpenRouterExperimentHelper, OpenRouterProvider
 from pathlib import Path
@@ -16,10 +17,10 @@ from the cohere-reasoning-v4 project.
 
 # TUNABLE PARAMETERS
 HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "test-l3.3-70b-10-12_15_2024"  # The name of the experiment; used for directory naming for results.
+EXPERIMENT_NAME = "test-l3.3-70b-200-12_15_2024"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
-TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
+TARGET_N_SOLVABLE_PROBLEMS = 3  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
 N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = .3  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
 UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
@@ -67,13 +68,16 @@ async def _appraise_problem(row: pd.Series) -> tuple[bool, list[pd.Series]]:
     results = await asyncio.gather(*solution_attempts)
     incorrect_solutions: list[pd.Series] = [attempt_data for attempt_success, attempt_data in results if not attempt_success]
     
-    # Augment the incorrect solutions with the solution_ids
-    for idx, augmented_row in enumerate(incorrect_solutions):
-        augmented_row["solution_id"] = idx
-
     # Did we find the appropriate number of incorrect solutions?
     failure_rate = len(incorrect_solutions) / N_SOLUTION_ATTEMPTS_PER_PROBLEM
     success_rate = 1 - failure_rate
+
+    # Augment the incorrect solutions with the solution_ids (and the overall success rate of the problem)
+    for idx, augmented_row in enumerate(incorrect_solutions):
+        augmented_row["solution_id"] = idx
+        augmented_row["row_id_success_rate"] = success_rate
+
+    
 
     print(f"Success rate for row {row["row_id"]}: {success_rate}")
 
@@ -86,6 +90,7 @@ async def _appraise_problem(row: pd.Series) -> tuple[bool, list[pd.Series]]:
 
 
 async def main():
+    n_problems_considered = 0
     n_solvable_problems = 0
     incorrect_solutions = []
 
@@ -131,6 +136,7 @@ async def main():
             tasks.remove(task)  # Remove completed task from our set
             try:
                 is_solvable, incorrect_solution_rows = await task
+                n_problems_considered += 1
                 if is_solvable:
                     n_solvable_problems += 1
                     incorrect_solutions.extend(incorrect_solution_rows)
@@ -156,7 +162,7 @@ async def main():
     incorrect_df = incorrect_df.sort_values(["row_id", "solution_id"]).reset_index(drop=True)
 
     # Reorder the columns of the dataframe (and discard redundant columns from the original dataframe)
-    incorrect_df = incorrect_df[["row_id", "problem", "solution", "solution_id", "candidate_solution", "candidate_verification_reasoning", "candidate_verification_result"]]
+    incorrect_df = incorrect_df[["row_id", "problem", "solution", "row_id_success_rate", "solution_id", "candidate_solution", "candidate_verification_reasoning", "candidate_verification_result"]]
 
     # ~~~ (3) Save Results ~~~
     print(f"Saving results to {SINK_PATH} and {SINK_PATH.with_suffix('.txt')}...")
@@ -171,6 +177,21 @@ async def main():
             f.write(f"{row_id}\n")
     print(f"Saved results to {SINK_PATH} and {SINK_PATH.with_suffix('.txt')}.")
 
+    # Print statistics summary
+    print(f"\n === Statistics === \n")
+    print(f"Total problems considered: {n_problems_considered}")
+    print(f"Total solvable problems found: {n_solvable_problems}")
+    print(f"Total unsolvable problems found: {len(df) - n_solvable_problems}")
+    
+    # Print distribution of success rates across problems
+    success_rates = incorrect_df.groupby('row_id')['row_id_success_rate'].first()
+    lower_bound = math.floor(LOWER_SUCCESS_RATE_BOUND * N_SOLUTION_ATTEMPTS_PER_PROBLEM)
+    upper_bound = math.floor(UPPER_SUCCESS_RATE_BOUND * N_SOLUTION_ATTEMPTS_PER_PROBLEM)
+    print("\nDistribution of success rates across problems:")
+    for n_successes in range(lower_bound, upper_bound + 1):
+        success_rate = n_successes / N_SOLUTION_ATTEMPTS_PER_PROBLEM
+        n_problems = sum((success_rates >= success_rate) & (success_rates < (n_successes + 1) / N_SOLUTION_ATTEMPTS_PER_PROBLEM))
+        print(f"{n_successes} successes ({success_rate:.2f}): {n_problems} problems")
 
     
 

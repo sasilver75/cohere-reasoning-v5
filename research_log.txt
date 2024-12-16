@@ -1,0 +1,14 @@
+December 15, 2024
+
+Did some experimenting to see with L3.3 which of the providers seemed to offer the chat completiosn that I'm looking for.
+
+Starting experiment: test-l3.3-70b-200-12_15_2024 using NOVITA
+- 200 problems, 10 attempts per problem, .3 to .7 success rate bounds
+- 3 incorrect solutions per problem
+- 2 completions per incorrect solutions
+
+Thoughts:
+- It might be nice to add some more descriptive information to the output of the "generate_solvable_problem_solutions.py" script, which shows how many problems were evaluated, how many were solvable, and the distribution of solvability of each.
+    - 
+- It might also be nice to attach some information to each row_id about what the initial solvability of this problem was. It would be nice to know this for later analysis.
+    - Added
