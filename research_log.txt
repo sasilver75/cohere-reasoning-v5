@@ -9,6 +9,21 @@ Starting experiment: test-l3.3-70b-200-12_15_2024 using NOVITA
 
 Thoughts:
 - It might be nice to add some more descriptive information to the output of the "generate_solvable_problem_solutions.py" script, which shows how many problems were evaluated, how many were solvable, and the distribution of solvability of each.
-    - 
+    - Added
 - It might also be nice to attach some information to each row_id about what the initial solvability of this problem was. It would be nice to know this for later analysis.
     - Added
+
+Running 200x3x3 through
+
+476.320 credits at the beginning of the experiment.
+
+Running evalution
+This took ~6000 seconds, with concurrency of 10. I changed it to 30 for future, but that will only matter if we had surplus tokens in our bucket.
+
+Running on policy solutions
+Done in like 0 seconds; didn't need to generate any additoinal ones
+
+Running completions
+Done! Elapsed: 346.32s
+
+Let's look at the results

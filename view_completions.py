@@ -11,7 +11,7 @@ from utils import plot_recovery_figures
 app = Flask(__name__)
 
 # Load the CSV file
-EXPERIMENT_NAME = "test-l3.3-70b-10-12_15_2024"
+EXPERIMENT_NAME = "test-l3.3-70b-200-12_15_2024"
 csv_path = f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_completed.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")

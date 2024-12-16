@@ -7,7 +7,7 @@ from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
 HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "test-l3.3-70b-10-12_15_2024"  # The name of the experiment; used for directory naming for results.
+EXPERIMENT_NAME = "test-l3.3-70b-200-12_15_2024"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 SINK_PATH = Path(f"datasets/derived/{EXPERIMENT_NAME}/interesting_problems_completed.csv")
 N_COMPLETIONS_PER_PREFIX = 2  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
@@ -77,6 +77,10 @@ async def main():
     print("Reading input data...")
     df = pd.read_csv(SOURCE_PATH)
     print(f"Loaded {df["row_id"].nunique()} problems, with {max(df["solution_id"])+1} solutions per problem.")
+    # Check for and remove NaN solutions
+    nan_count = df["candidate_solution"].isna().sum()
+    print(f"Found {nan_count} rows with NaN candidate solutions - dropping these rows, since we can't make a prefix out of them")
+    df = df.dropna(subset=["candidate_solution"]).reset_index(drop=True)
 
     # Generate completions
     print(f"Generating {N_COMPLETIONS_PER_PREFIX} completions (and verifications) per incorrect solution")
