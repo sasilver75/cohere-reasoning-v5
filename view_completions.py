@@ -368,6 +368,13 @@ def view_completions():
     completion_ids = sorted(completions_for_solution['completion_id'].unique())
     current_completion_num = completion_ids.index(row['completion_id'])
     
+    # Calculate problem-wide recovery rate
+    problem_recovery_rate = problem_stats.mean() * 100
+    
+    # Calculate solution-specific recovery rate
+    solution_stats = completions_for_solution['completion_verification_result']
+    solution_recovery_rate = solution_stats.mean() * 100
+    
     completion_data = {
         "row_id": int(row.get("row_id", 0)),
         "solution_id": int(row.get("solution_id", 0)),
@@ -378,6 +385,7 @@ def view_completions():
         "completion_number": current_completion_num,
         "problem_difficulty": float(row.get("row_id_success_rate", 0)) * 100,
         "problem_recovery_rate": problem_recovery_rate,
+        "solution_recovery_rate": solution_recovery_rate,
         "problem": str(row.get("problem", "N/A")),
         "solution": str(row.get("solution", "N/A")),
         "candidate_solution": str(row.get("candidate_solution", "N/A")),
@@ -516,15 +524,20 @@ def view_completions():
                 </div>
             </div>
         </div>
-        <h2 style="background-color: {{ 'lightgreen' if completion_data.completion_verification_result else 'lightcoral' }}; 
-                  padding: 15px; 
-                  border-radius: 4px;">
-            Row ID: {{ completion_data.row_id }} | 
-            Solution ID: {{ completion_data.solution_number }}/{{ completion_data.total_solutions }} | 
-            Completion ID: {{ completion_data.completion_number }}/{{ completion_data.total_completions }} | 
-            Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }} |
-            Recovery Rate: {{ "%.1f%%"|format(completion_data.problem_recovery_rate) }}
-        </h2>
+        <div style="background-color: {{ 'lightgreen' if completion_data.completion_verification_result else 'lightcoral' }}; 
+                    padding: 15px; 
+                    border-radius: 4px;">
+            <h2 style="margin: 0 0 10px 0;">
+                Row ID: {{ completion_data.row_id }} | 
+                Solution ID: {{ completion_data.solution_number }}/{{ completion_data.total_solutions }} | 
+                Completion ID: {{ completion_data.completion_number }}/{{ completion_data.total_completions }}
+            </h2>
+            <h3 style="margin: 0;">
+                Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }} | 
+                Problem Recovery Rate: {{ "%.1f%%"|format(completion_data.problem_recovery_rate) }} | 
+                Solution Recovery Rate: {{ "%.1f%%"|format(completion_data.solution_recovery_rate) }}
+            </h3>
+        </div>
         <div class="completion">
             <div class="section">
                 <h2>Problem:</h2>
