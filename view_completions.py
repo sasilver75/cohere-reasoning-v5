@@ -61,6 +61,16 @@ def stats():
     # Convert difficulty to percentage
     per_problem_stats['difficulty'] = per_problem_stats['difficulty'] * 100
     
+    # Calculate min and max difficulty for normalization
+    min_difficulty = per_problem_stats['difficulty'].min()
+    max_difficulty = per_problem_stats['difficulty'].max()
+    
+    # Add normalized difficulty column (0 to 100)
+    per_problem_stats['normalized_difficulty'] = (
+        (per_problem_stats['difficulty'] - min_difficulty) / 
+        (max_difficulty - min_difficulty) * 100
+    )
+    
     # Create the plots
     plot_url = create_plots(correct_completions, incorrect_completions, per_problem_stats)
     
@@ -260,9 +270,11 @@ def stats():
                             <td><a href="{{ url_for('view_completions', row_id=row['row_id']) }}" 
                                   style="text-decoration: none; color: #007bff;">{{ row['row_id'] }}</a></td>
                             <td class="problem-text" title="{{ row['problem'] }}">{{ row['problem'] }}</td>
-                            <td>{{ "%.1f%%"|format(row['difficulty']) }}</td>
+                            <td style="background-color: hsl({{ (row['normalized_difficulty'] * 1.2) }}, 80%, 85%);">
+                                {{ "%.1f%%"|format(row['difficulty']) }}</td>
                             <td>{{ row['recoveries'] }} / {{ row['attempts'] }}</td>
-                            <td>{{ "%.1f%%"|format(row['recovery_rate']) }}</td>
+                            <td style="background-color: hsl({{ (row['recovery_rate'] * 1.2) }}, 80%, 85%);">
+                                {{ "%.1f%%"|format(row['recovery_rate']) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
