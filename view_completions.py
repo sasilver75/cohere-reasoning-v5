@@ -48,15 +48,18 @@ def stats():
     # Calculate per-problem recovery rates
     per_problem_stats = df.groupby('row_id').agg({
         'completion_verification_result': ['count', 'sum', 'mean'],  # sum gives us total True values
-        'problem': 'first'  # Get the problem text for reference
+        'problem': 'first',  # Get the problem text for reference
+        'row_id_success_rate': 'first'  # Get the problem difficulty
     }).reset_index()
     
     # Rename columns for clarity
-    per_problem_stats.columns = ['row_id', 'attempts', 'recoveries', 'recovery_rate', 'problem']
+    per_problem_stats.columns = ['row_id', 'attempts', 'recoveries', 'recovery_rate', 'problem', 'difficulty']
     # Sort by recovery rate descending
     per_problem_stats = per_problem_stats.sort_values('recovery_rate', ascending=False)
     # Convert recovery rate to percentage
     per_problem_stats['recovery_rate'] = per_problem_stats['recovery_rate'] * 100
+    # Convert difficulty to percentage
+    per_problem_stats['difficulty'] = per_problem_stats['difficulty'] * 100
     
     # Create the plots
     plot_url = create_plots(correct_completions, incorrect_completions, per_problem_stats)
@@ -236,12 +239,17 @@ def stats():
 
             <div class="problem-stats-container">
                 <h2>Per-Problem Recovery Rates <span style="font-size: 0.8em; font-weight: normal; color: #666;">(click columns to sort)</span></h2>
+                <div class="column-definitions" style="color: #666; margin-bottom: 15px; font-size: 0.9em;">
+                    <p><strong>Problem Difficulty:</strong> Percentage of straight-shot solutions that were successful during initial problem evaluation.</p>
+                    <p><strong>Recoveries:</strong> The fraction of incorrect solutions that, when completed, resulted in a correct answer.</p>
+                    <p><strong>Recovery Rate:</strong> The fraction above expressed as a percentage.</p>
+                </div>
                 <table class="problem-stats-table">
                     <thead>
                         <tr>
                             <th onclick="sortTable(0)" class="sort-arrow">Row ID</th>
                             <th onclick="sortTable(1)">Problem</th>
-                            <th onclick="sortTable(2)">Total Attempts</th>
+                            <th onclick="sortTable(2)" title="Original success rate for this problem">Problem Difficulty</th>
                             <th onclick="sortTable(3)">Recoveries</th>
                             <th onclick="sortTable(4)" class="sort-arrow desc">Recovery Rate</th>
                         </tr>
@@ -249,11 +257,12 @@ def stats():
                     <tbody>
                         {% for _, row in problem_stats.iterrows() %}
                         <tr>
-                            <td>{{ row['row_id'] }}</td>
+                            <td><a href="{{ url_for('view_completions', row_id=row['row_id']) }}" 
+                                  style="text-decoration: none; color: #007bff;">{{ row['row_id'] }}</a></td>
                             <td class="problem-text" title="{{ row['problem'] }}">{{ row['problem'] }}</td>
-                            <td>{{ row['attempts'] }}</td>
-                            <td>{{ row['recoveries'] }}</td>
-                            <td>{{ "%.1f %%"|format(row['recovery_rate']) }}</td>
+                            <td>{{ "%.1f%%"|format(row['difficulty']) }}</td>
+                            <td>{{ row['recoveries'] }} / {{ row['attempts'] }}</td>
+                            <td>{{ "%.1f%%"|format(row['recovery_rate']) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -335,6 +344,7 @@ def view_completions():
         "row_id": int(row.get("row_id", 0)),
         "solution_id": int(row.get("solution_id", 0)),
         "completion_id": int(row.get("completion_id", 0)),
+        "problem_difficulty": float(row.get("row_id_success_rate", 0)) * 100,  # Convert to percentage
         "problem": str(row.get("problem", "N/A")),
         "solution": str(row.get("solution", "N/A")),
         "candidate_solution": str(row.get("candidate_solution", "N/A")),
@@ -473,7 +483,9 @@ def view_completions():
                 </div>
             </div>
         </div>
-        <h2>Row ID: {{ completion_data.row_id }} | Solution ID: {{ completion_data.solution_id }} | Completion ID: {{ completion_data.completion_id }}</h2>
+        <h2>Row ID: {{ completion_data.row_id }} | Solution ID: {{ completion_data.solution_id }} | 
+            Completion ID: {{ completion_data.completion_id }} | 
+            Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }}</h2>
         <div class="completion">
             <div class="section">
                 <h2>Problem:</h2>
