@@ -17,11 +17,11 @@ from the cohere-reasoning-v4 project.
 
 # TUNABLE PARAMETERS
 HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "test-l3.3-70b-200-12_15_2024"  # The name of the experiment; used for directory naming for results.
-SOURCE_PATH = Path("datasets/original/cn_k12_math_problems.csv")
+EXPERIMENT_NAME = "test-l3.3-70b-5-12_15_2024"  # The name of the experiment; used for directory naming for results.
+SOURCE_PATH = Path("datasets/original/numina_cnk12.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
-TARGET_N_SOLVABLE_PROBLEMS = 200  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
-N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
+TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
+N_SOLUTION_ATTEMPTS_PER_PROBLEM = 5  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = .3  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
 UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
 MAX_CONCURRENT_PROBLEMS = 30  # The maximum number of problems we'll evaluate concurrently.
@@ -181,7 +181,8 @@ async def main():
     print(f"\n === Statistics === \n")
     print(f"Total problems considered: {n_problems_considered}")
     print(f"Total solvable problems found: {n_solvable_problems}")
-    print(f"Total unsolvable problems found: {len(df) - n_solvable_problems}")
+    print(f"Total unsolvable problems found: {n_problems_considered - n_solvable_problems}")
+    print(f"Total problems unconsidered: {len(df) - n_problems_considered}")
     
     # Print distribution of success rates across problems
     success_rates = incorrect_df.groupby('row_id')['row_id_success_rate'].first()

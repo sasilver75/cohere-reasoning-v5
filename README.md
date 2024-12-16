@@ -23,7 +23,10 @@ This environment variable file is git-ignored, so your precious credentials won'
 
 ## Processing data
 #### Scripts:
-- `download_datset.py`: Downloads the NuminaMath CoT dataset from HuggingFace, adds a `row_id` column, shuffles it, and saves it to a CSV file.
+- `downloaders`: Contains scripts to download and adapt datasets from HuggingFace (e.g. NuminaMath CoT, Zebralogic, MATH, etc.) - Generates CSVs with {row_id, problem, solution} columns.
+    - `download_numina.py`: Downloads the NuminaMath CoT dataset (cn_k12 subset) from HuggingFace, adapts it to our format, and saves it to a CSV file.
+    - `download_zebralogic.py`: Downloads the Zebralogic dataset from HuggingFace, adapts it to our format, and saves it to a CSV file.
+    - `download_math.py`: Downloads the MATH dataset from HuggingFace, adapts it to our format, and saves it to a CSV file.
 - `generate_solvable_problem_solutions.py`: For a model under evaluation, generate a number of solutions for each of a collection of problems, with the goal of identifying problems which are "solvable" by the model, but not trivially so (determined by the success % rate for an invidiaul problem). 
 - `generate_incorrect_solutions_off_policy.py`: For the row_ids identified as "solvable," generate a number of verified-as-incorrect solutions for each problem, using a model that is NOT the model under evaluation (Off-Policy, e.g. Command-R).
 - `generate_incorrect_solutions_on_policy.py`: For the row_ids identified as "solvable," generate number of verified-as-incorrect solutions for each problem, using a model that is IS the model under evaluation (On-Policy, e.g. Command-R+ or LLaMA 3 405B).

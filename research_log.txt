@@ -27,3 +27,12 @@ Running completions
 Done! Elapsed: 346.32s
 
 Let's look at the results
+
+....
+
+
+------------
+
+December 16, 2024
+
+Trying to get Zebralogic and MATH plugged in

@@ -13,7 +13,7 @@ as well as the Helper classes from v5.
 
 # TUNABLE PARAMETERS
 HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "test-l3.3-70b-200-12_15_2024"  # The name of the experiment; used for directory naming for results.
+EXPERIMENT_NAME = "test-l3.3-70b-5-12_15_2024"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 TARGET_N_INCORRECT_SOLUTIONS_PER_PROBLEM = 3  # Number of desired incorrect solutions per problem. Will truncate existing ones if we have more existing ones than desired.

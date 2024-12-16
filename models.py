@@ -184,9 +184,10 @@ class CohereExperimentHelper(Helper):
                         problem=row["problem"]
                     ),
                 }],
-                temperature=0.3,
+                temperature=0.2,
+                p=.8,
             ),
-            timeout=90,
+            timeout=120,
         )
         return response.message.content[0].text
 
@@ -222,9 +223,9 @@ class CohereExperimentHelper(Helper):
                         ),
                     }
                 ],
-                temperature=0.0,
+                temperature=0.0,  # greedy
             ),
-            timeout=90,
+            timeout=120,
         )
         return extract_verification_from_response(response.message.content[0].text)
 
@@ -262,11 +263,11 @@ class CohereExperimentHelper(Helper):
                             user_turn=user_turn,
                             assistant_turn=assistant_turn,
                         ),
-                        temperature=0.3,
+                        temperature=0.2,
                         raw_prompting=True,
                     )
                 ),
-                timeout=90
+                timeout=120
             )
             
         return prefix, completion_response.text
@@ -338,9 +339,11 @@ class OpenRouterExperimentHelper(Helper):
                     "provider": {
                         "order": [self.provider.value],
                         "allow_fallbacks": False,
-                    }
+                    },
+                    "temperature": 0.2,
+                    "top_p": 0.8
                 },
-                timeout=90
+                timeout=120
             ) as response:
                 response = await response.json()
                 return response["choices"][0]["message"]["content"]
@@ -372,9 +375,11 @@ class OpenRouterExperimentHelper(Helper):
                     "provider": {
                         "order": ["DeepInfra"],
                         "allow_fallbacks": False,
-                    }
+                    },
+                    "temperature": 0.2,
+                    "top_p": 0.8
                 },
-                timeout=90
+                timeout=120
             ) as response:
                 response_json = await response.json()
                 return response_json["choices"][0]["message"]["content"]
@@ -447,8 +452,8 @@ class OpenRouterExperimentHelper(Helper):
                         ),
                     }
                 ],
-                temperature=0.0,
+                temperature=0.0, # greedy
             ),
-            timeout=90,
+            timeout=120,
         )
         return extract_verification_from_response(response.message.content[0].text)
