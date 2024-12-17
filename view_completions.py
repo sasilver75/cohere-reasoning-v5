@@ -405,183 +405,193 @@ def view_completions():
 
     return render_template_string(
         """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Math Problem Completion Viewer</title>
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script>
-            MathJax = {
-                tex: {
-                    inlineMath: [['$', '$'], ['\\(', '\\)']],
-                    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                    processEscapes: true,
-                    processEnvironments: true
-                },
-                options: {
-                    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Math Problem Completion Viewer</title>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: 1.6; 
+                    padding: 20px;
+                    max-width: 1800px;
+                    margin: 0 auto;
+                    background-color: #1a1a1a;
+                    color: #fff;
                 }
-            };
-        </script>
-        <style>
-            body { 
-                font-family: Arial, sans-serif; 
-                line-height: 1.6; 
-                padding: 20px;
-                max-width: 1800px;
-                margin: 0 auto;
-            }
-            .header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            .completion { 
-                border: 1px solid #ddd; 
-                padding: 20px; 
-                margin-bottom: 20px;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-            }
-            .section {
-                width: 48%;
-                margin-bottom: 20px;
-            }
-            h2, h3 { color: #333; }
-            .content-box { 
-                background-color: #f4f4f4; 
-                padding: 10px; 
-                border-radius: 4px;
-                margin-bottom: 15px;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                white-space: pre-wrap;
-            }
-            .verification-box {
-                padding: 10px;
-                border-radius: 4px;
-                margin-bottom: 15px;
-                font-weight: bold;
-            }
-            .verification-true {
-                background-color: lightgreen;
-            }
-            .verification-false {
-                background-color: lightcoral;
-            }
-            .navigation { 
-                display: flex; 
-                gap: 10px;
-            }
-            .navigation a { 
-                text-decoration: none; 
-                color: #333; 
-                padding: 10px; 
-                border: 1px solid #ddd;
-            }
-            .jump-form {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                margin-left: 20px;
-            }
-            .jump-form input {
-                width: 80px;
-                padding: 5px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-            .jump-form button {
-                padding: 5px 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            .jump-form button:hover {
-                background-color: #0056b3;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h1>Math Problem Completion Viewer ({{ page }}/{{ total_pages }})</h1>
-            <h3 style="margin-top: 0; color: #666;">Experiment: {{ experiment_name }}</h3>
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <form class="jump-form" action="{{ url_for('view_completions') }}" method="get">
-                    <label for="row_id">Jump to Row ID:</label>
-                    <input type="number" id="row_id" name="row_id" min="1">
-                    <button type="submit">Go</button>
-                </form>
-                <div class="navigation">
-                    {% if page > 1 %}
-                        <a href="{{ url_for('view_completions', page=page-1, filter=request.args.get('filter')) }}">Previous</a>
-                    {% endif %}
-                    {% if page < total_pages %}
-                        <a href="{{ url_for('view_completions', page=page+1, filter=request.args.get('filter')) }}">Next</a>
-                    {% endif %}
-                    <a href="{{ url_for('stats') }}">Back to Statistics</a>
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .completion { 
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 20px;
+                }
+                .section {
+                    flex: 0 0 calc(50% - 15px);  /* Fixed width, no growing/shrinking */
+                    background-color: #242424;
+                    padding: 20px;
+                    border-radius: 4px;
+                    box-sizing: border-box;
+                }
+                .content-box { 
+                    background-color: #2a2a2a;
+                    padding: 10px; 
+                    border-radius: 4px;
+                    margin-bottom: 15px;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    white-space: pre-wrap;
+                }
+                /* Handle LaTeX content */
+                .MathJax_Display {
+                    max-width: 100% !important;
+                    font-size: 0.9em !important;
+                }
+                .MathJax {
+                    max-width: 100% !important;
+                }
+                /* Force inline math to wrap */
+                .MathJax_Display > .MathJax {
+                    display: inline-block !important;
+                }
+                h2, h3 { 
+                    color: #fff;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                }
+                .verification-box {
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin-bottom: 15px;
+                    font-weight: bold;
+                }
+                .verification-true {
+                    background-color: lightgreen;
+                }
+                .verification-false {
+                    background-color: lightcoral;
+                }
+                .navigation { 
+                    display: flex; 
+                    gap: 10px;
+                }
+                .navigation a { 
+                    text-decoration: none; 
+                    color: #333; 
+                    padding: 10px; 
+                    border: 1px solid #ddd;
+                }
+                .jump-form {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-left: 20px;
+                }
+                .jump-form input {
+                    width: 80px;
+                    padding: 5px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+                .jump-form button {
+                    padding: 5px 10px;
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+                .jump-form button:hover {
+                    background-color: #0056b3;
+                }
+                @media (max-width: 768px) {
+                    .completion {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Math Problem Completion Viewer ({{ page }}/{{ total_pages }})</h1>
+                <h3 style="margin-top: 0; color: #666;">Experiment: {{ experiment_name }}</h3>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <form class="jump-form" action="{{ url_for('view_completions') }}" method="get">
+                        <label for="row_id">Jump to Row ID:</label>
+                        <input type="number" id="row_id" name="row_id" min="1">
+                        <button type="submit">Go</button>
+                    </form>
+                    <div class="navigation">
+                        {% if page > 1 %}
+                            <a href="{{ url_for('view_completions', page=page-1, filter=request.args.get('filter')) }}">Previous</a>
+                        {% endif %}
+                        {% if page < total_pages %}
+                            <a href="{{ url_for('view_completions', page=page+1, filter=request.args.get('filter')) }}">Next</a>
+                        {% endif %}
+                        <a href="{{ url_for('stats') }}">Back to Statistics</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div style="background-color: {{ 'lightgreen' if completion_data.completion_verification_result else 'lightcoral' }}; 
-                    padding: 15px; 
-                    border-radius: 4px;">
-            <h2 style="margin: 0 0 10px 0;">
-                Row ID: {{ completion_data.row_id }} | 
-                Solution ID: {{ completion_data.solution_number }}/{{ completion_data.total_solutions }} | 
-                Completion ID: {{ completion_data.completion_number }}/{{ completion_data.total_completions }}
-            </h2>
-            <h3 style="margin: 0;">
-                Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }} | 
-                Problem Recovery Rate: {{ "%.1f%%"|format(completion_data.problem_recovery_rate) }} | 
-                Solution Recovery Rate: {{ "%.1f%%"|format(completion_data.solution_recovery_rate) }}
-            </h3>
-        </div>
-        <div class="completion">
-            <div class="section">
-                <h2>Problem:</h2>
-                <div class="content-box">{{ completion_data.problem }}</div>
-                
-                <h2>Ground Truth Solution:</h2>
-                <div class="content-box">{{ completion_data.solution }}</div>
-
-                <h2>Candidate Solution:</h2>
-                <div class="content-box">{{ completion_data.candidate_solution }}</div>
-
-                <h2>Candidate Verification Result:</h2>
-                <div class="verification-box verification-{{ completion_data.candidate_verification_result|lower }}">
-                    {{ completion_data.candidate_verification_result }}
-                </div>
-
-                <h2>Candidate Verification Reasoning:</h2>
-                <div class="content-box">{{ completion_data.candidate_verification_reasoning }}</div>
+            <div style="background-color: {{ 'lightgreen' if completion_data.completion_verification_result else 'lightcoral' }}; 
+                        padding: 15px; 
+                        border-radius: 4px;">
+                <h2 style="margin: 0 0 10px 0;">
+                    Row ID: {{ completion_data.row_id }} | 
+                    Solution ID: {{ completion_data.solution_number }}/{{ completion_data.total_solutions }} | 
+                    Completion ID: {{ completion_data.completion_number }}/{{ completion_data.total_completions }}
+                </h2>
+                <h3 style="margin: 0;">
+                    Problem Difficulty: {{ "%.1f%%"|format(completion_data.problem_difficulty) }} | 
+                    Problem Recovery Rate: {{ "%.1f%%"|format(completion_data.problem_recovery_rate) }} | 
+                    Solution Recovery Rate: {{ "%.1f%%"|format(completion_data.solution_recovery_rate) }}
+                </h3>
             </div>
-            <div class="section">
-                <h2>Prefix:</h2>
-                <div class="content-box">{{ completion_data.prefix }}</div>
+            <div class="completion">
+                <div class="section">
+                    <h2>Problem:</h2>
+                    <div class="content-box">{{ completion_data.problem|safe }}</div>
+                    
+                    <h2>Ground Truth Solution:</h2>
+                    <div class="content-box">{{ completion_data.solution|safe }}</div>
 
-                <h2>Completion:</h2>
-                <div class="content-box">{{ completion_data.completion }}</div>
-                
-                <h2>Completion Verification Result:</h2>
-                <div class="verification-box verification-{{ completion_data.completion_verification_result|lower }}">
-                    {{ completion_data.completion_verification_result }}
+                    <h2>Candidate Solution:</h2>
+                    <div class="content-box">{{ completion_data.candidate_solution|safe }}</div>
+
+                    <h2>Candidate Verification Result:</h2>
+                    <div class="verification-box verification-{{ completion_data.candidate_verification_result|lower }}">
+                        {{ completion_data.candidate_verification_result }}
+                    </div>
+
+                    <h2>Candidate Verification Reasoning:</h2>
+                    <div class="content-box">{{ completion_data.candidate_verification_reasoning|safe }}</div>
                 </div>
-                
-                <h2>Completion Verification Reasoning:</h2>
-                <div class="content-box">{{ completion_data.completion_verification_reasoning }}</div>
+                <div class="section">
+                    <h2>Prefix:</h2>
+                    <div class="content-box">{{ completion_data.prefix|safe }}</div>
+
+                    <h2>Completion:</h2>
+                    <div class="content-box">{{ completion_data.completion|safe }}</div>
+                    
+                    <h2>Completion Verification Result:</h2>
+                    <div class="verification-box verification-{{ completion_data.completion_verification_result|lower }}">
+                        {{ completion_data.completion_verification_result }}
+                    </div>
+                    
+                    <h2>Completion Verification Reasoning:</h2>
+                    <div class="content-box">{{ completion_data.completion_verification_reasoning|safe }}</div>
+                </div>
             </div>
-        </div>
-    </body>
-    </html>
-    """,
+        </body>
+        </html>
+        """,
         completion_data=completion_data,
         page=page,
         total_pages=len(filtered_df),
