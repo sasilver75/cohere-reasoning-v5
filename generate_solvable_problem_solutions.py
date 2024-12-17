@@ -13,10 +13,8 @@ from the cohere-reasoning-v4 project.
 (Change from v4): Appraise problems until we reach the target number of of solvable problems.
 """
 
-# TODO: Does this work with lower=0.0? Upper=1.0? Should it?
-
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer="qwen/qwen-2.5-72b-instruct", strong_completer_provider=OpenRouterProvider.DEEPINFRA)  # Encapsulates logic about the specific models we're using
+HELPER = OpenRouterExperimentHelper(strong_completer="qwen/qwen-2.5-72b-instruct")  # Encapsulates logic about the specific models we're using
 EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-100-12_16_2024-new-verification"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path("datasets/original/competition_math.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to

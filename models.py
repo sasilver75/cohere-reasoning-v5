@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 import os
+from model_providers import OPENROUTER_MODEL_PROVIDERS
 from utils import TokenBucket
 import cohere
 from dotenv import load_dotenv
@@ -290,7 +291,7 @@ class OpenRouterExperimentHelper(Helper):
     Enscapsulates logic for interacting both with the Cohere API and the OpenRouter API, thorugh whic we access Qwen 2.5.
     Note that the "provider" is going to be fixed to DeepInfra, which serves Qwen 2.5 72B Instruct in its original bf16 precision.
     """
-    def __init__(self, strong_completer: str, strong_completer_provider: OpenRouterProvider, strong_verifier: str = "meta-llama/llama-3.3-70b-instruct", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
+    def __init__(self, strong_completer: str, strong_verifier: str = "meta-llama/llama-3.3-70b-instruct", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
         super().__init__(strong_completer)
 
         if "COHERE_API_KEY" not in os.environ:
@@ -311,8 +312,6 @@ class OpenRouterExperimentHelper(Helper):
         self.cohere_async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY"))  # Needed for verification
 
         self.prefix_size = prefix_size
-        self.provider = strong_completer_provider
-
     @retry(
         stop=stop_after_attempt(20),
         wait=wait_exponential(multiplier=1, min=4, max=10),
@@ -337,7 +336,7 @@ class OpenRouterExperimentHelper(Helper):
                         {"role": "user", "content": prompt}
                     ],
                     "provider": {
-                        "order": [self.provider.value],
+                        "order": [OPENROUTER_MODEL_PROVIDERS[self.strong_completer].value],
                         "allow_fallbacks": False,
                     },
                     "temperature": 0.2,
@@ -373,7 +372,7 @@ class OpenRouterExperimentHelper(Helper):
                         {"role": "assistant", "content": assistant_turn}
                     ],
                     "provider": {
-                        "order": ["DeepInfra"],
+                        "order": [OPENROUTER_MODEL_PROVIDERS[self.strong_completer].value],
                         "allow_fallbacks": False,
                     },
                     "temperature": 0.2,
@@ -408,6 +407,10 @@ class OpenRouterExperimentHelper(Helper):
                     "messages": [
                         {"role": "user", "content": user_turn}
                     ],
+                    "provider": {
+                        "order": [OPENROUTER_MODEL_PROVIDERS[self.strong_verifier].value],
+                        "allow_fallbacks": False,
+                    },
                     "temperature": 0.0,
                     "top_k": 0  # Greedy
                 },

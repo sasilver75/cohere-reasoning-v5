@@ -32,6 +32,7 @@ This environment variable file is git-ignored, so your precious credentials won'
 - `generate_incorrect_solutions_on_policy.py`: For the row_ids identified as "solvable," generate number of verified-as-incorrect solutions for each problem, using a model that is IS the model under evaluation (On-Policy, e.g. Command-R+ or LLaMA 3 405B).
 - `generate_completions.py`: Given a collection of incorrect solutions (either on-policy of off-policy), use the model under evaluation to generate completions for a truncated prefix of each incorrect solution. Verify the correctness of the generated completion, and save the results to a CSV file.
 #### Experiment Configuration:
+- `model_providers.py`: Contains the mappings between models and their appropriate OpenRouter providers.
 - `models.py`: Contains the implementations of the `Helper` class, like `CohereExperimentHelper`, which encapsulate logic around generating a (straight-shot) solution, verification, and completion generation. To run an experiment on a new model, you'll likely need to create a new `Helper`-implementing class in this file for your model and inference provider.
 - `prompts.py`: Contains the prompts used for the experiment.
 - There are additionally some experiment-level hyperparmeters (like the number of solutions per problem, when evaluating problem difficulty level) that can be configured for each of the files in the "Scripts" subsection above.
