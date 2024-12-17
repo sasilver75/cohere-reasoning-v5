@@ -16,12 +16,12 @@ from the cohere-reasoning-v4 project.
 # TODO: Does this work with lower=0.0? Upper=1.0? Should it?
 
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer="meta-llama/llama-3.3-70b-instruct", provider=OpenRouterProvider.NOVITA)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "test-l3.3-70b-5-12_15_2024"  # The name of the experiment; used for directory naming for results.
-SOURCE_PATH = Path("datasets/original/numina_cnk12.csv")
+HELPER = OpenRouterExperimentHelper(strong_completer="qwen/qwen-2.5-72b-instruct", strong_completer_provider=OpenRouterProvider.DEEPINFRA)  # Encapsulates logic about the specific models we're using
+EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-100-12_16_2024-new-verification"  # The name of the experiment; used for directory naming for results.
+SOURCE_PATH = Path("datasets/original/competition_math.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
-TARGET_N_SOLVABLE_PROBLEMS = 5  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
-N_SOLUTION_ATTEMPTS_PER_PROBLEM = 5  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
+TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
+N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.
 LOWER_SUCCESS_RATE_BOUND = .3  # The lower bound on the success rate of the solutions we'll accept as solvable/interesting; Number if [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
 UPPER_SUCCESS_RATE_BOUND = .7  # The upper bound on the success rate of the solutions we'll accept as solvable/interesting; Number in [0, 1). Note that the lower the succcess rate bound, the more problems we'll have to evaluate here, but also less incorrect solution looping we'll have to do in in later scripts.
 MAX_CONCURRENT_PROBLEMS = 30  # The maximum number of problems we'll evaluate concurrently.
@@ -65,7 +65,7 @@ async def _appraise_problem(row: pd.Series) -> tuple[bool, list[pd.Series]]:
         _generate_and_verify_solution(row)
         for _ in range(N_SOLUTION_ATTEMPTS_PER_PROBLEM)
     ]
-    results = await asyncio.gather(*solution_attempts)
+    results: list[tuple[bool, pd.Series]] = await asyncio.gather(*solution_attempts)
     incorrect_solutions: list[pd.Series] = [attempt_data for attempt_success, attempt_data in results if not attempt_success]
     
     # Did we find the appropriate number of incorrect solutions?

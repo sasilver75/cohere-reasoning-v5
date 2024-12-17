@@ -12,15 +12,17 @@ dataset_subdirectory = "original"
 file_path = f"{dataset_directory}/{dataset_subdirectory}/numina_cnk12.csv"
 
 # Combine train and test sets (keep info), filter to cn_k12, add index
+# TODO: Do we want to kep the train set info too? (Train is 859494 [276564 cnk12] and Test is 100 [cnk12])
 train_df = pd.DataFrame(dataset["train"])
 test_df = pd.DataFrame(dataset["test"])
 train_df["set"] = "train"
 test_df["set"] = "test"
 df = pd.concat([train_df, test_df])
-print(f"Combined train and test sets ({len(df)} rows)...")
+print(f"Combined train ({len(train_df)} rows) and test ({len(test_df)} rows) sets into ({len(df)} rows)...")
 
 # Filter to only the cn_k12 subset
 df = df[df["source"] == "cn_k12"]
+print(f"Filtered to {len(df)} rows of cn_k12 problems")
 
 # Set an explicit "row_id" column (since the dataset doesn't have one)
 print("Setting row_id column...")

@@ -283,14 +283,14 @@ class OpenRouterProvider(Enum):
 class OpenRouterExperimentHelper(Helper):
     """
     Helper for a scenario in which we use the following models:
-    - Qwen 2.5 72B Instruct as the strong completer (model under evaluation)
-    - Cohere Command R Plus 08 2024 as the strong verifier
+    - Some OpenRouter openweights model as the model under evaluation
+    - Meta-Llama 3.3 70B Instruct as the default strong verifier
     - Cohere Command R 03 2024 as the weak completer
 
     Enscapsulates logic for interacting both with the Cohere API and the OpenRouter API, thorugh whic we access Qwen 2.5.
     Note that the "provider" is going to be fixed to DeepInfra, which serves Qwen 2.5 72B Instruct in its original bf16 precision.
     """
-    def __init__(self, strong_completer: str, provider: OpenRouterProvider, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
+    def __init__(self, strong_completer: str, strong_completer_provider: OpenRouterProvider, strong_verifier: str = "meta-llama/llama-3.3-70b-instruct", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
         super().__init__(strong_completer)
 
         if "COHERE_API_KEY" not in os.environ:
@@ -300,7 +300,7 @@ class OpenRouterExperimentHelper(Helper):
             raise ValueError("OPENROUTER_API_KEY must be set in the environment")
 
         self.strong_completer = strong_completer
-        self.strong_verifier = "command-r-plus-08-2024"
+        self.strong_verifier = strong_verifier
         self.weak_completer = "command-r-03-2024"
 
         # Note that Cohere's rate limit for chat endpoints is 500/min; We set conservatively at 400/minute.
@@ -311,7 +311,7 @@ class OpenRouterExperimentHelper(Helper):
         self.cohere_async_client = cohere.AsyncClientV2(api_key=os.getenv("COHERE_API_KEY"))  # Needed for verification
 
         self.prefix_size = prefix_size
-        self.provider = provider
+        self.provider = strong_completer_provider
 
     @retry(
         stop=stop_after_attempt(20),
@@ -383,6 +383,39 @@ class OpenRouterExperimentHelper(Helper):
             ) as response:
                 response_json = await response.json()
                 return response_json["choices"][0]["message"]["content"]
+    
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
+        before_sleep=before_sleep_log(logger, logging.WARNING)
+    )
+    async def _request_openrouter_verification(self, problem: str, solution: str, candidate_solution: str) -> tuple[bool, str]:
+        # Get permission to send a request
+        await self.openrouter_bucket.acquire()
+
+        # Send request 
+        user_turn = prompts.VERIFY_SOLUTION_PROMPT.format(problem=problem, solution=solution, candidate_solution=candidate_solution)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url=OPENROUTER_ENDPOINT,
+                headers={
+                    "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": self.strong_verifier,
+                    "messages": [
+                        {"role": "user", "content": user_turn}
+                    ],
+                    "temperature": 0.0,
+                    "top_k": 0  # Greedy
+                },
+                timeout=120
+            ) as response:
+                response_json = await response.json()
+                return extract_verification_from_response(response_json["choices"][0]["message"]["content"])
+
 
         
 
@@ -418,42 +451,17 @@ class OpenRouterExperimentHelper(Helper):
         # Return information
         return prefix, completion
     
-    @retry(
-        stop=stop_after_attempt(20),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
-        retry=retry_if_exception_type((asyncio.TimeoutError, Exception)),
-        before_sleep=before_sleep_log(logger, logging.WARNING)
-    )
+
     async def get_verification(self, candidate_solution: str, row: pd.Series) -> tuple[bool, str]:
         """
         Given a candidate solution and a row from the source dataframe, verify the candidate solution.
-        args:
-            candidate_solution: str - The candidate solution to verify
-            row: pd.Series - A row from the source dataframe (eg cn_k12_math_problems.csv, from NuminaMath-CoT)
-        returns:
-            verified: bool - Whether the candidate solution was verified as correct
-            verification_reasoning: str - The reasoning for the verification result
-
-        Note: This is a copy-paste of the CohereExperimentHelper get_verification method.
         """
+        # Prepare information
         problem = row["problem"]
         solution = row["solution"]
-        await self.cohere_bucket.acquire()
-        response = await asyncio.wait_for(
-            self.cohere_async_client.chat(
-                model=self.strong_verifier,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompts.VERIFY_SOLUTION_PROMPT.format(
-                            problem=problem,
-                            solution=solution,
-                            candidate_solution=candidate_solution,
-                        ),
-                    }
-                ],
-                temperature=0.0, # greedy
-            ),
-            timeout=120,
-        )
-        return extract_verification_from_response(response.message.content[0].text)
+
+        # Robustly get the verification
+        verified, verification_reasoning = await self._request_openrouter_verification(problem, solution, candidate_solution)
+        
+        # Return information
+        return verified, verification_reasoning

@@ -11,7 +11,7 @@ from utils import plot_recovery_figures
 app = Flask(__name__)
 
 # Load the CSV file
-EXPERIMENT_NAME = "test-l3.3-70b-5-12_15_2024"
+EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-100-12_16_2024-new-verification"
 csv_path = f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems_completed.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
@@ -223,7 +223,8 @@ def stats():
                         <button type="submit">Go</button>
                     </form>
                     <div class="navigation">
-                        <a href="{{ url_for('view_completions', page=1) }}">View Individual Completions</a>
+                        <a href="{{ url_for('view_completions', page=1) }}">View All Completions</a>
+                        <a href="{{ url_for('view_completions', page=1, filter='correct') }}">View Correct Completions</a>
                     </div>
                 </div>
             </div>
@@ -337,24 +338,29 @@ def stats():
 
 @app.route("/completions")
 def view_completions():
+    # Get filter parameter
+    completion_filter = request.args.get("filter")
+    
+    # Filter dataframe if needed
+    filtered_df = df[df['completion_verification_result'] == True] if completion_filter == 'correct' else df
+    
     # Get row_id from query parameters if provided
     row_id = request.args.get("row_id", type=int)
     if row_id:
-        # Find the index of the row_id in the dataframe
         try:
-            page = df[df['row_id'] == row_id].index[0] + 1
+            page = filtered_df[filtered_df['row_id'] == row_id].index[0] + 1
         except IndexError:
             page = 1
     else:
         page = request.args.get("page", 1, type=int)
     
-    if page < 1 or page > len(df):
+    if page < 1 or page > len(filtered_df):
         page = 1
 
-    row = df.iloc[page - 1]
+    row = filtered_df.iloc[page - 1]
     
     # Calculate recovery rate for this problem
-    problem_df = df[df['row_id'] == row['row_id']]
+    problem_df = filtered_df[filtered_df['row_id'] == row['row_id']]
     problem_stats = problem_df['completion_verification_result']
     problem_recovery_rate = problem_stats.mean() * 100  # Convert to percentage
     
@@ -514,13 +520,13 @@ def view_completions():
                     <button type="submit">Go</button>
                 </form>
                 <div class="navigation">
-                    <a href="{{ url_for('stats') }}">Back to Statistics</a>
                     {% if page > 1 %}
-                        <a href="{{ url_for('view_completions', page=page-1) }}">Previous</a>
+                        <a href="{{ url_for('view_completions', page=page-1, filter=request.args.get('filter')) }}">Previous</a>
                     {% endif %}
                     {% if page < total_pages %}
-                        <a href="{{ url_for('view_completions', page=page+1) }}">Next</a>
+                        <a href="{{ url_for('view_completions', page=page+1, filter=request.args.get('filter')) }}">Next</a>
                     {% endif %}
+                    <a href="{{ url_for('stats') }}">Back to Statistics</a>
                 </div>
             </div>
         </div>
@@ -578,7 +584,7 @@ def view_completions():
     """,
         completion_data=completion_data,
         page=page,
-        total_pages=len(df),
+        total_pages=len(filtered_df),
         experiment_name=EXPERIMENT_NAME
     )
 
