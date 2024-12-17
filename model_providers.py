@@ -8,6 +8,7 @@ Additionally, we'd like to select a provider that offers the "raw completion" ab
 class OpenRouterModel(Enum):
     QWEN_2_5_72B_INSTRUCT = "qwen/qwen-2.5-72b-instruct"
     LLAMA_3_3_70B_INSTRUCT = "meta-llama/llama-3.3-70b-instruct"
+    GEMMA_2_27B_INSTRUCT = "google/gemma-2-27b-it"
 
 class OpenRouterProvider(Enum):
     DEEPINFRA = "DeepInfra"
@@ -17,5 +18,6 @@ class OpenRouterProvider(Enum):
 
 OPENROUTER_MODEL_PROVIDERS = {
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
-    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA
+    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
+    OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA
 }
