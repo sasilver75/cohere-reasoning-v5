@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 import os
-from model_providers import OPENROUTER_MODEL_PROVIDERS
+from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel
 from utils import TokenBucket
 import cohere
 from dotenv import load_dotenv
@@ -274,12 +274,6 @@ class CohereExperimentHelper(Helper):
         return prefix, completion_response.text
     
 
-class OpenRouterProvider(Enum):
-    DEEPINFRA = "DeepInfra"
-    HYPERBOLIC = "Hyperbolic"
-    NOVITA = "Novita"
-
-
 # TODO: I should probably be passing a "provider" argument here, so that we can make sure that the provider that we use for agiven model is in original precision.
 class OpenRouterExperimentHelper(Helper):
     """
@@ -291,7 +285,7 @@ class OpenRouterExperimentHelper(Helper):
     Enscapsulates logic for interacting both with the Cohere API and the OpenRouter API, thorugh whic we access Qwen 2.5.
     Note that the "provider" is going to be fixed to DeepInfra, which serves Qwen 2.5 72B Instruct in its original bf16 precision.
     """
-    def __init__(self, strong_completer: str, strong_verifier: str = "meta-llama/llama-3.3-70b-instruct", cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
+    def __init__(self, strong_completer: OpenRouterModel, strong_verifier: OpenRouterModel = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT, cohere_bucket_capacity: int = 400, cohere_report_every: int = 10, cohere_bucket_verbose: bool = False, openrouter_bucket_capacity: int = 300, openrouter_report_every: int = 10, openrouter_bucket_verbose: bool = False, prefix_size: float = 0.7):
         super().__init__(strong_completer)
 
         if "COHERE_API_KEY" not in os.environ:
@@ -331,7 +325,7 @@ class OpenRouterExperimentHelper(Helper):
                     "Content-Type": "application_json"
                 },
                 json={
-                    "model": self.strong_completer,
+                    "model": self.strong_completer.value,
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],
@@ -366,7 +360,7 @@ class OpenRouterExperimentHelper(Helper):
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": self.strong_completer,
+                    "model": self.strong_completer.value,
                     "messages": [
                         {"role": "user", "content": user_turn},
                         {"role": "assistant", "content": assistant_turn}
@@ -403,7 +397,7 @@ class OpenRouterExperimentHelper(Helper):
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": self.strong_verifier,
+                    "model": self.strong_verifier.value,
                     "messages": [
                         {"role": "user", "content": user_turn}
                     ],

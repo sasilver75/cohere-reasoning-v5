@@ -1,7 +1,7 @@
 import asyncio
 import math
 import pandas as pd
-from models import CohereExperimentHelper, OpenRouterExperimentHelper, OpenRouterProvider
+from models import CohereExperimentHelper, OpenRouterExperimentHelper, OpenRouterModel
 from pathlib import Path
 from tqdm import tqdm
 from time import perf_counter
@@ -14,8 +14,8 @@ from the cohere-reasoning-v4 project.
 """
 
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer="qwen/qwen-2.5-72b-instruct")  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-100-12_16_2024-new-verification"  # The name of the experiment; used for directory naming for results.
+HELPER = OpenRouterExperimentHelper(strong_completer=OpenRouterModel.QWEN_2_5_72B_INSTRUCT)  # Encapsulates logic about the specific models we're using
+EXPERIMENT_NAME = "experiment-ZEBRAMC-qwen2.5_70b-20-12_17_2024"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path("datasets/original/competition_math.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
 TARGET_N_SOLVABLE_PROBLEMS = 10  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
