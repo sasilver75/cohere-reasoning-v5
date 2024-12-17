@@ -22,14 +22,15 @@ The candidate solution may have boxed (e.g. using the \\boxed{{...}} command) th
 
 Given the above information, reason about whether the candidate solution is correct, where correctness is defined as producing a correct final answer.
 
-First, reason about whether the solution is correct in <verification_reasoning></verification_reasoning> XML tags.
+First, reason about whether the solution is correct inside <verification_reasoning></verification_reasoning> XML tags.
     - To do this, first state the final answer of the ground truth solution detailed in <solution> tags above.
     - Then, state the final answer of the candidate solution detailed in the <candidate_solution> tags above.
-    - Finally, reason about whether the candidate solution is correct, specifically indicating the step and manner in which the reasoning may have gone wrong, if it did.
+    - Finally, reason about whether the candidate solution is correct, given the ground-truth solution above. Specifically indicate the step and manner in which the reasoning may have gone wrong, if it did.
     - If the correct answer was produced in the candidate solution but not appropriately boxed (for example, maybe the answer was boxed instead of the related multiple choice option, or vice-versa) -- that should still be considered as a Correct solution.
 Make sure to remember to close your <verification_reasoning> tag with a </verification_reasoning> tag.
 
 Then, determine whether the candidate solution is either "Correct" or "Incorrect" in <verification_result></verification_result> XML tags, given your reasoning.
+
 In terms of structure, a good verification result might look like:
 <verification_result>
 Incorrect
