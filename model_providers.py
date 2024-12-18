@@ -9,6 +9,7 @@ class OpenRouterModel(Enum):
     QWEN_2_5_72B_INSTRUCT = "qwen/qwen-2.5-72b-instruct"
     LLAMA_3_3_70B_INSTRUCT = "meta-llama/llama-3.3-70b-instruct"
     GEMMA_2_27B_INSTRUCT = "google/gemma-2-27b-it"
+    LLAMA_3_1_405B_INSTRUCT = "meta-llama/llama-3.1-405b-instruct"  # Waiting on this one; We don't have a good provider (quant, completion) on OpenRouter (https://sasilver0051g-lbx2356.slack.com/archives/C07E794RAFJ/p1734480088017999?thread_ts=1734479625.429039&cid=C07E794RAFJ)
 
 class OpenRouterProvider(Enum):
     DEEPINFRA = "DeepInfra"

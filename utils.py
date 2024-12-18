@@ -73,7 +73,7 @@ def get_naive_prefix(solution: str, prefix_size: float) -> str:
     returns:
         prefix: str - The prefix of the solution
     """
-    words = solution.split()
+    words = solution.split(" ")
     n_words = len(words)
     n_words_to_take = max(1, int(prefix_size * n_words))
     return " ".join(words[:n_words_to_take])

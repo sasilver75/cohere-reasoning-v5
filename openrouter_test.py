@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-from model_providers import OpenRouterProvider
+from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 
 load_dotenv()
 import requests
@@ -31,8 +31,8 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = "meta-llama/llama-3.1-405b-instruct"
-PROVIDER = OpenRouterProvider.AVIAN
+MODEL = OpenRouterModel.QWEN_2_5_72B_INSTRUCT
+PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 # Straight shot example
 # print(f"STAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
@@ -55,7 +55,7 @@ PROVIDER = OpenRouterProvider.AVIAN
 # print(f"END OF STRAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
 
 
-# Completion examples
+# Completion test examples
 print(f"COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")
 prompts = [
     (
@@ -71,9 +71,81 @@ prompts = [
         "1, 3, 5, 7, 9, 11, 13, 15, 17" # Will it add ", 19"?
     )
 ]
-for user_turn, assistant_turn in prompts:
+# for user_turn, assistant_turn in prompts:
+#     data = {
+#     "model": MODEL.value,  # Specify the model you want to use
+#     "messages": [
+#         {"role": "user", "content": user_turn},  # Using your existing prefix
+#         {"role": "assistant", "content": assistant_turn}  # Prefill example
+#     ],
+#     "provider": {
+#         "order": [
+#             PROVIDER.value
+#         ],
+#         "allow_fallbacks": False,
+#         }
+#     }
+#     response = requests.post(url, headers=headers, json=data)
+#     print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
+# print(f"END OF COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")   
+
+
+
+# Let's try some math out
+
+data = [
+    (
+        "What's 5/4 + 2?",
+        "5/4 is 1, so"  # Wrong fraction conversion, unfinished
+    ),
+    (
+        "If a train travels 120 miles in 2 hours, what's its speed in miles per hour?",
+        "Let me divide 2 by 120, so"  # Wrong division order, unfinished
+    ),
+    (
+        "Sally has 3 times as many marbles as Tom. If Tom has 12 marbles, how many do they have together?",
+        "If Tom has 12 marbles, Sally has 3 marbles, so"  # Misinterpreted 'times as many', unfinished
+    ),
+    (
+        "What's 2 + 3 × 4?",
+        "First I'll add 2 and 3 to get 5, then"  # Order of operations mistake, unfinished
+    ),
+    (
+        "A rectangle has a width of 4 inches and a length twice its width. What's its area?",
+        "If the width is 4 inches, then the length is 4 + 2 = 6 inches. Now to find the area,"  # Wrong interpretation of 'twice'
+    ),
+    (
+        "If you have $20 and spend 25% of it, how much do you have left?",
+        "25% of $20 is $5, so I'll add $5 to get"  # Wrong operation (adding instead of subtracting)
+    ),
+    (
+        "What's the average of 15, 20, and 25?",
+        "To find the average, I'll add these numbers: 15 + 20 + 25 = 50. Now I'll divide by 2 since"  # Wrong divisor
+    ),
+    (
+        "If 8 cookies are shared equally among 4 children, how many cookies does each child get?",
+        "I'll multiply 8 × 4 to find out how many cookies each child gets, so"  # Wrong operation
+    ),
+    (
+        "What's 1/2 of 30?",
+        "To find half of 30, I'll add 30 + 2, which gives me"  # Wrong operation
+    ),
+    (
+        "A square has a perimeter of 20 inches. What's its area?",
+        "If the perimeter is 20 inches, each side must be 20/2 = 10 inches. Now for the area,"  # Wrong perimeter calculation
+    ),
+    (
+        "How many quarters make $2.75?",
+        "Each quarter is 25 cents, which is $0.25. So I'll multiply 2.75 × 0.25 to get"  # Wrong approach
+    ),
+    (
+        "If it takes 3 minutes to boil one egg, how long will it take to boil 6 eggs at the same time?",
+        "With 6 eggs, it will take 6 × 3 = 18 minutes because"  # Wrong reasoning about parallel vs sequential
+    )
+]
+for user_turn, assistant_turn in data:
     data = {
-    "model": MODEL,  # Specify the model you want to use
+    "model": MODEL.value,  # Specify the model you want to use
     "messages": [
         {"role": "user", "content": user_turn},  # Using your existing prefix
         {"role": "assistant", "content": assistant_turn}  # Prefill example
@@ -86,5 +158,10 @@ for user_turn, assistant_turn in prompts:
         }
     }
     response = requests.post(url, headers=headers, json=data)
-    print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
-print(f"END OF COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")   
+    completion = response.json()["choices"][0]["message"]["content"]
+    print(f"""
+    Problem: {user_turn}
+    Prefix: {assistant_turn}
+    Completion: {completion}
+    \n----------------------------------\n
+    """)
