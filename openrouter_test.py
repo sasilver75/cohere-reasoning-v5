@@ -31,8 +31,9 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT
-PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+# PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+PROVIDER = OpenRouterProvider.DEEPSEEK
 
 # Straight shot example
 # print(f"STAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
@@ -73,17 +74,19 @@ prompts = [
 ]
 for user_turn, assistant_turn in prompts:
     data = {
-    "model": MODEL.value,  # Specify the model you want to use
-    "messages": [
-        {"role": "user", "content": user_turn},  # Using your existing prefix
-        {"role": "assistant", "content": assistant_turn}  # Prefill example
-    ],
-    "provider": {
-        "order": [
-            PROVIDER.value
+        "model": MODEL.value,  # Specify the model you want to use
+        "messages": [
+            {"role": "user", "content": user_turn},  # Using your existing prefix
+            {"role": "assistant", "content": assistant_turn}  # Prefill example
         ],
-        "allow_fallbacks": False,
-        }
+        "provider": {
+        "order": [
+                PROVIDER.value
+            ],
+            "allow_fallbacks": False,
+        },
+        "temperature": 0.2,
+        "top_p": 0.8
     }
     print("sending request")
     response = requests.post(url, headers=headers, json=data)

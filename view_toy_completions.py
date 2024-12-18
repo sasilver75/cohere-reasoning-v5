@@ -1,0 +1,324 @@
+import os
+import pandas as pd
+from flask import Flask, render_template_string, request
+from flask.json import provider
+import matplotlib.pyplot as plt
+import io
+import base64
+import numpy as np
+
+app = Flask(__name__)
+
+# Load the CSV file
+csv_path = "toy_evaluate.csv"
+if not os.path.exists(csv_path):
+    print(f"Error: CSV file not found at {csv_path}")
+    exit(1)
+
+try:
+    df = pd.read_csv(csv_path)
+except Exception as e:
+    print(f"Error reading CSV file: {e}")
+    exit(1)
+
+def create_recovery_plot():
+    # Create bar plot of recovery rates by model
+    recovery_rates = df.groupby('model').agg({
+        'problem_id': 'count',  # total problems
+        'verified': lambda x: x.sum()  # number of verified solutions
+    }).assign(
+        recovery_rate=lambda x: x['verified'] / x['problem_id']
+    )
+
+    plt.figure(figsize=(10, 6))
+    recovery_rates['recovery_rate'].plot(kind='bar')
+    plt.title('Recovery Rate by Model')
+    plt.xlabel('Model')
+    plt.ylabel('Recovery Rate')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Add percentage labels on top of each bar
+    for i, v in enumerate(recovery_rates['recovery_rate']):
+        plt.text(i, v, f'{v:.1%}', ha='center', va='bottom')
+
+    # Convert plot to base64 string
+    img = io.BytesIO()
+    plt.savefig(img, format='png', bbox_inches='tight', dpi=120)
+    img.seek(0)
+    plt.close()
+    
+    return base64.b64encode(img.getvalue()).decode()
+
+@app.route("/")
+def stats():
+    # Calculate statistics for each model
+    model_stats = df.groupby('model').agg({
+        'problem_id': 'count',
+        'verified': ['sum', 'mean'],
+        'correction_detected': ['sum', 'mean']
+    }).round(3)
+    
+    # Flatten column names
+    model_stats.columns = ['total_problems', 'verified_count', 'verified_rate', 
+                          'corrections_count', 'corrections_rate']
+    
+    # Create the recovery rate plot
+    plot_url = create_recovery_plot()
+    
+    return render_template_string("""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Toy Evaluation Results</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: 1.6; 
+                    padding: 20px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                .header {
+                    margin-bottom: 20px;
+                }
+                .stats-container {
+                    background-color: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-bottom: 20px;
+                }
+                .model-stats-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    background-color: white;
+                }
+                .model-stats-table th,
+                .model-stats-table td {
+                    padding: 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+                .model-stats-table th {
+                    background-color: #f8f9fa;
+                }
+                .model-stats-table tr:hover {
+                    background-color: #f5f5f5;
+                }
+                .chart-container {
+                    margin: 30px auto;
+                    text-align: center;
+                }
+                .model-link {
+                    text-decoration: none;
+                    color: #007bff;
+                }
+                .model-link:hover {
+                    text-decoration: underline;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Toy Evaluation Results Overview</h1>
+            </div>
+            
+            <div class="stats-container">
+                <h2>Model Performance Summary</h2>
+                <table class="model-stats-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Total Problems</th>
+                            <th>Verified Solutions</th>
+                            <th>Verification Rate</th>
+                            <th>Corrections Detected</th>
+                            <th>Correction Rate</th>
+                            <th>View Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for model, stats in model_stats.iterrows() %}
+                        <tr>
+                            <td>{{ model }}</td>
+                            <td>{{ stats.total_problems }}</td>
+                            <td>{{ stats.verified_count }}</td>
+                            <td>{{ "%.1f%%"|format(stats.verified_rate * 100) }}</td>
+                            <td>{{ stats.corrections_count }}</td>
+                            <td>{{ "%.1f%%"|format(stats.corrections_rate * 100) }}</td>
+                            <td>
+                                <a href="{{ url_for('view_completions', model=model) }}" class="model-link">
+                                    View Completions
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ plot_url }}" alt="Recovery Rates by Model">
+            </div>
+        </body>
+        </html>
+    """, model_stats=model_stats, plot_url=plot_url)
+
+@app.route("/completions")
+def view_completions():
+    model = request.args.get("model")
+    if not model:
+        return "Model parameter is required", 400
+    
+    # Filter dataframe for selected model
+    model_df = df[df['model'] == model].copy()
+    
+    # Get page number from query parameters
+    page = request.args.get("page", 1, type=int)
+    if page < 1 or page > len(model_df):
+        page = 1
+    
+    # Get current row
+    row = model_df.iloc[page - 1]
+    
+    completion_data = {
+        "model": model,
+        "problem_id": int(row.get("problem_id", 0)),
+        "problem": str(row.get("problem", "N/A")),
+        "solution": str(row.get("solution", "N/A")),
+        "prefix": str(row.get("prefix", "N/A")),
+        "completion": str(row.get("completion", "N/A")),
+        "candidate_solution": str(row.get("candidate_solution", "N/A")),
+        "verified": bool(row.get("verified", False)),
+        "correction_detected": bool(row.get("correction_detected", False))
+    }
+
+    return render_template_string("""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Model Completions Viewer</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: 1.6; 
+                    padding: 20px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .content-section {
+                    background-color: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 4px;
+                    margin-bottom: 20px;
+                }
+                .content-box {
+                    background-color: white;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    white-space: pre-wrap;
+                }
+                .verification-box {
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+                .verification-true {
+                    background-color: lightgreen;
+                }
+                .verification-false {
+                    background-color: lightcoral;
+                }
+                .nav-button {
+                    text-decoration: none;
+                    color: white;
+                    background-color: #007bff;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    transition: background-color 0.2s;
+                }
+                .nav-button:hover:not(.disabled) {
+                    background-color: #0056b3;
+                }
+                .nav-button.disabled {
+                    background-color: #6c757d;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                    opacity: 0.65;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>{{ completion_data.model }} Completions ({{ page }}/{{ total_pages }})</h1>
+                <div class="navigation">
+                    <a href="{{ url_for('stats') }}" class="nav-button">Back to Overview</a>
+                    <a href="{{ url_for('view_completions', model=completion_data.model, page=page-1) }}" 
+                       class="nav-button {% if page <= 1 %}disabled{% endif %}">Previous</a>
+                    <a href="{{ url_for('view_completions', model=completion_data.model, page=page+1) }}" 
+                       class="nav-button {% if page >= total_pages %}disabled{% endif %}">Next</a>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>Problem ID: {{ completion_data.problem_id }}</h2>
+                
+                <h3>Problem:</h3>
+                <div class="content-box">{{ completion_data.problem }}</div>
+                
+                <h3>Ground Truth Solution:</h3>
+                <div class="content-box">{{ completion_data.solution }}</div>
+                
+                <h3>Prefix:</h3>
+                <div class="content-box">{{ completion_data.prefix }}</div>
+                
+                <h3>Completion:</h3>
+                <div class="content-box">{{ completion_data.completion }}</div>
+                
+                <h3>Candidate Solution:</h3>
+                <div class="content-box">{{ completion_data.candidate_solution }}</div>
+                
+                <h3>Verification Result:</h3>
+                <div class="verification-box verification-{{ completion_data.verified|lower }}">
+                    Verified: {{ completion_data.verified }}
+                </div>
+                
+                <h3>Correction Detection:</h3>
+                <div class="verification-box verification-{{ completion_data.correction_detected|lower }}">
+                    Correction Detected: {{ completion_data.correction_detected }}
+                </div>
+            </div>
+        </body>
+        </html>
+    """, completion_data=completion_data, page=page, total_pages=len(model_df))
+
+# Custom JSON encoder to handle numpy types
+class NumpyEncoder(provider.DefaultJSONProvider):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+app.json = NumpyEncoder(app)
+
+if __name__ == "__main__":
+    print(f"Starting server. CSV file path: {csv_path}")
+    app.run(debug=True, host="localhost", port=5000)

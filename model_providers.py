@@ -19,12 +19,13 @@ class OpenRouterProvider(Enum):
     NOVITA = "Novita"
     AVIAN = "Avian"
     SF_COMPUTE = "SF Compute"
+    DEEPSEEK = "DeepSeek"
 
 
 OPENROUTER_MODEL_PROVIDERS = {
+    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.DEEPSEEK,
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
     # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
-    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC,
     OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE
 }
