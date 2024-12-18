@@ -22,26 +22,52 @@ except Exception as e:
     exit(1)
 
 def create_recovery_plot():
-    # Create bar plot of recovery rates by model
-    recovery_rates = df.groupby('model').agg({
+    # Calculate rates by model
+    stats = df.groupby('model').agg({
         'problem_id': 'count',  # total problems
-        'verified': lambda x: x.sum()  # number of verified solutions
+        'verified': lambda x: x.sum(),  # number of verified solutions
+        'correction_detected': lambda x: x.sum()  # number of corrections detected
     }).assign(
-        recovery_rate=lambda x: x['verified'] / x['problem_id']
+        recovery_rate=lambda x: x['verified'] / x['problem_id'],
+        correction_rate=lambda x: x['correction_detected'] / x['problem_id']
     )
 
-    plt.figure(figsize=(10, 6))
-    recovery_rates['recovery_rate'].plot(kind='bar')
-    plt.title('Recovery Rate by Model')
-    plt.xlabel('Model')
-    plt.ylabel('Recovery Rate')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    # Set up the plot with a more constrained width
+    fig, ax = plt.subplots(figsize=(10, 6))  # Reduced from 12 to 10
+    
+    # Set the width of each bar and positions of the bars
+    width = 0.35
+    x = np.arange(len(stats.index))
+    
+    # Create bars
+    rects1 = ax.bar(x - width/2, stats['recovery_rate'], width, label='Recovery Rate', color='#2196F3')
+    rects2 = ax.bar(x + width/2, stats['correction_rate'], width, label='Correction Rate', color='#FF9800')
 
+    # Customize the plot
+    ax.set_title('Recovery and Correction Rates by Model')
+    ax.set_xlabel('Model')
+    ax.set_ylabel('Rate')
+    ax.set_xticks(x)
+    ax.set_xticklabels(stats.index, rotation=45, ha='right')
+    # Move legend to the top of the plot, outside the chart area
+    ax.legend(bbox_to_anchor=(0.75, 1.2), loc='upper left', ncol=1)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
     # Add percentage labels on top of each bar
-    for i, v in enumerate(recovery_rates['recovery_rate']):
-        plt.text(i, v, f'{v:.1%}', ha='center', va='bottom')
+    def autolabel(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate(f'{height:.1%}',
+                       xy=(rect.get_x() + rect.get_width()/2, height),
+                       xytext=(0, 3),  # 3 points vertical offset
+                       textcoords="offset points",
+                       ha='center', va='bottom')
+
+    autolabel(rects1)
+    autolabel(rects2)
+
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout()
 
     # Convert plot to base64 string
     img = io.BytesIO()
