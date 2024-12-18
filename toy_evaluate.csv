@@ -1,0 +1,143 @@
+model,provider,problem_id,problem,solution,prefix,completion,candidate_solution,verified,correction_detected
+qwen/qwen-2.5-72b-instruct,DeepInfra,0,What's 5/4 + 2?,"Let me solve this step by step:
+1. 5/4 = 1.25
+2. 1.25 + 2 = 3.25
+Therefore, 5/4 + 2 = 3.25","5/4 is 1, so"," the equation becomes 1 + 2, which equals 3. However, to be more precise, 5/4 is actually 1.25. Therefore, 1.25 + 2 equals 3.25.","5/4 is 1, so  the equation becomes 1 + 2, which equals 3. However, to be more precise, 5/4 is actually 1.25. Therefore, 1.25 + 2 equals 3.25.",True,True
+qwen/qwen-2.5-72b-instruct,DeepInfra,1,"If a train travels 120 miles in 2 hours, what's its speed in miles per hour?","Let me solve this step by step:
+1. Speed = Distance ÷ Time
+2. Distance = 120 miles
+3. Time = 2 hours
+4. Speed = 120 ÷ 2 = 60
+Therefore, the train's speed is 60 miles per hour","Let me divide 2 by 120, so"," the answer is 60 miles per hour. 
+
+Correction: To find the speed of the train in miles per hour, you need to divide the distance traveled by the time it took. In this case, you divide 120 miles by 2 hours:
+
+\[ \text{Speed} = \frac{120 \text{ miles}}{2 \text{ hours}} = 60 \text{ miles per hour} \]
+
+So, the train's speed is 60 miles per hour.","Let me divide 2 by 120, so  the answer is 60 miles per hour. 
+
+Correction: To find the speed of the train in miles per hour, you need to divide the distance traveled by the time it took. In this case, you divide 120 miles by 2 hours:
+
+\[ \text{Speed} = \frac{120 \text{ miles}}{2 \text{ hours}} = 60 \text{ miles per hour} \]
+
+So, the train's speed is 60 miles per hour.",True,True
+qwen/qwen-2.5-72b-instruct,DeepInfra,2,"Sally has 3 times as many marbles as Tom. If Tom has 12 marbles, how many do they have together?","Let me solve this step by step:
+1. Tom has 12 marbles
+2. Sally has 3 × 12 = 36 marbles
+3. Together they have 12 + 36 = 48 marbles
+Therefore, Sally and Tom have 48 marbles together","If Tom has 12 marbles, Sally has 3 marbles, so"," the total number of marbles Sally has is 3 * 12 = 36 marbles. Together, Sally and Tom have 12 + 36 = 48 marbles.","If Tom has 12 marbles, Sally has 3 marbles, so  the total number of marbles Sally has is 3 * 12 = 36 marbles. Together, Sally and Tom have 12 + 36 = 48 marbles.",True,True
+google/gemma-2-27b-it,DeepInfra,0,What's 5/4 + 2?,"Let me solve this step by step:
+1. 5/4 = 1.25
+2. 1.25 + 2 = 3.25
+Therefore, 5/4 + 2 = 3.25","5/4 is 1, so"," 1 + 2 = 3.
+
+Here's how to solve it:
+
+* **Convert the mixed number:** 5/4 is the same as 1 1/4 
+* **Add the whole numbers:** 1 + 2 = 3
+* **Keep the fraction:**  3 1/4 
+
+
+Let me know if you have any other math problems!","5/4 is 1, so  1 + 2 = 3.
+
+Here's how to solve it:
+
+* **Convert the mixed number:** 5/4 is the same as 1 1/4 
+* **Add the whole numbers:** 1 + 2 = 3
+* **Keep the fraction:**  3 1/4 
+
+
+Let me know if you have any other math problems!",False,True
+google/gemma-2-27b-it,DeepInfra,1,"If a train travels 120 miles in 2 hours, what's its speed in miles per hour?","Let me solve this step by step:
+1. Speed = Distance ÷ Time
+2. Distance = 120 miles
+3. Time = 2 hours
+4. Speed = 120 ÷ 2 = 60
+Therefore, the train's speed is 60 miles per hour","Let me divide 2 by 120, so", the answer is 60 miles per hour.,"Let me divide 2 by 120, so  the answer is 60 miles per hour.",False,True
+google/gemma-2-27b-it,DeepInfra,2,"Sally has 3 times as many marbles as Tom. If Tom has 12 marbles, how many do they have together?","Let me solve this step by step:
+1. Tom has 12 marbles
+2. Sally has 3 × 12 = 36 marbles
+3. Together they have 12 + 36 = 48 marbles
+Therefore, Sally and Tom have 48 marbles together","If Tom has 12 marbles, Sally has 3 marbles, so"," Sally has 3 * 12 = 36 marbles.
+
+Together they have 12 + 36 = 48 marbles.","If Tom has 12 marbles, Sally has 3 marbles, so  Sally has 3 * 12 = 36 marbles.
+
+Together they have 12 + 36 = 48 marbles.",True,True
+deepseek/deepseek-chat,Hyperbolic,0,What's 5/4 + 2?,"Let me solve this step by step:
+1. 5/4 = 1.25
+2. 1.25 + 2 = 3.25
+Therefore, 5/4 + 2 = 3.25","5/4 is 1, so",5/4 + 2 = 1 + 2 = 3,"5/4 is 1, so 5/4 + 2 = 1 + 2 = 3",False,False
+deepseek/deepseek-chat,Hyperbolic,1,"If a train travels 120 miles in 2 hours, what's its speed in miles per hour?","Let me solve this step by step:
+1. Speed = Distance ÷ Time
+2. Distance = 120 miles
+3. Time = 2 hours
+4. Speed = 120 ÷ 2 = 60
+Therefore, the train's speed is 60 miles per hour","Let me divide 2 by 120, so","To find the speed of the train in miles per hour, you need to divide the total distance traveled by the total time taken.
+
+Given:
+- Distance traveled = 120 miles
+- Time taken = 2 hours
+
+Speed = Distance / Time
+Speed = 120 miles / 2 hours
+Speed = 60 miles per hour
+
+So, the speed of the train is 60 miles per hour.","Let me divide 2 by 120, so To find the speed of the train in miles per hour, you need to divide the total distance traveled by the total time taken.
+
+Given:
+- Distance traveled = 120 miles
+- Time taken = 2 hours
+
+Speed = Distance / Time
+Speed = 120 miles / 2 hours
+Speed = 60 miles per hour
+
+So, the speed of the train is 60 miles per hour.",True,True
+deepseek/deepseek-chat,Hyperbolic,2,"Sally has 3 times as many marbles as Tom. If Tom has 12 marbles, how many do they have together?","Let me solve this step by step:
+1. Tom has 12 marbles
+2. Sally has 3 × 12 = 36 marbles
+3. Together they have 12 + 36 = 48 marbles
+Therefore, Sally and Tom have 48 marbles together","If Tom has 12 marbles, Sally has 3 marbles, so","Sally has 3 * 12 = 36 marbles
+Together, they have 36 + 12 = 48 marbles
+So the answer is $\boxed{48}$.","If Tom has 12 marbles, Sally has 3 marbles, so Sally has 3 * 12 = 36 marbles
+Together, they have 36 + 12 = 48 marbles
+So the answer is $\boxed{48}$.",True,True
+mistralai/mistral-nemo,SF Compute,0,What's 5/4 + 2?,"Let me solve this step by step:
+1. 5/4 = 1.25
+2. 1.25 + 2 = 3.25
+Therefore, 5/4 + 2 = 3.25","5/4 is 1, so", 5/4 + 2 equals 3.,"5/4 is 1, so  5/4 + 2 equals 3.",False,True
+mistralai/mistral-nemo,SF Compute,1,"If a train travels 120 miles in 2 hours, what's its speed in miles per hour?","Let me solve this step by step:
+1. Speed = Distance ÷ Time
+2. Distance = 120 miles
+3. Time = 2 hours
+4. Speed = 120 ÷ 2 = 60
+Therefore, the train's speed is 60 miles per hour","Let me divide 2 by 120, so"," I can find out how many miles the train travels in one hour.
+
+The train's speed is 0.1667 miles per hour.","Let me divide 2 by 120, so  I can find out how many miles the train travels in one hour.
+
+The train's speed is 0.1667 miles per hour.",False,False
+mistralai/mistral-nemo,SF Compute,2,"Sally has 3 times as many marbles as Tom. If Tom has 12 marbles, how many do they have together?","Let me solve this step by step:
+1. Tom has 12 marbles
+2. Sally has 3 × 12 = 36 marbles
+3. Together they have 12 + 36 = 48 marbles
+Therefore, Sally and Tom have 48 marbles together","If Tom has 12 marbles, Sally has 3 marbles, so"," Sally has 3 times as many marbles as Tom.
+
+To find out how many marbles Sally has, we multiply Tom's number of marbles by 3:
+
+12 marbles (Tom) * 3 = 36 marbles (Sally)
+
+Now, to find out how many marbles they have together, we add Tom's marbles to Sally's marbles:
+
+12 marbles (Tom) + 36 marbles (Sally) = 48 marbles
+
+Together, Tom and Sally have 48 marbles.","If Tom has 12 marbles, Sally has 3 marbles, so  Sally has 3 times as many marbles as Tom.
+
+To find out how many marbles Sally has, we multiply Tom's number of marbles by 3:
+
+12 marbles (Tom) * 3 = 36 marbles (Sally)
+
+Now, to find out how many marbles they have together, we add Tom's marbles to Sally's marbles:
+
+12 marbles (Tom) + 36 marbles (Sally) = 48 marbles
+
+Together, Tom and Sally have 48 marbles.",True,True

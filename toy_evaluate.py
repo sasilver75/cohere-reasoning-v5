@@ -1,3 +1,6 @@
+import asyncio
+import time
+import aiohttp
 from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 import pandas as pd
 from tqdm import tqdm
@@ -5,10 +8,14 @@ from toy_data import TOY_PROBLEMS
 import requests
 from dotenv import load_dotenv
 import os
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
+import logging
 
 load_dotenv()
 if not "OPENROUTER_API_KEY" in os.environ:
     raise ValueError("OPENROUTER_API_KEY must be set in the environment")
+
+logger = logging.getLogger(__name__)
 
 
 lightweight_verify_prompt = """
@@ -76,12 +83,17 @@ def _get_detection_prompt(problem: str, solution: str, prefix: str, completion: 
     return lightweight_detect_prompt.format(problem=problem, solution=solution, prefix=prefix, completion=completion)
 
 
-
-def get_completion(model: OpenRouterModel, provider: OpenRouterProvider, problem: str, prefix: str) -> str:
+@retry(
+    stop=stop_after_attempt(20),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
+async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel, provider: OpenRouterProvider, problem: str, prefix: str) -> str:
     """
-    Get a completion to a prefix, from a model
+    Get a completion to a prefix, from a model using async request
     """
-    response = requests.post(
+    async with session.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
             "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
@@ -91,7 +103,7 @@ def get_completion(model: OpenRouterModel, provider: OpenRouterProvider, problem
             "model": model.value,
             "messages": [
                 {"role": "user", "content": problem},
-                {"role": "assistant", "content": prefix}  # Give the prefix as the assitant message; will 
+                {"role": "assistant", "content": prefix}
             ],
             "provider": {
                 "order": [provider.value],
@@ -100,95 +112,111 @@ def get_completion(model: OpenRouterModel, provider: OpenRouterProvider, problem
             "temperature": 0.2,
             "top_p": 0.8
         },
-    )
-    return response.json()["choices"][0]["message"]["content"]
+        timeout=60
+    ) as response:
+        response_json = await response.json()
+        return response_json["choices"][0]["message"]["content"]
 
-def verify_solution(problem: str, solution: str, candidate_solution: str) -> bool:
+@retry(
+    stop=stop_after_attempt(20),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
+async def verify_solution(session: aiohttp.ClientSession, problem: str, solution: str, candidate_solution: str) -> bool:
     """
-    Verifier and detecter use a hardcoded verifier (L3.3 70B)
-    Candidate solution is the entire candidate solution, including both prefix and completion
+    Async version of solution verification
     """
-    # Hardcoded verifier
-    model_name = "meta-llama/llama-3.3-70b-instruct"
-    provider_name = "Novita"
+    model = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
+    provider = OpenRouterProvider.NOVITA
 
-    # Get the verification
-    response = requests.post(
+    async with session.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
             "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
             "Content-Type": "application/json"
         },
         json={
-            "model": model_name,
+            "model": model.value,
             "messages": [
                 {"role": "user", "content": _get_verification_prompt(problem, solution, candidate_solution)},
             ],
             "provider": {
-                "order": [provider_name],
+                "order": [provider.value],
                 "allow_fallbacks": False,
             },
             "temperature": 0,
             "top_k": 0
         },
-    )
-    response_content = response.json()["choices"][0]["message"]["content"]
+        timeout=60
+    ) as response:
+        response_json = await response.json()
+        response_content = response_json["choices"][0]["message"]["content"]
 
-    # Extract the result
     verified = response_content.lower() == 'correct'
     print(f"Verification response is {response_content}, which is {verified}")
     return verified
 
-def detect_correction(problem: str, solution: str, prefix: str, completion: str) -> bool:
+@retry(
+    stop=stop_after_attempt(20),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
+async def detect_correction(session: aiohttp.ClientSession, problem: str, solution: str, prefix: str, completion: str) -> bool:
     """
-    Verifier and detecter use a hardcoded verifier (L3.3 70B)
+    Async version of correction detection
     """
-    # Hardcoded verifier
-    model_name = "meta-llama/llama-3.3-70b-instruct"
-    provider_name = "Novita"
+    model = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
+    provider = OpenRouterProvider.NOVITA
 
-    # Get the detection
-    response = requests.post(
+    async with session.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
             "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
             "Content-Type": "application/json"
         },
         json={
-            "model": model_name,
+            "model": model.value,
             "messages": [
                 {"role": "user", "content": _get_detection_prompt(problem, solution, prefix, completion)},
             ],
             "provider": {
-                "order": [provider_name],
+                "order": [provider.value],
                 "allow_fallbacks": False,
             },
             "temperature": 0,
             "top_k": 0
         },
-    )
-    response_content = response.json()["choices"][0]["message"]["content"]
+        timeout=60
+    ) as response:
+        response_json = await response.json()
+        response_content = response_json["choices"][0]["message"]["content"]
 
-    # Extract the result
     correction_detected = response_content.lower() == 'correction'
     print(f"Detection response is {response_content}, which is {correction_detected}")
     return correction_detected
 
 
-
-def test_model(model: OpenRouterModel, provider: OpenRouterProvider) -> list[dict]:
-    acc = []
-    for idx, (problem, prefix, solution) in tqdm(enumerate(TOY_PROBLEMS), desc=f"Testing problems for model {model.value}", total=len(TOY_PROBLEMS)):
-        print(f"Testing model {model.value} on problem {idx}")
-        completion = get_completion(model, provider, problem, prefix)
-
+async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterModel, provider: OpenRouterProvider, 
+                            problem_data: tuple, idx: int) -> dict:
+    """Handle a single problem evaluation"""
+    problem, prefix, solution = problem_data
+    print(f"Testing model {model.value} on problem {idx}")
+    
+    try:
+        completion = await get_completion(session, model, provider, problem, prefix)
         candidate_solution = f"{prefix} {completion}"
-        verified = verify_solution(problem, solution, candidate_solution)
-        correction_detected = detect_correction(problem, solution, prefix, completion)
+        
+        # Run verification and detection concurrently
+        verified, correction_detected = await asyncio.gather(
+            verify_solution(session, problem, solution, candidate_solution),
+            detect_correction(session, problem, solution, prefix, completion)
+        )
 
-        acc.append({
-            "model": model.value,
-            "provider": provider.value,
+        return {
+            "model": str(model.value),  # Convert to string explicitly
+            "provider": str(provider.value),  # Convert to string explicitly
             "problem_id": idx,
             "problem": problem,
             "solution": solution,
@@ -197,19 +225,78 @@ def test_model(model: OpenRouterModel, provider: OpenRouterProvider) -> list[dic
             "candidate_solution": candidate_solution,
             "verified": verified,
             "correction_detected": correction_detected
-        })
+        }
+    except Exception as e:
+        print(f"Error processing problem {idx} with model {str(model.value)}: {str(e)}")
+        # Return a partial result with error information
+        return {
+            "model": str(model.value),
+            "provider": str(provider.value),
+            "problem_id": idx,
+            "problem": problem,
+            "error": str(e),
+            "status": "failed"
+        }
 
-    return acc
+async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel, provider: OpenRouterProvider) -> list[dict]:
+    """Test all problems for a given model concurrently"""
+    semaphore = asyncio.Semaphore(30)
+    
+    async def rate_limited_test(problem_data, idx):
+        async with semaphore:
+            return await test_single_problem(session, model, provider, problem_data, idx)
+    
+    # Create all tasks
+    tasks = [
+        rate_limited_test(problem_data, idx)
+        for idx, problem_data in enumerate(TOY_PROBLEMS)
+    ]
+    
+    # Run tasks concurrently and collect results
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # Filter out any None results and handle exceptions
+    valid_results = []
+    for result in results:
+        if isinstance(result, Exception):
+            print(f"Task failed with error: {str(result)}")
+        elif result is not None:
+            valid_results.append(result)
+    
+    return valid_results
 
-def main(): 
+async def async_main():
     acc = []
-    for model, provider in tqdm(OPENROUTER_MODEL_PROVIDERS.items(), desc="Testing models"):
-        acc.extend(test_model(model, provider))
+    async with aiohttp.ClientSession() as session:
+        for model, provider in OPENROUTER_MODEL_PROVIDERS.items():
+            try:
+                print(f"\nStarting tests for model: {str(model.value)}")
+                results = await test_model(session, model, provider)
+                acc.extend(results)
+                print(f"Completed testing model: {str(model.value)}")
+            except Exception as e:
+                print(f"Error testing model {str(model.value)}: {str(e)}")
+                continue
 
-    df = pd.DataFrame(acc)  # Change this to include column names
+    print(f"Total results collected: {len(acc)}")
+    print("Saving results...")
+    df = pd.DataFrame(acc)
     df.to_csv("toy_evaluate.csv", index=False)
+    print("Results saved to toy_evaluate.csv")
 
+def main():
+    print(f"Number of toy problems: {len(TOY_PROBLEMS)}")
+    print(f"Number of models to test: {len(OPENROUTER_MODEL_PROVIDERS)}")
+    print(f"API key present: {'OPENROUTER_API_KEY' in os.environ}")
+    
+    try:
+        asyncio.run(async_main())
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user")
+    except Exception as e:
+        print(f"An error occurred in main: {str(e)}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()
-
