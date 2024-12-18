@@ -204,7 +204,7 @@ def test_model(model: OpenRouterModel, provider: OpenRouterProvider) -> list[dic
 def main(): 
     acc = []
     for model, provider in tqdm(OPENROUTER_MODEL_PROVIDERS.items(), desc="Testing models"):
-        acc.append(test_model(model, provider))
+        acc.extend(test_model(model, provider))
 
     df = pd.DataFrame(acc)  # Change this to include column names
     df.to_csv("toy_evaluate.csv", index=False)
