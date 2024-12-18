@@ -6,8 +6,8 @@ import pandas as pd
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer=OpenRouterModel.QWEN_2_5_72B_INSTRUCT)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "experiment-ZEBRAMC-qwen2.5_70b-20-12_17_2024"  # The name of the experiment; used for directory naming for results.
+HELPER = OpenRouterExperimentHelper(strong_completer=OpenRouterModel.QWEN_2_5_72B_INSTRUCT, prefix_size=.9)  # Encapsulates logic about the specific models we're using
+EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-20-12_17_2024-with.9cutoff"  # The name of the experiment; used for directory naming for results.
 SOURCE_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems_on_policy_solutions.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems_completed.csv")
 N_COMPLETIONS_PER_PREFIX = 2  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.

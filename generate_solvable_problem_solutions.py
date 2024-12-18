@@ -14,9 +14,9 @@ from the cohere-reasoning-v4 project.
 """
 
 # TUNABLE PARAMETERS
-HELPER = OpenRouterExperimentHelper(strong_completer=OpenRouterModel.QWEN_2_5_72B_INSTRUCT)  # Encapsulates logic about the specific models we're using
-EXPERIMENT_NAME = "experiment-ZEBRAMC-qwen2.5_70b-20-12_17_2024"  # The name of the experiment; used for directory naming for results.
-SOURCE_PATH = Path("datasets/original/zebralogic_mc.csv")
+HELPER = OpenRouterExperimentHelper(strong_completer=OpenRouterModel.QWEN_2_5_72B_INSTRUCT, prefix_size=.9)  # Encapsulates logic about the specific models we're using
+EXPERIMENT_NAME = "experiment-MATH-qwen2.5_70b-20-12_17_2024-with.9cutoff"  # The name of the experiment; used for directory naming for results.
+SOURCE_PATH = Path("datasets/original/competition_math.csv")
 SINK_PATH = Path(f"datasets/experiments/{EXPERIMENT_NAME}/interesting_problems.csv")  # The path to save the file to
 TARGET_N_SOLVABLE_PROBLEMS = 20  # The number of solvable problems we want to identify. Note that the stronger the model and the lower the success rate bounds, the more problems we'll have to evaluate (and the more requests we'll make)
 N_SOLUTION_ATTEMPTS_PER_PROBLEM = 10  # For each problem, the number of solution attempts over which we'll evaluate problem difficulty. Note that without retries we'll have 2*{N_SOLUTION_ATTEMPTS_PER_PROBLEM} API calls per problem.

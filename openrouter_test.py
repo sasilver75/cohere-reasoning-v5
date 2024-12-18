@@ -31,8 +31,8 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = "google/gemma-2-27b-it"
-PROVIDER = OpenRouterProvider.DEEPINFRA
+MODEL = "meta-llama/llama-3.1-405b-instruct"
+PROVIDER = OpenRouterProvider.AVIAN
 
 # Straight shot example
 # print(f"STAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
@@ -88,4 +88,3 @@ for user_turn, assistant_turn in prompts:
     response = requests.post(url, headers=headers, json=data)
     print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
 print(f"END OF COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")   
-

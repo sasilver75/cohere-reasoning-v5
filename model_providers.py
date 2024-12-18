@@ -14,6 +14,7 @@ class OpenRouterProvider(Enum):
     DEEPINFRA = "DeepInfra"
     HYPERBOLIC = "Hyperbolic"
     NOVITA = "Novita"
+    AVIAN = "Avian"
 
 
 OPENROUTER_MODEL_PROVIDERS = {

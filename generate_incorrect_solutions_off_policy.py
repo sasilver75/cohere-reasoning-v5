@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 import asyncio
 from time import perf_counter
-from models import CohereExperimentHelper
+from experiment_helpers import CohereExperimentHelper
 import logging
 from tqdm.asyncio import tqdm_asyncio as atqdm
 
