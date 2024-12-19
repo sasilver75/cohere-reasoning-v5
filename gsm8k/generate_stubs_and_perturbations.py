@@ -13,13 +13,6 @@ import re
 import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 
-"""
-This was my first attempt at taking a stab at the GSM8k dataset
-https://sasilver0051g-lbx2356.slack.com/archives/C07E794RAFJ/p1734586887486259?thread_ts=1734579417.516549&cid=C07E794RAFJ
-Instead of this, I think we'd like to do the following: 
-
-"""
-
 load_dotenv()
 if not "OPENROUTER_API_KEY" in os.environ:
     raise ValueError("OPENROUTER_API_KEY must be set in the environment")
