@@ -1,13 +1,15 @@
 import asyncio
 import time
 import aiohttp
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 import pandas as pd
 from tqdm import tqdm
 from toy_data import TOY_PROBLEMS
 import requests
 from dotenv import load_dotenv
-import os
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 import logging
 

@@ -10,7 +10,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Load the CSV file
-csv_path = "toy_evaluate.csv"
+csv_path = "toy/toy_evaluate.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
     exit(1)
