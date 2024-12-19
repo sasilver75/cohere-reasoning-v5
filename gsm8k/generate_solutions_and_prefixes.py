@@ -17,21 +17,63 @@ if not "OPENROUTER_API_KEY" in os.environ:
 
 logger = logging.getLogger(__name__)
 
-# For rate limiting
+# Configuration
 TOKEN_BUCKET = TokenBucket(400)
+MODEL = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
+PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
+    "Content-Type": "application/json"
+}
 
-lightweight_generate_prompt = """..."""
-lightweight_verify_prompt = """..."""
-lightweight_prefix_prompt = """..."""
+lightweight_solution_prompt =  """
+Solve the following math or reasoning problem, clearly presenting your reasoning and final answer.
 
-def _get_generate_prompt() -> str:
-    ...
+Your input is as follows:
+<problem>
+{problem}
+</problem>
+"""
 
-def _get_verify_prompt() -> str:
-    ...
+lightweight_verify_prompt = """
+You will be given the following:
+- A math problem
+- The ground-truth answer to the problem
+- A candidate solution, which contains both a reasoning process and a final answer
+
+Your goal is to determine if the candidate solution is correct.
+You will output a single word, "correct" or "incorrect", to indicate if the candidate solution is a valid solution to the problem.
+You should only care about the final answer presented in the candidate solution.
+
+Your input is as follows:
+<problem>
+{problem}
+</problem>
+<ground_truth_answer>
+{answer}
+</ground_truth_answer>
+<candidate_solution>
+{solution}
+</candidate_solution>
+
+Now, evaluate the candidate solution by outputting either "correct" or "incorrect", considering the final answer produced.
+Do not output any other text than "correct" or "incorrect". Do not output any form of reasoning or explanation. Only output "correct" or "incorrect", this is absolutely critical.
+"""
+
+lightweight_prefix_prompt = """..."""  # TODO
+
+def _get_solution_prompt(problem: str) -> str:
+    return lightweight_solution_prompt.format(problem=problem)
+    
+
+def _get_verify_prompt(problem: str, answer: str, solution: str) -> str:
+    return lightweight_verify_prompt.format(problem=problem, answer=answer, solution=solution)
 
 def _get_prefix_prompt() -> str:
+    # TODO
     ...
+
 
 @retry(
     stop=stop_after_attempt(5),
@@ -39,9 +81,25 @@ def _get_prefix_prompt() -> str:
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def generate_solution() -> str:
+async def generate_solution(problem: str, session: aiohttp.ClientSession) -> str:
     await TOKEN_BUCKET.acquire()
-    ...
+    
+    async with session.post(
+        COMPLETION_URL,
+        headers=HEADERS,
+        json = {
+            "model": MODEL.value,
+            "messages": [
+                {"role": "user", "content": _get_solution_prompt(problem)},
+            ],
+            "temperature": .2,
+            "top_p": 0.8,
+        },
+        timeout=60
+    ) as response:
+        response_json = await response.json()
+        return response_json["choices"][0]["message"]["content"]
+    
 
 @retry(
     stop=stop_after_attempt(5),
@@ -49,9 +107,29 @@ async def generate_solution() -> str:
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def verify_solution() -> bool:
+async def verify_solution(problem: str, answer: str, solution: str, session: aiohttp.ClientSession) -> bool:
     await TOKEN_BUCKET.acquire()
-    ...
+    
+    async with session.post(
+        COMPLETION_URL,
+        headers=HEADERS,
+        json = {
+            "model": MODEL.value,
+            "messages": [
+                {"role": "user", "content": _get_verify_prompt(problem, answer, solution)}
+            ],
+            "temperature": 0,
+            "top_k": 0  # Use Greedy for verification
+        },
+        timeout=60
+    ) as response:
+        response_json = await response.json()
+        response_content = response_json["choices"][0]["message"]["content"]
+    
+    verified = response_content.lower() == 'correct'
+    print(f"Verification response is {response_content}, which is {verified}")
+    return verified
+
 
 @retry(
     stop=stop_after_attempt(5),
@@ -59,53 +137,65 @@ async def verify_solution() -> bool:
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def generate_prefix() -> str:
+async def generate_prefix(problem: str, solution: str, session: aiohttp.ClientSession) -> str:
     await TOKEN_BUCKET.acquire()
     ...
 
 
-async def process_row(row: pd.Series) -> dict:
+async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
+    row_id = row["row_id"]
+    problem = row["problem"]
+    reasoning = row["reasoning"]
+    answer = row["solution"]  # TODO: This is a little messy, can we just change what we name it in download_gsm8k.py?
 
     # Attempt to generate a correct, verified solution
     N_ATTEMPTS = 10
     for _ in range(N_ATTEMPTS):
-        solution = await generate_solution(row)
-        verified = await verify_solution(solution)
+        solution = await generate_solution(problem, session)
+        verified = await verify_solution(problem, answer, solution, session)
         if verified:
             break
     else:
         raise ValueError(f"Failed to generate a correct solution after {N_ATTEMPTS} attempts for row {row['row_id']}")
     
-
-    prefix = await generate_prefix(row, solution)
+    # prefix = await generate_prefix(problem, solution, session)
+    prefix = "Placeholder"  # I want to look at some solutions to think about few-shots, then implement the prompt with examples.
 
     return {
-        "row_id": row["row_id"],
-        "problem": row["problem"],
-        "ground_truth_reasoning": row["reasoning"],
-        "ground_truth_solution": row["solution"],
+        "row_id": row_id,
+        "problem": problem,
+        "ground_truth_reasoning": reasoning,
+        "ground_truth_solution": answer,
         "verified_solution": solution,
         "prefix": prefix,
     }
 
 
 async def main():
+    # Load dataset
     print(f"Loading GSM8k datasset...")
     df = pd.read_csv("datasets/original/gsm8k.csv")
+    # TODO: REMOVE THIS LINE BELOW
+    df = df.head(25)
+    # TODO: REMOVE THIS LINE ABOVE
     print(f"Loaded GSM8k datasset with {len(df)} rows and columns {list(df.columns)}")
 
-    acc = []
-    tasks = [process_row(row) for _, row in df.iterrows()]
-    with tqdm(total=len(tasks), desc="Processisng rows") as pbar:
-        for coro in asyncio.as_completed(tasks):
-            result = await coro
-            acc.append(result)
-            pbar.update(1)
+    # Process the rows
+    async with aiohttp.ClientSession() as session:
+        acc = []
+        tasks = [process_row(row, session) for _, row in df.iterrows()]
+        with tqdm(total=len(tasks), desc="Processing rows") as pbar:
+            for coro in asyncio.as_completed(tasks):
+                result = await coro
+                acc.append(result)
+                pbar.update(1)
 
     
     # Convert the list of dicts to a dataframe and save
     df = pd.DataFrame(acc)
-    df.to_csv("gsm8k/datsets/gsm8k_solutions_and_prefixes.csv", index=False)
+    filepath = "gsm8k/datasets/gsm8k_solutions_and_prefixes.csv"    
+    df.to_csv(filepath, index=False)
+    print(f"Saved to {filepath}")
 
     
 
