@@ -76,7 +76,7 @@ TOY_PROBLEMS = [
     ),
     (
         "A box contains red, blue, and green marbles. If 1/3 are red, 1/4 are blue, what fraction are green?",
-        "Let me add 1/3 + 1/4 to get 7/12 for red and blue combined. So green must be 5/12 because",  # Wrong fraction addition
+        "Let me add 1/3 + 1/4 to get 8/12 for red and blue combined. So green must be 4/12 because",  # Wrong fraction addition
         "Let me solve this step by step:\n1. Convert to common denominator of 12:\n   - Red: 1/3 = 4/12\n   - Blue: 1/4 = 3/12\n2. Red and blue together = 4/12 + 3/12 = 7/12\n3. Total must be 12/12 (or 1)\n4. Green = 12/12 - 7/12 = 5/12\nTherefore, 5/12 of the marbles are green"
     ),
     (
@@ -93,11 +93,6 @@ TOY_PROBLEMS = [
         "A factory produces widgets in three colors: red, blue, and green. They made 1200 widgets last month. If red widgets take 2 hours to make, blue widgets take 3 hours, and green widgets take 4 hours, and the factory spent exactly 3000 hours on production, how many of each color did they make?",
         "Let's solve this step by step:\n1. Let's say we have r red, b blue, and g green widgets\n2. We know r + b + g = 1200\n3. And 2r + 3b + 4g = 3000\n4. Since red widgets are fastest, let's maximize those first, so",  # Error in step 4 - wrong approach
         "Let me solve this step by step:\n1. Let r, b, g be the number of red, blue, green widgets\n2. Equation 1: r + b + g = 1200 (total widgets)\n3. Equation 2: 2r + 3b + 4g = 3000 (total hours)\n4. From Equation 1: r = 1200 - b - g\n5. Substitute into Equation 2:\n   2(1200 - b - g) + 3b + 4g = 3000\n   2400 - 2b - 2g + 3b + 4g = 3000\n   2400 + b + 2g = 3000\n   b + 2g = 600\n6. Solve system:\n   b = 600 - 2g\n   r = 1200 - (600 - 2g) - g = 600 + g\n7. All values must be positive, solving gives:\n   g = 200, b = 200, r = 800\nTherefore, they made 800 red, 200 blue, and 200 green widgets"
-    ),
-    (
-        "In a game, players move through rooms numbered 1 to 20. Each turn, they roll a die and move forward that many spaces. If they land on a multiple of 4, they move back 2 spaces. If they land on a prime number, they move forward 1 space. Starting from room 1, what's the minimum number of rolls needed to reach room 20?",
-        "Let's track this:\n1. From room 1, we need to get to room 20, so we need to cover 19 spaces\n2. The best rolls would be all 6s\n3. With three rolls of 6, we'd reach rooms 7, 13, and 19, so",  # Error in step 3
-        "Let me solve this step by step:\n1. Start at room 1\n2. Roll 6: Move to 7 (prime, +1) → room 8 (multiple of 4, -2) → room 6\n3. Roll 6: Move to 12 (multiple of 4, -2) → room 10\n4. Roll 6: Move to 16 (multiple of 4, -2) → room 14\n5. Roll 6: Move to 20\nTherefore, it takes a minimum of 4 rolls to reach room 20"
     ),
     (
         "A baker makes cakes that require 3 eggs, 2 cups of flour, and 1 cup of sugar each. Cookies require 1 egg, 1 cup of flour, and 1/2 cup of sugar each. If the baker has 24 eggs, 20 cups of flour, and 12 cups of sugar, and wants to maximize the total number of items made, how many of each should they bake?",
@@ -149,4 +144,54 @@ TOY_PROBLEMS = [
         "Let's solve this:\n1. When gears mesh, their rotations are inversely proportional to their teeth\n2. From first to second gear: 12/36 = 1/3, so second gear makes 20 rotations\n3. From second to third: 36/24 = 3/2, so third gear makes 30 rotations\n4. Therefore, when first gear makes 60 rotations, third gear makes",  # Error in gear ratio calculation
         "Let me solve this step by step:\n1. First to second gear ratio: 12:36 = 1:3\n   - When first gear makes 60 rotations\n   - Second gear makes 60 × (12/36) = 20 rotations\n2. Second to third gear ratio: 36:24 = 3:2\n   - When second gear makes 20 rotations\n   - Third gear makes 20 × (36/24) = 30 rotations\nTherefore, the third gear makes 30 complete rotations"
     ),
+    (
+        "A recipe calls for 3/4 cup of sugar to make 12 cookies. How much sugar is needed to make 30 cookies?",
+        "To make 30 cookies, that's 2.5 times more cookies, so I'll add 2.5 to 3/4 cup to find the new amount of",  # Error: adding instead of multiplying
+        "Let me solve this step by step:\n1. Current recipe: 12 cookies needs 3/4 cup sugar\n2. New amount: 30 cookies = 12 × 2.5\n3. Sugar needed = 3/4 × 2.5 = 15/8 = 1.875\nTherefore, 1.875 cups of sugar are needed"
+    ),
+    (
+        "In a game, you score 3 points for each red target and lose 2 points for each blue target. If you hit 8 red targets and 5 blue targets, what's your final score?",
+        "Let me calculate: 8 red targets is 24 points, 5 blue targets is 10 points, now I'll add these together since all points should be",  # Error: adding penalty instead of subtracting
+        "Let me solve this step by step:\n1. Points from red targets: 8 × 3 = 24 points\n2. Points from blue targets: 5 × (-2) = -10 points\n3. Final score = 24 - 10 = 14\nTherefore, the final score is 14 points"
+    ),
+    (
+        "A triangle has angles measuring x, 2x, and 3x. What is the value of x?",
+        "Since it's a triangle, like a circle, x + 2x + 3x must equal 360, and now I can solve for",  # Error: using 360 instead of 180
+        "Let me solve this step by step:\n1. In a triangle, angles sum to 180\n2. So: x + 2x + 3x = 180\n3. Combine like terms: 6x = 180\n4. Solve for x: x = 30\nTherefore, x = 30"
+    ),
+    (
+        "A store sells candies in bags of 6 for $2.40. How much would 15 candies cost?",
+        "If 6 candies cost $2.40, then each candy costs $2.40 ÷ 6 = $0.40. Now I'll add $0.40 repeatedly until I reach",  # Error: adding instead of multiplying unit price
+        "Let me solve this step by step:\n1. Cost per candy = $2.40 ÷ 6 = $0.40\n2. Cost for 15 candies = 15 × $0.40 = $6.00\nTherefore, 15 candies would cost $6.00"
+    ),
+    (
+        "A square room has an area of 64 square feet. If you want to place a border of tiles around the edge of the room, how many 1-foot tiles do you need?",
+        "The area is 64 sq ft, so each side is 8 feet. To find the number of tiles needed around the edge, I'll multiply 8 × 8 since that's how many tiles would cover",  # Error: calculating area instead of perimeter
+        "Let me solve this step by step:\n1. Area = 64 sq ft, so side length = 8 feet (since 8 × 8 = 64)\n2. Perimeter = 4 × side length = 4 × 8 = 32\n3. Each tile is 1 foot, so need one tile per foot\nTherefore, you need 32 tiles"
+    ),
+    (
+        "At a fair, balloons come in packs of 5 for $3. If you need 23 balloons, how much will you spend?",
+        "First, I'll divide 23 by 5:\n23 ÷ 5 = 4 remainder 3\nThen multiply $3 by 4 since that's how many complete packs we need. The remaining 3 balloons will be free because",  # Error: assuming remaining balloons are free
+        "Let me solve this step by step:\n1. Need 23 balloons, packs contain 5 balloons\n2. Number of packs needed = ceil(23 ÷ 5) = 5 packs\n3. Cost = 5 packs × $3 = $15\nTherefore, you will spend $15"
+    ),
+    (
+        "In a sequence, each number is found by doubling the previous number and subtracting 1. If the sequence starts with 4, what's the 4th number?",
+        "Step 1: Start with 4\nStep 2: Double it to get 8, subtract 1 to get 7\nStep 3: Double 7 to get 14, subtract 1 to get 13\nStep 4: Now I'll double 13 and",  # Error: correct process but unfinished
+        "Let me solve this step by step:\n1. Start: 4\n2. Next: (4 × 2) - 1 = 7\n3. Then: (7 × 2) - 1 = 13\n4. Finally: (13 × 2) - 1 = 25\nTherefore, the 4th number is 25"
+    ),
+    (
+        "A cylindrical water tank has a radius of 3 feet and height of 4 feet. How many cubic feet of water can it hold?",
+        "> Starting with radius = 3 feet\n> Area of base = π × radius squared\n> So area = 3.14 × 3 × 3\n> Now multiply by height because",  # Error: using 3.14 instead of π and showing calculation
+        "Let me solve this step by step:\n1. Volume = π × radius² × height\n2. Radius = 3 feet\n3. Height = 4 feet\n4. Volume = π × 3² × 4 = 113.1 cubic feet\nTherefore, the tank can hold 113.1 cubic feet of water"
+    ),
+    (
+        "If 15% of a number is 45, what is 25% of the same number?",
+        "1) First find the number:\n   - 15% means multiply by 0.15\n   - So if 0.15x = 45\n2) Now add 10% to 45 since 25% is 10% more than 15%, which means",  # Error: adding percentage difference instead of solving proportionally
+        "Let me solve this step by step:\n1. Let x be the number\n2. 15% of x = 45\n3. 0.15x = 45\n4. x = 300\n5. 25% of x = 0.25 × 300 = 75\nTherefore, 25% of the number is 75"
+    ),
+    (
+        "Three friends split a bill of $85. The first pays 20% more than the second, who pays 20% more than the third. How much does each person pay?",
+        "Let's work backwards:\n1) Total is $85\n2) First pays 20% more than second\n3) Second pays 20% more than third\n4) So if we divide $85 by 3 to get the average, then adjust by 20% for each person, that means",  # Error: dividing equally first
+        "Let me solve this step by step:\n1. Let third person's payment be x\n2. Second pays 1.2x\n3. First pays 1.2(1.2x) = 1.44x\n4. Total equation: x + 1.2x + 1.44x = 85\n5. 3.64x = 85\n6. x = 23.35\n7. Second pays: 28.02\n8. First pays: 33.63\nTherefore, they pay $33.63, $28.02, and $23.35"
+    )
 ]

@@ -77,6 +77,43 @@ def create_recovery_plot():
     
     return base64.b64encode(img.getvalue()).decode()
 
+def create_problem_difficulty_plot():
+    # Pivot the data to get problems on x-axis and models as different lines
+    pivot_data = df.pivot(index='problem_id', columns='model', values='verified')
+    
+    # Set up the plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    
+    # Create a scatter plot for each model with slight vertical offsets to avoid overlap
+    models = pivot_data.columns
+    for i, model in enumerate(models):
+        offset = i * 0.1  # Small vertical offset for each model
+        # Convert boolean to 0/1 and add offset
+        y_values = pivot_data[model].astype(int) + offset
+        ax.scatter(pivot_data.index, y_values, label=model, alpha=0.6, marker='o')
+
+    # Customize the plot
+    ax.set_title('Problem Success Pattern by Model')
+    ax.set_xlabel('Problem ID')
+    ax.set_ylabel('Success (0=False, 1=True)')
+    ax.set_yticks([0, 1])
+    ax.set_yticklabels(['Failed', 'Succeeded'])
+    ax.grid(True, linestyle='--', alpha=0.7)
+    
+    # Move legend to the right side of the plot
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout()
+
+    # Convert plot to base64 string
+    img = io.BytesIO()
+    plt.savefig(img, format='png', bbox_inches='tight', dpi=120)
+    img.seek(0)
+    plt.close()
+    
+    return base64.b64encode(img.getvalue()).decode()
+
 @app.route("/")
 def stats():
     # Calculate statistics for each model
@@ -92,6 +129,7 @@ def stats():
     
     # Create the recovery rate plot
     plot_url = create_recovery_plot()
+    difficulty_plot_url = create_problem_difficulty_plot()
     
     return render_template_string("""
         <!DOCTYPE html>
@@ -190,9 +228,13 @@ def stats():
             <div class="chart-container">
                 <img src="data:image/png;base64,{{ plot_url }}" alt="Recovery Rates by Model">
             </div>
+
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ difficulty_plot_url }}" alt="Problem Difficulty Pattern">
+            </div>
         </body>
         </html>
-    """, model_stats=model_stats, plot_url=plot_url)
+    """, model_stats=model_stats, plot_url=plot_url, difficulty_plot_url=difficulty_plot_url)
 
 @app.route("/completions")
 def view_completions():
