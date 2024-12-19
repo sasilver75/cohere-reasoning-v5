@@ -109,7 +109,25 @@ def stats():
                     margin: 0 auto;
                 }
                 .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                     margin-bottom: 20px;
+                }
+                .header-buttons {
+                    display: flex;
+                    gap: 10px;
+                }
+                .header-button {
+                    text-decoration: none;
+                    color: white;
+                    background-color: #007bff;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    transition: background-color 0.2s;
+                }
+                .header-button:hover {
+                    background-color: #0056b3;
                 }
                 .stats-container {
                     background-color: #f4f4f4;
@@ -151,6 +169,9 @@ def stats():
         <body>
             <div class="header">
                 <h1>GSM8K Completions Overview</h1>
+                <div class="header-buttons">
+                    <a href="{{ url_for('view_problems') }}" class="header-button">View Problems</a>
+                </div>
             </div>
             
             <div class="stats-container">
@@ -348,6 +369,138 @@ def view_completions():
         </body>
         </html>
     """, completion_data=completion_data, page=page, total_pages=len(model_df))
+
+@app.route("/problems")
+def view_problems():
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Number of problems per page
+    
+    # Get total number of unique problems
+    unique_problems = df.drop_duplicates('problem_id')
+    total_problems = len(unique_problems)
+    total_pages = (total_problems + per_page - 1) // per_page
+    
+    # Ensure page is within valid range
+    page = max(1, min(page, total_pages))
+    
+    # Get problems for current page
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    current_problems = unique_problems.iloc[start_idx:end_idx]
+    
+    return render_template_string("""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>GSM8K Problems Overview</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: 1.6; 
+                    padding: 20px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .problem-container {
+                    background-color: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-bottom: 20px;
+                }
+                .problem-box {
+                    background-color: white;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-bottom: 15px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .section-title {
+                    font-weight: bold;
+                    color: #666;
+                    margin-bottom: 5px;
+                }
+                .navigation {
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+                .nav-button {
+                    text-decoration: none;
+                    color: white;
+                    background-color: #007bff;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    transition: background-color 0.2s;
+                }
+                .nav-button.overview {
+                    background-color: #ff9800;
+                }
+                .nav-button:hover:not(.disabled) {
+                    background-color: #0056b3;
+                }
+                .nav-button.disabled {
+                    background-color: #6c757d;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                    opacity: 0.65;
+                }
+                .pagination-info {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>GSM8K Problems Overview</h1>
+                <a href="{{ url_for('stats') }}" class="nav-button overview">Back to Overview</a>
+            </div>
+            
+            <div class="pagination-info">
+                Page {{ page }} of {{ total_pages }} ({{ total_problems }} total problems)
+            </div>
+
+            {% for _, problem in current_problems.iterrows() %}
+            <div class="problem-container">
+                <h3>Problem ID: {{ problem.problem_id }}</h3>
+                
+                <div class="problem-box">
+                    <div class="section-title">Problem:</div>
+                    {{ problem.problem }}
+                </div>
+                
+                <div class="problem-box">
+                    <div class="section-title">Original Stub:</div>
+                    {{ problem.stub }}
+                </div>
+                
+                <div class="problem-box">
+                    <div class="section-title">Perturbed Stub:</div>
+                    {{ problem.perturbed_stub_lm }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="navigation">
+                <a href="{{ url_for('view_problems', page=page-1) }}" 
+                   class="nav-button {% if page <= 1 %}disabled{% endif %}">Previous</a>
+                <a href="{{ url_for('view_problems', page=page+1) }}" 
+                   class="nav-button {% if page >= total_pages %}disabled{% endif %}">Next</a>
+            </div>
+        </body>
+        </html>
+    """, page=page, total_pages=total_pages, total_problems=total_problems, 
+        current_problems=current_problems)
 
 # Custom JSON encoder to handle numpy types
 class NumpyEncoder(provider.DefaultJSONProvider):
