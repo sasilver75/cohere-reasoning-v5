@@ -12,6 +12,11 @@ class OpenRouterModel(Enum):
     # LLAMA_3_1_405B_INSTRUCT = "meta-llama/llama-3.1-405b-instruct"  # Waiting on this one; We don't have a good provider (quant, completion) on OpenRouter (https://sasilver0051g-lbx2356.slack.com/archives/C07E794RAFJ/p1734480088017999?thread_ts=1734479625.429039&cid=C07E794RAFJ)
     DEEPSEEK_2_5_1210_INSTRUCT = "deepseek/deepseek-chat"
     MISTRAL_NEMO_12B_INSTRUCT = "mistralai/mistral-nemo"
+    NEMOTRON_4_340B_INSTRUCT = "nvidia/nemotron-4-340b-instruct"
+    MISTRAL_8x22B_INSTRUCT = "mistralai/mixtral-8x22b-instruct"
+    PHI_3_128K_MEDIUM_INSTRUCT = "microsoft/phi-3-medium-128k-instruct"
+    QWEN_QWQ_32B_PREVIEW = "qwen/qwq-32b-preview"
+
 
 class OpenRouterProvider(Enum):
     DEEPINFRA = "DeepInfra"
@@ -20,12 +25,17 @@ class OpenRouterProvider(Enum):
     AVIAN = "Avian"
     SF_COMPUTE = "SF Compute"
     DEEPSEEK = "DeepSeek"
+    MISTRAL = "Mistral"
+    AZURE = "Azure"
 
 
 OPENROUTER_MODEL_PROVIDERS = {
-    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Trying Hyperbolic (bf16)
+    # OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Trying Hyperbolic (bf16)
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
-    # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA, # Not using this one.
-    OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA, # Check this...
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE 
+    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
+    OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE,
+    OpenRouterModel.MISTRAL_8x22B_INSTRUCT: OpenRouterProvider.MISTRAL,  # Check
+    OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Check
+    OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check
 }

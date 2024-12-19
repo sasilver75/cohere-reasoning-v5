@@ -345,7 +345,7 @@ def _get_problem_prompt(problem: str) -> str:
 
 
 @retry(
-    stop=stop_after_attempt(20),
+    stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -379,7 +379,7 @@ async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel,
         return response_json["choices"][0]["message"]["content"]
 
 @retry(
-    stop=stop_after_attempt(20),
+    stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -419,7 +419,7 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, solution
     return verified
 
 @retry(
-    stop=stop_after_attempt(20),
+    stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -534,8 +534,8 @@ async def async_main():
     acc = []
     async with aiohttp.ClientSession() as session:
         for model, provider in OPENROUTER_MODEL_PROVIDERS.items():
-            if model != OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT:
-                continue
+            # if model != OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT:
+            #     continue
             try:
                 print(f"\nStarting tests for model: {str(model.value)}")
                 results = await test_model(session, model, provider)
@@ -548,8 +548,8 @@ async def async_main():
     print(f"Total results collected: {len(acc)}")
     print("Saving results...")
     df = pd.DataFrame(acc)
-    df.to_csv("toy_evaluate_deepseek.csv", index=False)
-    print("Results saved to toy_evaluate_deepseek.csv")
+    df.to_csv("toy_evaluate.csv", index=False)
+    print("Results saved to toy_evaluate.csv")
 
 def main():
     print(f"Number of toy problems: {len(TOY_PROBLEMS)}")
