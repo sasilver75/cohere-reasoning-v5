@@ -31,29 +31,8 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
-# PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
-PROVIDER = OpenRouterProvider.DEEPSEEK
-
-# Straight shot example
-# print(f"STAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
-# prompt = '\nThe function $y=x^{2}+2ax+1$ is an increasing function in the interval $[2,+\\infty)$. Determine the range of values for the real number $a$.\n\nPlease solve this problem step-by-step, boxing the final answer.\n'
-# data = {
-#     "model": MODEL,  # Specify the model you want to use
-#     "messages": [
-#         {"role": "user", "content": prompt},  # Using your existing prefix
-#         # {"role": "assistant", "content": prefix}  # Prefill example
-#     ],
-#     "provider": {
-#         "order": [
-#             PROVIDER.value
-#         ],
-#         "allow_fallbacks": False,
-#     }
-# }
-# response = requests.post(url, headers=headers, json=data)
-# print(response.json(), "\n")
-# print(f"END OF STRAIGHT SHOT EXAMPLE \n ~~~~~~~~~~~~~~~~~~ \n")
+MODEL = OpenRouterModel.PHI_3_5_MINI_128K_INSTRUCT
+PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 
 # Completion test examples

@@ -16,6 +16,7 @@ class OpenRouterModel(Enum):
     MISTRAL_8x22B_INSTRUCT = "mistralai/mixtral-8x22b-instruct"
     PHI_3_128K_MEDIUM_INSTRUCT = "microsoft/phi-3-medium-128k-instruct"
     QWEN_QWQ_32B_PREVIEW = "qwen/qwq-32b-preview"
+    PHI_3_5_MINI_128K_INSTRUCT = "microsoft/phi-3.5-mini-128k-instruct"
 
 
 class OpenRouterProvider(Enum):
@@ -30,12 +31,13 @@ class OpenRouterProvider(Enum):
 
 
 OPENROUTER_MODEL_PROVIDERS = {
-    # OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Trying Hyperbolic (bf16)
+    # OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often.
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
     OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE,  # Check: Shuld this be SF compute? Or should it be DeepInfra?
-    OpenRouterModel.MISTRAL_8x22B_INSTRUCT: OpenRouterProvider.MISTRAL,  # Check
-    OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Check
+    # OpenRouterModel.MISTRAL_8x22B_INSTRUCT: OpenRouterProvider.MISTRAL,  # No providers list precision; Mistral doesn't do completions.
+    # OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Only provider is Azure and it just returns EOS tokens when doing completions
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check
+    OpenRouterModel.PHI_3_5_MINI_128K_INSTRUCT: OpenRouterProvider.AZURE,  # Check
 }
