@@ -117,7 +117,7 @@ def create_problem_difficulty_plot():
 @app.route("/")
 def stats():
     # Calculate statistics for each model
-    model_stats = df.groupby('model').agg({
+    model_stats = df.groupby(['model', 'provider']).agg({
         'problem_id': 'count',
         'verified': ['sum', 'mean'],
         'correction_detected': ['sum', 'mean']
@@ -197,6 +197,7 @@ def stats():
                     <thead>
                         <tr>
                             <th>Model</th>
+                            <th>Provider</th>
                             <th>Total Problems</th>
                             <th>Verified Solutions</th>
                             <th>Verification Rate</th>
@@ -206,9 +207,10 @@ def stats():
                         </tr>
                     </thead>
                     <tbody>
-                        {% for model, stats in model_stats.iterrows() %}
+                        {% for (model, provider), stats in model_stats.iterrows() %}
                         <tr>
                             <td>{{ model }}</td>
+                            <td>{{ provider }}</td>
                             <td>{{ stats.total_problems }}</td>
                             <td>{{ stats.verified_count }}</td>
                             <td>{{ "%.1f%%"|format(stats.verified_rate * 100) }}</td>
@@ -255,12 +257,12 @@ def view_completions():
     
     completion_data = {
         "model": model,
+        "provider": str(row.get("provider", "N/A")),
         "problem_id": int(row.get("problem_id", 0)),
         "problem": str(row.get("problem", "N/A")),
         "solution": str(row.get("solution", "N/A")),
         "prefix": str(row.get("prefix", "N/A")),
         "completion": str(row.get("completion", "N/A")),
-        "candidate_solution": str(row.get("candidate_solution", "N/A")),
         "verified": bool(row.get("verified", False)),
         "correction_detected": bool(row.get("correction_detected", False))
     }
@@ -311,6 +313,11 @@ def view_completions():
                 .verification-false {
                     background-color: lightcoral;
                 }
+                .navigation {
+                    display: flex;
+                    gap: 10px;  /* Add spacing between buttons */
+                    align-items: center;
+                }
                 .nav-button {
                     text-decoration: none;
                     color: white;
@@ -318,6 +325,12 @@ def view_completions():
                     padding: 10px 20px;
                     border-radius: 4px;
                     transition: background-color 0.2s;
+                }
+                .nav-button.overview {
+                    background-color: #ff9800;  /* Orange color for overview button */
+                }
+                .nav-button.overview:hover {
+                    background-color: #f57c00;  /* Darker orange on hover */
                 }
                 .nav-button:hover:not(.disabled) {
                     background-color: #0056b3;
@@ -328,13 +341,24 @@ def view_completions():
                     pointer-events: none;
                     opacity: 0.65;
                 }
+                .title-section {
+                    flex: 1;
+                }
+                .provider-info {
+                    margin: 0;
+                    color: #666;
+                    font-size: 1em;
+                }
             </style>
         </head>
         <body>
             <div class="header">
-                <h1>{{ completion_data.model }} Completions ({{ page }}/{{ total_pages }})</h1>
+                <div class="title-section">
+                    <h1>{{ completion_data.model }} Completions ({{ page }}/{{ total_pages }})</h1>
+                    <h3 class="provider-info">Provider: {{ completion_data.provider }}</h3>
+                </div>
                 <div class="navigation">
-                    <a href="{{ url_for('stats') }}" class="nav-button">Back to Overview</a>
+                    <a href="{{ url_for('stats') }}" class="nav-button overview">Back to Overview</a>
                     <a href="{{ url_for('view_completions', model=completion_data.model, page=page-1) }}" 
                        class="nav-button {% if page <= 1 %}disabled{% endif %}">Previous</a>
                     <a href="{{ url_for('view_completions', model=completion_data.model, page=page+1) }}" 
@@ -356,9 +380,6 @@ def view_completions():
                 
                 <h3>Completion:</h3>
                 <div class="content-box">{{ completion_data.completion }}</div>
-                
-                <h3>Candidate Solution:</h3>
-                <div class="content-box">{{ completion_data.candidate_solution }}</div>
                 
                 <h3>Verification Result:</h3>
                 <div class="verification-box verification-{{ completion_data.verified|lower }}">

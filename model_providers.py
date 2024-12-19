@@ -34,7 +34,7 @@ OPENROUTER_MODEL_PROVIDERS = {
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE,
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE,  # Check: Shuld this be SF compute? Or should it be DeepInfra?
     OpenRouterModel.MISTRAL_8x22B_INSTRUCT: OpenRouterProvider.MISTRAL,  # Check
     OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Check
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check

@@ -499,8 +499,8 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
             "prefix": prefix,
             "completion": "ERROR PLACEHOLDER",
             "candidate_solution": "ERROR PLACEHOLDER",
-            "verified": "ERROR PLACEHOLDER",
-            "correction_detected": "ERROR PLACEHOLDER"
+            "verified": False,
+            "correction_detected": False
         }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel, provider: OpenRouterProvider) -> list[dict]:
