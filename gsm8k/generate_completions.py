@@ -15,14 +15,13 @@ import logging
 
 
 # Configuration
-N_PROBLEMS = 5  # None = All
+N_PROBLEMS = 25  # None = All
 MODELS = [
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
-    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
 ]
 
 
@@ -278,7 +277,7 @@ def _get_problem_prompt(problem: str) -> str:
 
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(10),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -312,7 +311,7 @@ async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel,
         return response_json["choices"][0]["message"]["content"]
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(10),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -352,7 +351,7 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
     return verified
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(10),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -401,6 +400,9 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
 
     print(f"Testing model {model.value} on problem {row_id}")
 
+
+    # TODO: Consider wrapping all of the below in a try/except block, and return "placeholder" values if the tasks actually fail; This would only happen if we 
+
     # These are robust, tenacity-decorated methods that call APIs that will retry if they raise Exceptions
 
     # Get the completion using the LM-perturbed stub
@@ -414,7 +416,9 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
         )
     
     return {
-        "row_id": row_id,
+        "model": str(model.value),
+        "provider": str(OPENROUTER_MODEL_PROVIDERS[model].value),
+        "problem_id": row_id,
         "problem": problem,
         "answer": answer,
         "stub": stub,
@@ -462,7 +466,7 @@ async def async_main():
     df = pd.read_csv("gsm8k/datasets/gsm8k_stubs_and_perturbations.csv")
     print(f"Loaded dataset with {len(df)} rows and columns {list(df.columns)}")
 
-    print(f"Testing {N_PROBLEMS if N_PROBLEMS is not None else "all"} problems")
+    print(f"Testing {N_PROBLEMS if N_PROBLEMS is not None else "all"} problems, out of {len(df)} available problems")
     if N_PROBLEMS is not None:
         df = df.head(N_PROBLEMS)
 
