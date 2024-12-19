@@ -173,7 +173,16 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
         timeout=60
     ) as response:
         response_json = await response.json()
-        return response_json["choices"][0]["message"]["content"]
+
+    response_content = response_json["choices"][0]["message"]["content"]
+
+    # Extract the content between the <perturbed_stub> tags
+    pattern = r'<perturbed_stub>\s*(.*?)\s*</perturbed_stub>'
+    match = re.search(pattern, response_content, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        raise ValueError(f"Couldn't find perturbed stub in response: {response_content}")
     
 
 def get_perturbed_stub_deterministic(stub: str) -> str:
