@@ -1,0 +1,94 @@
+Very few models as beign sophisticated as 
+
+
+
+Notes:
+
+- Two high-levle thoughts on paper writing
+    - He uses Overleaf a lot; we shold just get to drafting immediately, because the closer we get the draf lookinglike the final thing, the less we have later.
+    - 
+
+Q: Is this enough in a paper?
+By actually running the experiments, formalizing it, and putting it inot a set of results, it wlil fill out our intuition as to whether 
+it's enough or not. There's a danger to continue going after more results. You get scooped eventually. There's some merit to just writing it down.
+
+The best papers don't always correlate to sophistication. 
+To him, it seems like it's worthwhile to write stuf up now.
+
+
+We should try the deterministic perturbations ...
+(Jimin gave some examples of the deterministic pertrubations)
+There was one point where we tried addinga totally outof context prefix... that seems like somethign that's super easy to catch for LLMs
+There could als obe more subtle perturbations tht acn be done to a reasoning chain.
+
+Where we introduce the perturbations throughout the chain is also something interesting.
+
+
+Eddie: I'm of the strong opinion that we should still write it up - have teh kernel of results that are clear and work.
+And then we can think of what set of extensions fit the narrative.
+He also really likes it when papers include things that didn't work.
+
+Jimin: Once we write the initial stuf up, it will make it more clear to
+
+
+
+Eddie's critique: It's hard to do verbose. Most of the things that you write are notes. 
+The importance is wbetween when you really specifically have questions that you need input in and a delineation in.
+He'd be reading through a thread and wouldn't be usre whether he should be going back. 
+
+
+In total it took more than a year to wrap up Jimin's project
+Obviously ht efield is changing so fast, so some direction.... that he would be working on initially.. would be less interesting to the whole community
+It's always so hard.... when experiment results are sort of unclear and you have to really... find some interesting thread out of it.
+Maybe just getting used to that with time. 
+
+
+The theme of trying complicated things and landing on something that's comparatively simple is pretty common.
+It's not obvious what we should ablate from our setup..
+That's decorrelated from the novelty of a result. The lcassic example of CoT.
+
+A lot of the decision points were on experiment hyperparameters. 
+Eddie finds that in most research he's done, there's.... parameters that ACTUALLY matter that we can empirically optimize, and then
+there's a bunch of hyperparamteters that DONT matter and that the reviewer says "it doesn't matter".
+
+Paper structure:
+Abstract
+introduce
+Related work
+
+Eddie: First, start with an ACL template... just write the title ,abstract, intro (can be bullet points), and the figures. Even if The
+figure is blank, it doesn't matter -- just the captions. The title and abstract forces you to think about where the paper fits in in the narrative
+of other papers. The vast majority of researchers reading your paper will only get that far.
+The introduction with citations. the writing doesn't matter (justbulletp oints), but the citations matter. What's the foudnational work that you're building on top of?
+Forces you to do a lit review to make sure that you'res till relvant, etc. The figures and table captions... most of the time, they'll look at this after the title and abstract.
+Typically they're skim the tables first. 
+Very concretely, once you write the title, abstract, intro with citations, and figure captions -- then circulate it with us!
+But everyone's heavily influenced by their advisor's style -- Jimin, what do you think/
+
+Jimin: Writing the abstract and intro makes a lot of sense too, to me. During meetings with the advisor, sometimes he'll ask her to write up an abstract of a future bpaper. 
+Maybe after that it's good to just write the experimental section... because that part is more execution, and it's pretty clear what you want to write about... Maybe then go back and ty to coordinate the story
+in the intro with the things in the experiments. I think writing hte intro will give you a sense fo what experiments you want to add on to the current results.
+
+I'm sure that Ivan and Sara will have things to say about the final paper
+
+Looking at the figures of the papers that we'll be citing in the intro should be inspiration for 
+
+Jimin: I like tosee a paper that compares with other methods... Because we're going to review... other self-correction datasets/methods.
+There will be multiple axxes where we 
+
+GSM8k perturbations and a bunch of models
+Rows are each model and the columns could be : Their GSM8k, Our GSM8k evaluation, off-policy GSM8k perturb perforance, on-policy GSM8k peruturb performance
+
+
+AS you write things in  the cintro and cite in the intro -- just look at the 
+
+
+For the deterministic.. it's hard to 
+
+
+Experiment structure:
+...
+
+
+Reviewer nits:
+...
