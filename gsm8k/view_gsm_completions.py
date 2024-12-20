@@ -164,6 +164,9 @@ def stats():
                 .model-link:hover {
                     text-decoration: underline;
                 }
+                .title-section {
+                    flex: 1;
+                }
             </style>
         </head>
         <body>
@@ -288,6 +291,15 @@ def view_completions():
                     border-radius: 4px;
                     margin-top: 10px;
                     white-space: pre-wrap;
+                    border: 2px solid #007bff;
+                }
+                .content-box-secondary {
+                    background-color: #fafafa;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    white-space: pre-wrap;
+                    border: 1px solid #e0e0e0;
                 }
                 .verification-box {
                     padding: 10px;
@@ -328,27 +340,30 @@ def view_completions():
         </head>
         <body>
             <div class="header">
-                <h1>GSM8K Completion ({{ page }}/{{ total_pages }})</h1>
+                <div class="title-section">
+                    <h1>GSM8K Completion ({{ page }}/{{ total_pages }})</h1>
+                    <h3 style="margin-top: 0; color: #666;">Model: {{ completion_data.model }}</h3>
+                </div>
                 <div class="navigation">
                     <a href="{{ url_for('stats') }}" class="nav-button overview">Back to Overview</a>
-                    <a href="{{ url_for('view_completions', page=page-1) }}" 
+                    <a href="{{ url_for('view_completions', model=model, page=page-1) }}" 
                        class="nav-button {% if page <= 1 %}disabled{% endif %}">Previous</a>
-                    <a href="{{ url_for('view_completions', page=page+1) }}" 
+                    <a href="{{ url_for('view_completions', model=model, page=page+1) }}" 
                        class="nav-button {% if page >= total_pages %}disabled{% endif %}">Next</a>
                 </div>
             </div>
 
             <div class="content-section">
-                <h2>Row ID: {{ completion_data.row_id }}</h2>
+                <h2>Problem ID: {{ completion_data.problem_id }}</h2>
                 
                 <h3>Problem:</h3>
                 <div class="content-box">{{ completion_data.problem }}</div>
                 
                 <h3>Answer:</h3>
-                <div class="content-box">{{ completion_data.answer }}</div>
+                <div class="content-box-secondary">{{ completion_data.answer }}</div>
                 
                 <h3>Original Stub:</h3>
-                <div class="content-box">{{ completion_data.stub }}</div>
+                <div class="content-box-secondary">{{ completion_data.stub }}</div>
                 
                 <h3>Perturbed Stub:</h3>
                 <div class="content-box">{{ completion_data.perturbed_stub_lm }}</div>
@@ -360,15 +375,10 @@ def view_completions():
                 <div class="verification-box verification-{{ completion_data.verified|lower }}">
                     Verified: {{ completion_data.verified }}
                 </div>
-                
-                <h3>Correction Detection:</h3>
-                <div class="verification-box verification-{{ completion_data.correction_detected|lower }}">
-                    Correction Detected: {{ completion_data.correction_detected }}
-                </div>
             </div>
         </body>
         </html>
-    """, completion_data=completion_data, page=page, total_pages=len(model_df))
+    """, completion_data=completion_data, page=page, total_pages=len(model_df), model=model)
 
 @app.route("/problems")
 def view_problems():

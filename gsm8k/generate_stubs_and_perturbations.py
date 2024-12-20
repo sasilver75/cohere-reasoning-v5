@@ -67,7 +67,7 @@ Bad perturbations include:
 - Changing the reasoning stub entirely.
 
 
-Here are some examples of good perturbations, along with explanations of what perturbatoin was applied:
+Here are some examples of good perturbations, along with explanations of what perturbation was applied:
 
 <examples>
 
