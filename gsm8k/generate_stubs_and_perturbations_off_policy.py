@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 # Configuration
 STUB_TOKENS = 100
 TOKEN_BUCKET = TokenBucket(400)
-MODEL = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
-PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+PREFIX_AND_PERTURB_MODEL = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
 COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
@@ -126,7 +125,7 @@ async def generate_solution_stub(problem: str, session: aiohttp.ClientSession) -
         COMPLETION_URL,
         headers=HEADERS,
         json = {
-            "model": MODEL.value,
+            "model": PREFIX_AND_PERTURB_MODEL.value,
             "messages": [
                 {"role": "user", "content": _get_stub_prompt(problem)},
             ],
@@ -156,7 +155,7 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
         COMPLETION_URL,
         headers=HEADERS,
         json = {
-            "model": MODEL.value,
+            "model": PREFIX_AND_PERTURB_MODEL.value,
             "messages": [
                 {"role": "user", "content": _get_perturb_prompt(problem=problem, stub=stub)},
             ],
@@ -268,7 +267,7 @@ async def main():
     
     # Convert the list of dicts to a dataframe and save
     df = pd.DataFrame(acc)
-    filepath = "gsm8k/datasets/gsm8k_stubs_and_perturbations.csv"    
+    filepath = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"    
     df.to_csv(filepath, index=False)
     print(f"Saved to {filepath}")
 

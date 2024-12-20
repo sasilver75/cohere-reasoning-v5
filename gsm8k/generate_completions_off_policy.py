@@ -463,7 +463,7 @@ async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel, df:
 async def async_main():
 
     print(f"Loading dataset...")
-    df = pd.read_csv("gsm8k/datasets/gsm8k_stubs_and_perturbations.csv")
+    df = pd.read_csv("gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv")
     print(f"Loaded dataset with {len(df)} rows and columns {list(df.columns)}")
 
     print(f"Testing {N_PROBLEMS if N_PROBLEMS is not None else "all"} problems, out of {len(df)} available problems")
@@ -485,8 +485,9 @@ async def async_main():
     print(f"Total results collected: {len(acc)}")
     print("Saving results...")
     df = pd.DataFrame(acc)
-    df.to_csv("gsm8k/datasets/gsm8k_completions.csv", index=False)
-    print("Results saved to gsm8k_completions.csv")
+    filepath = "gsm8k/datasets/gsm8k_completions_off_policy.csv"
+    df.to_csv(filepath, index=False)
+    print(f"Results saved to {filepath}")
 
 def main():
     print(f"Number of models to test: {len(OPENROUTER_MODEL_PROVIDERS)}")
