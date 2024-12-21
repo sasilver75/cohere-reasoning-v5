@@ -29,6 +29,7 @@ if not "COHERE_API_KEY" in os.environ:
     raise ValueError("COHERE_API_KEY must be set in the environment")
 
 # CONFIGURATION
+# ~ Experiment parameters
 N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
@@ -40,8 +41,12 @@ MODELS = [
     # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
 VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+
+# ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
 COHERE_TOKEN_BUCKET = TokenBucket(400, "Cohere")
+
+# ~ Things for making requests
 COHERE_SYNC_CLIENT = cohere.Client(api_key=os.environ["COHERE_API_KEY"]) # For completions, we need to use the V1 Client
 OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_HEADERS = {

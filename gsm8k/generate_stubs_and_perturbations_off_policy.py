@@ -15,7 +15,7 @@ from gsm8k.gsm_utils import TokenBucket
 
 """
 This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
-DeepSeek 2.5 is not a model under evaluation (because no OpenRouter providers support assistant prefilling), so it's a good use case for it.
+DeepSeek 2.5 is not a model under evaluation (because no OpenRouter providers support assistant prefilling for it).
 """
 
 # Load in .env file and confirm needed keys are present
@@ -25,10 +25,15 @@ if not "OPENROUTER_API_KEY" in os.environ:
 
 
 # CONFIGURATION
+# ~ Experiment parameters
 STUB_N_TOKENS = 100
 N_PROBLEMS = 100  # None means "All" problems
-OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+
+# ~ Rate limiting
+OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
+
+# ~ Things for making requests
 OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
