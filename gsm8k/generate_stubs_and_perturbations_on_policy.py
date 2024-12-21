@@ -177,8 +177,8 @@ async def main():
     print(f"Loaded GSM8k dataset with {len(df)} rows and columns {list(df.columns)}")
 
     if N_PROBLEMS is not None:  
-        df = df.head(N_PROBLEMS)    
         print(f"Using first {N_PROBLEMS} problems of {len(df)} problems")
+        df = df.head(N_PROBLEMS)    
 
     # Process each model
     all_results = []
