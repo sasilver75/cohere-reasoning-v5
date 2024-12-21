@@ -188,7 +188,7 @@ async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | Co
     model_df = df[df["stub_model"] == model.value].copy()
     print(f"Testing {len(model_df)} problems for model {model.value}")
     
-    semaphore = asyncio.Semaphore(15)
+    semaphore = asyncio.Semaphore(30)
     
     async def rate_limited_test(row: pd.Series):
         async with semaphore:
@@ -213,8 +213,8 @@ async def main():
     print(f"Loaded dataset with {len(df)} rows and columns {list(df.columns)}")
 
     if N_PROBLEMS is not None:
+        print(f"Using first {N_PROBLEMS} problems of {len(df)} problems")
         df = df.head(N_PROBLEMS)
-        print(f"Using first {N_PROBLEMS} problems")
 
     acc = []
     async with aiohttp.ClientSession() as session:
