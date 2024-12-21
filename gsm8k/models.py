@@ -1,12 +1,9 @@
 from enum import Enum
+
 """
 It's important that we select providers that provide the model in the same precision as which it was released (e.g. if a model was released in bf16, don't use an fp8 precision version of it).
 OpenRouter makes this information available: https://openrouter.ai/meta-llama/llama-3.3-70b-instruct/providers
 Additionally, we'd like to select a provider that offers the "raw completion" ability we're looking for (this doesn't matter for verifier models, but it can't hurt).
-
-
-NOTE: THIS FILE IS NO LONGER USED! THE GSM USES ITS OWN MODELS.PY FILE -- ITS A SELF-CONTAINED EXPERIMENT!
-
 """
 
 class OpenRouterModel(Enum):
@@ -35,7 +32,7 @@ class OpenRouterProvider(Enum):
 
 
 OPENROUTER_MODEL_PROVIDERS = {
-    # OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often.
+    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often. But I can use it for prefix/perturbation generation, which doesn't need that.
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
@@ -45,3 +42,9 @@ OPENROUTER_MODEL_PROVIDERS = {
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check
     OpenRouterModel.PHI_3_5_MINI_128K_INSTRUCT: OpenRouterProvider.AZURE,  # Check
 }
+
+
+
+class CohereModel(Enum):
+    COHERE_R7B = "command-r7b-12-2024"
+    COHERE_CRP = "command-r-plus-08-2024"

@@ -10,7 +10,8 @@ import numpy as np
 app = Flask(__name__)
 
 # Load the CSV file
-csv_path = "gsm8k/datasets/gsm8k_completions.csv"
+ON_POLICY = False
+csv_path = f"gsm8k/datasets/gsm8k_completions_{"on_policy" if ON_POLICY else "off_policy"}.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
     exit(1)
@@ -25,28 +26,23 @@ def create_verification_plot():
     # Calculate rates by model
     stats = df.groupby('model').agg({
         'problem_id': 'count',  # total problems
-        'perturbed_stub_lm_solution_verified': lambda x: x.sum(),  # number of verified solutions
-        'perturbed_stub_lm_solution_correction_detected': lambda x: x.sum()  # number of corrections detected
+        'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
     }).assign(
-        verification_rate=lambda x: x['perturbed_stub_lm_solution_verified'] / x['problem_id'],
-        correction_rate=lambda x: x['perturbed_stub_lm_solution_correction_detected'] / x['problem_id']
+        verification_rate=lambda x: x['perturbed_stub_lm_solution_verified'] / x['problem_id']
     )
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(12, 6))
     
     # Set the width of each bar and positions of the bars
-    width = 0.35
     x = np.arange(len(stats.index))
     
-    # Create bars with updated labels
-    rects1 = ax.bar(x - width/2, stats['verification_rate'], width, 
-                    label='Correct Answer Rate', color='#2196F3')
-    rects2 = ax.bar(x + width/2, stats['correction_rate'], width, 
-                    label='Correction Detection Rate', color='#FF9800')
+    # Create single bar for verification rate
+    rects = ax.bar(x, stats['verification_rate'], 
+                   label='Correct Answer Rate', color='#2196F3')
 
     # Customize the plot
-    ax.set_title('Recovery and Correction Rates by Model')
+    ax.set_title('Correct Answer Rate by Model')
     ax.set_xlabel('Model')
     ax.set_ylabel('Rate')
     ax.set_xticks(x)
@@ -64,11 +60,9 @@ def create_verification_plot():
                        textcoords="offset points",
                        ha='center', va='bottom')
 
-    autolabel(rects1)
-    autolabel(rects2)
-
+    autolabel(rects)
     plt.tight_layout()
-
+    
     # Convert plot to base64 string
     img = io.BytesIO()
     plt.savefig(img, format='png', bbox_inches='tight', dpi=120)
@@ -82,13 +76,14 @@ def stats():
     # Calculate statistics for each model
     model_stats = df.groupby(['model', 'provider']).agg({
         'problem_id': 'count',
-        'perturbed_stub_lm_solution_verified': ['sum', 'mean'],
-        'perturbed_stub_lm_solution_correction_detected': ['sum', 'mean']
-    }).round(3)
+        'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
+    })
     
-    # Flatten column names
-    model_stats.columns = ['total_problems', 'verified_count', 'verified_rate', 
-                          'corrections_count', 'corrections_rate']
+    # Calculate the rate manually
+    model_stats['verified_rate'] = model_stats['perturbed_stub_lm_solution_verified'] / model_stats['problem_id']
+    
+    # Rename columns for clarity
+    model_stats.columns = ['total_problems', 'verified_count', 'verified_rate']
     
     # Create the plot
     plot_url = create_verification_plot()
@@ -187,8 +182,6 @@ def stats():
                             <th>Total Problems</th>
                             <th>Verified Solutions</th>
                             <th>Verification Rate</th>
-                            <th>Corrections Detected</th>
-                            <th>Correction Rate</th>
                             <th>View Results</th>
                         </tr>
                     </thead>
@@ -200,8 +193,6 @@ def stats():
                             <td>{{ stats.total_problems }}</td>
                             <td>{{ stats.verified_count }}</td>
                             <td>{{ "%.1f%%"|format(stats.verified_rate * 100) }}</td>
-                            <td>{{ stats.corrections_count }}</td>
-                            <td>{{ "%.1f%%"|format(stats.corrections_rate * 100) }}</td>
                             <td>
                                 <a href="{{ url_for('view_completions', model=model) }}" class="model-link">
                                     View Completions

@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
+from models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 
 load_dotenv()
 import requests
@@ -31,7 +31,7 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.PHI_3_5_MINI_128K_INSTRUCT
+MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 

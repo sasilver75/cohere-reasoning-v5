@@ -1,8 +1,7 @@
 import random
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from model_providers import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
+from models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 from utils import TokenBucket
 import pandas as pd
 from tqdm import tqdm
@@ -19,10 +18,22 @@ if not "OPENROUTER_API_KEY" in os.environ:
 
 logger = logging.getLogger(__name__)
 
+
+"""
+This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
+DeepSeek 2.5 is not a model under evaluation (because no OpenRouter providers support assistant prefilling), so it's a good use case for it.
+
+# TODO:
+- Change from LLaMA 3.3 70B Instruct to DeepSeek 2.5 1210 Instruct
+
+"""
+
+
 # Configuration
 STUB_TOKENS = 100
+N_PROBLEMS = 10  # None means "All" problems
 TOKEN_BUCKET = TokenBucket(400)
-PREFIX_AND_PERTURB_MODEL = OpenRouterModel.LLAMA_3_3_70B_INSTRUCT
+PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
@@ -224,7 +235,7 @@ def get_perturbed_stub_deterministic(stub: str) -> str:
 
 
 async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
-    row_id = row["row_id"]
+    problem_id = row["problem_id"]
     problem = row["problem"]
     reasoning = row["reasoning"]
     answer = row["solution"]  # TODO: This is a little messy, can we just change what we name it in download_gsm8k.py?
@@ -234,7 +245,7 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     # perturbed_stub_deterministic = get_perturbed_stub_deterministic(stub)
     
     return {
-        "row_id": row_id,
+        "problem_id": problem_id,
         "problem": problem,
         "ground_truth_reasoning": reasoning,
         "ground_truth_solution": answer,
@@ -249,10 +260,12 @@ async def main():
     # Load dataset
     print(f"Loading GSM8k datasset...")
     df = pd.read_csv("datasets/original/gsm8k.csv")
-    # TODO: REMOVE THIS LINE BELOW
-    df = df.head(50)
-    # TODO: REMOVE THIS LINE ABOVE
     print(f"Loaded GSM8k datasset with {len(df)} rows and columns {list(df.columns)}")
+
+
+    if N_PROBLEMS is not None:  
+        df = df.head(N_PROBLEMS)    
+        print(f"Using first {N_PROBLEMS} problems of {len(df)} problems")
 
     # Process the rows
     async with aiohttp.ClientSession() as session:
@@ -267,6 +280,10 @@ async def main():
     
     # Convert the list of dicts to a dataframe and save
     df = pd.DataFrame(acc)
+
+    # Make sure that the rows are ordered by problem_id asc; just aesthetics :)
+    df = df.sort_values(by="problem_id", ascending=True)
+
     filepath = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"    
     df.to_csv(filepath, index=False)
     print(f"Saved to {filepath}")
