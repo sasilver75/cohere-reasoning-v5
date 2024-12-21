@@ -14,6 +14,13 @@ import logging
 from utils import TokenBucket
 import cohere
 
+"""
+For every model under evaluation, generate completions and verifications for every model under evaluation,
+on top of the off-policy stubs and perturbations generated in generate_stubs_and_perturbations_off_policy.py.
+
+Results can be viewed using view_completions_off_policy.py
+"""
+
 # Load in .env file and confirm needed keys are present
 load_dotenv()
 if not "OPENROUTER_API_KEY" in os.environ:

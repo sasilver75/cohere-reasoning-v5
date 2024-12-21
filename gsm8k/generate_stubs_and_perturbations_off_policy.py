@@ -12,15 +12,17 @@ import re
 import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 
-# Load in .env file and confirm needed keys are present
-load_dotenv()
-if not "OPENROUTER_API_KEY" in os.environ:
-    raise ValueError("OPENROUTER_API_KEY must be set in the environment")
 
 """
 This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
 DeepSeek 2.5 is not a model under evaluation (because no OpenRouter providers support assistant prefilling), so it's a good use case for it.
 """
+
+# Load in .env file and confirm needed keys are present
+load_dotenv()
+if not "OPENROUTER_API_KEY" in os.environ:
+    raise ValueError("OPENROUTER_API_KEY must be set in the environment")
+
 
 # CONFIGURATION
 STUB_TOKENS = 100
