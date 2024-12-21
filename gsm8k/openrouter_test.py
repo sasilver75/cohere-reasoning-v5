@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-from models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
+from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 
 load_dotenv()
 import requests

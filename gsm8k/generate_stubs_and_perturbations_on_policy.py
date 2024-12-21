@@ -1,7 +1,7 @@
 import random
 import sys
 import os
-from models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, MODELS_UNDER_EVALUATION
+from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, MODELS_UNDER_EVALUATION
 from utils import TokenBucket
 import pandas as pd
 from tqdm import tqdm
@@ -13,7 +13,7 @@ import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 
 """
-
+This generates "on-policy" stubs for each model under evaluation, with off-policy perturbations.
 """
 
 load_dotenv()
@@ -25,8 +25,15 @@ if not "COHERE_API_KEY" in os.environ:
 
 
 # CONFIGURATION
-
-
+STUB_N_TOKENS = 100
+N_PROBLEMS = 100  # None means "All" problems
+OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
+COHERE_TOKEN_BUCKET = TokenBucket(400)
+COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
+    "Content-Type": "application/json"
+}
 # END OF CONFIGURATION
 
 

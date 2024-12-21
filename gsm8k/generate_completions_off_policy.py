@@ -4,16 +4,16 @@ import time
 import aiohttp
 import sys
 import os
-from models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, CohereModel
+from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, CohereModel
 import pandas as pd
 from tqdm import tqdm
 import requests
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 import logging
-from utils import TokenBucket
+from gsm8k.gsm_utils import TokenBucket
 import cohere
-
+from gsm8k import gsm_prompts
 """
 For every model under evaluation, generate completions and verifications for every model under evaluation,
 on top of the off-policy stubs and perturbations generated in generate_stubs_and_perturbations_off_policy.py.
@@ -48,54 +48,6 @@ COHERE_SYNC_CLIENT = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For co
 logger = logging.getLogger(__name__)
 
 
-
-
-lightweight_verify_prompt = """
-You are given a math problem, its ground-truth solution, and a candidate solution to that problem, and your goal is to verify that the candidate solution is correct.
-
-You will be given the following information:
-- The problem
-- The answer to the problem
-- The candidate solution, which includes reasoning and a final answer
-
-You will output a single word, "correct" or "incorrect", to indicate if the candidate solution is a valid solution to the problem.
-You should not mark a candidate solution as incorrect because of any error in its reasoning. You should only care about whether the final answer produced matches the answer.
-
-Your input is as follows:
-<problem>
-{problem}
-</problem>
-<answer>
-{answer}
-</answer>
-<candidate_solution>
-{candidate_solution}
-</candidate_solution>
-
-Now, evaluate the candidate solution by outputting either "correct" or "incorrect", considering the final answer produced.
-Do not output any other text than "correct" or "incorrect". Do not output any form of reasoning or explanation. Only output "correct" or "incorrect", this is absolutely critical.
-"""
-
-lightweight_problem_prompt = """
-Solve the following math or reasoning problem, clearly presenting your reasoning and final answer.
-
-Your input is as follows:
-<problem>
-{problem}
-</problem>
-"""
-
-lightweight_problem_cohere_prompt = """<BOS_TOKEN><|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|><|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|USER_TOKEN|>{problem}<|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>{stub}"""
-
-def _get_verification_prompt(problem: str, answer: str, candidate_solution: str) -> str:
-    return lightweight_verify_prompt.format(problem=problem, answer=answer, candidate_solution=candidate_solution)
-
-def _get_problem_prompt(problem: str) -> str:
-    return lightweight_problem_prompt.format(problem=problem)
-
-def _get_problem_cohere_prompt(problem: str, stub: str) -> str:
-    return lightweight_problem_cohere_prompt.format(problem=problem, stub=stub)
-
 @retry(
     stop=stop_after_attempt(10),
     wait=wait_exponential(multiplier=1, min=4, max=10),
@@ -117,7 +69,7 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
             json={
                 "model": model.value,
                 "messages": [
-                    {"role": "user", "content": _get_problem_prompt(problem)},
+                    {"role": "user", "content": gsm_prompts.get_solution_prompt(problem)},
                     {"role": "assistant", "content": perturbed_stub}
                 ],
                 "provider": {
@@ -153,7 +105,7 @@ async def get_completion_cohere(model: CohereModel, problem: str, perturbed_stub
                 executor,
                 lambda: COHERE_SYNC_CLIENT.chat(
                     model=model.value,
-                    message=_get_problem_cohere_prompt(problem, perturbed_stub),
+                    message=gsm_prompts.get_solution_prompt_cohere(problem, perturbed_stub),
                     temperature=0.2,
                     p=0.8,
                     raw_prompting=True,
@@ -199,7 +151,7 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
         json={
             "model": VERIFIER_MODEL.value,
             "messages": [
-                {"role": "user", "content": _get_verification_prompt(problem, answer, candidate_solution)},
+                {"role": "user", "content": gsm_prompts.get_verification_prompt(problem, answer, candidate_solution)},
             ],
             "provider": {
                 "order": [OPENROUTER_MODEL_PROVIDERS[VERIFIER_MODEL].value],
