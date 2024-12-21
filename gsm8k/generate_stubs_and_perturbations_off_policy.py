@@ -26,12 +26,12 @@ if not "OPENROUTER_API_KEY" in os.environ:
 
 # CONFIGURATION
 # ~ Experiment parameters
+N_PROBLEMS = 200  # None means "All" problems
 STUB_N_TOKENS = 100
-N_PROBLEMS = 5  # None means "All" problems
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 
 # ~ Rate limiting
-OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
+OPENROUTER_TOKEN_BUCKET = TokenBucket(350)
 
 # ~ Things for making requests
 OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"

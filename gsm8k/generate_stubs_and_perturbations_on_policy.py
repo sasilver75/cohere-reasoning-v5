@@ -28,16 +28,16 @@ if not "COHERE_API_KEY" in os.environ:
 # CONFIGURATION
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
-N_PROBLEMS = 20  # None means "All" problems
+N_PROBLEMS = 200  # None means "All" problems
 PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 MODELS = [
-    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     CohereModel.COHERE_R7B,
-    # CohereModel.COHERE_CRP,
-    # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    CohereModel.COHERE_CRP,
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
-    # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
 
 # ~ Rate limiting
