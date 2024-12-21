@@ -21,27 +21,26 @@ if not "OPENROUTER_API_KEY" in os.environ:
 if not "COHERE_API_KEY" in os.environ:
     raise ValueError("COHERE_API_KEY must be set in the environment")
 
-
 # CONFIGURATION
-N_PROBLEMS = 2  # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
-MODELS = {
-    CohereModel.COHERE_R7B,
+N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
+MODELS = [
+    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    # CohereModel.COHERE_R7B,
     # CohereModel.COHERE_CRP,
     # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     # OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
     # OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
-    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
-    
-}
+]
 VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
 COHERE_TOKEN_BUCKET = TokenBucket(400, "Cohere")
 COHERE_SYNC_CLIENT = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
 # END OF CONFIGURATION
 
-
 logger = logging.getLogger(__name__)
+
+
 
 
 lightweight_verify_prompt = """
@@ -218,6 +217,8 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     answer: int = row["ground_truth_solution"] # eg "18"
     stub: str = row["stub"]
     perturbed_stub_lm: str = row["perturbed_stub_lm"]
+    stub_and_perturb_model: str = row["stub_and_perturb_model"]
+    stub_and_perturb_model_provider: str = row["stub_and_perturb_model_provider"]
 
     print(f"Testing model {model.value} on problem {problem_id}")
 
@@ -229,23 +230,29 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     # Get the verification and correction detection results
     perturbed_stub_lm_verified = await verify_solution(session, problem, answer, f"{perturbed_stub_lm}{perturbed_stub_lm_completion}") # Does the full solution match the answer?
     
+
+    # TODO: is this the ordering we want?
     return {
-        "model": str(model.value),
-        "provider": str(OPENROUTER_MODEL_PROVIDERS[model].value) if isinstance(model, OpenRouterModel) else "Cohere",
         "problem_id": problem_id,
         "problem": problem,
         "answer": answer,
+        "stub_and_perturb_model": stub_and_perturb_model,
+        "stub_and_perturb_model_provider": stub_and_perturb_model_provider,
         "stub": stub,
+        "completion_model": model.value,
+        "completion_model_provider": OPENROUTER_MODEL_PROVIDERS[model].value if isinstance(model, OpenRouterModel) else "Cohere",
         "perturbed_stub_lm": perturbed_stub_lm,
         "perturbed_stub_lm_completion": perturbed_stub_lm_completion,
         "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
-        #"perturbed_stub_deterministic": perturbed_stub_deterministic
-        #...
+        # perturbed_stub_deterministic: ...
+        # perturbed_stub_deterministic_perturbation_type: ...
+        # perturbed_stub_deterministic_completion: ...
+        # perturbed_stub_deterministic_solution_verified: ...
     }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel, df: pd.DataFrame) -> list[dict]:
     """Test all problems for a given model concurrently"""
-    semaphore = asyncio.Semaphore(30)
+    semaphore = asyncio.Semaphore(15)
     
     async def rate_limited_test(row: pd.Series):
         async with semaphore:

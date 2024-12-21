@@ -12,26 +12,19 @@ import re
 import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 
+# Load in .env file and confirm needed keys are present
 load_dotenv()
 if not "OPENROUTER_API_KEY" in os.environ:
     raise ValueError("OPENROUTER_API_KEY must be set in the environment")
 
-logger = logging.getLogger(__name__)
-
-
 """
 This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
 DeepSeek 2.5 is not a model under evaluation (because no OpenRouter providers support assistant prefilling), so it's a good use case for it.
-
-# TODO:
-- Change from LLaMA 3.3 70B Instruct to DeepSeek 2.5 1210 Instruct
-
 """
 
-
-# Configuration
+# CONFIGURATION
 STUB_TOKENS = 100
-N_PROBLEMS = 10  # None means "All" problems
+N_PROBLEMS = 100  # None means "All" problems
 TOKEN_BUCKET = TokenBucket(400)
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -39,6 +32,10 @@ HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
     "Content-Type": "application/json"
 }
+# END OF CONFIGURATION
+
+logger = logging.getLogger(__name__)
+
 
 lightweight_solution_prompt =  """
 Solve the following math or reasoning problem, clearly presenting your reasoning and final answer.
@@ -237,7 +234,6 @@ def get_perturbed_stub_deterministic(stub: str) -> str:
 async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     problem_id = row["problem_id"]
     problem = row["problem"]
-    reasoning = row["reasoning"]
     answer = row["solution"]  # TODO: This is a little messy, can we just change what we name it in download_gsm8k.py?
 
     stub = await generate_solution_stub(problem, session)
@@ -247,11 +243,13 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     return {
         "problem_id": problem_id,
         "problem": problem,
-        "ground_truth_reasoning": reasoning,
-        "ground_truth_solution": answer,
+        "answer": answer,
+        "stub_and_perturb_model": PREFIX_AND_PERTURB_MODEL.value,
+        "stub_and_perturb_model_provider": OPENROUTER_MODEL_PROVIDERS[PREFIX_AND_PERTURB_MODEL].value,
         "stub": stub,
         "perturbed_stub_lm": perturbed_stub,
-        # "perturbed_stub_deterministic": perturbed_stub_deterministic
+        # perturbed_stub_deterministic: ...
+        # perturbed_stub_deterministic_perturbation_type: ...
     }
 
 
