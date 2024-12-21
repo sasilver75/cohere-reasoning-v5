@@ -42,7 +42,12 @@ MODELS = [
 VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
 COHERE_TOKEN_BUCKET = TokenBucket(400, "Cohere")
-COHERE_SYNC_CLIENT = cohere.Client(api_key=os.getenv("COHERE_API_KEY")) # For completions, we need to use the V1 Client
+COHERE_SYNC_CLIENT = cohere.Client(api_key=os.environ["COHERE_API_KEY"]) # For completions, we need to use the V1 Client
+OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_HEADERS = {
+    "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
+    "Content-Type": "application/json"
+}
 # END OF CONFIGURATION
 
 logger = logging.getLogger(__name__)
@@ -61,11 +66,8 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
     await OPENROUTER_TOKEN_BUCKET.acquire()
 
     async with session.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
-                "Content-Type": "application/json"
-            },
+            OPENROUTER_COMPLETION_URL,
+            headers=OPENROUTER_HEADERS,
             json={
                 "model": model.value,
                 "messages": [
@@ -143,11 +145,8 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
     await OPENROUTER_TOKEN_BUCKET.acquire()
 
     async with session.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
-            "Content-Type": "application/json"
-        },
+        OPENROUTER_COMPLETION_URL,
+        headers=OPENROUTER_HEADERS,
         json={
             "model": VERIFIER_MODEL.value,
             "messages": [
@@ -238,8 +237,7 @@ async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel, df:
     
     return valid_results
 
-async def async_main():
-
+async def main():
     print(f"Loading dataset...")
     df = pd.read_csv("gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv")
     print(f"Loaded dataset with {len(df)} rows and columns {list(df.columns)}")
@@ -251,14 +249,10 @@ async def async_main():
     acc = []
     async with aiohttp.ClientSession() as session:
         for model in MODELS:
-            try:
-                print(f"\nStarting tests for model: {str(model.value)}")
-                results = await test_model(session, model, df)
-                acc.extend(results)
-                print(f"Completed testing model: {str(model.value)}")
-            except Exception as e:
-                print(f"Error testing model {str(model.value)}: {str(e)}")
-                continue
+            print(f"\nStarting tests for model: {str(model.value)}")
+            results = await test_model(session, model, df)
+            acc.extend(results)
+            print(f"Completed testing model: {str(model.value)}")
 
     print(f"Total results collected: {len(acc)}")
     print("Saving results...")
@@ -267,18 +261,5 @@ async def async_main():
     df.to_csv(filepath, index=False)
     print(f"Results saved to {filepath}")
 
-def main():
-    print(f"Number of models to test: {len(OPENROUTER_MODEL_PROVIDERS)}")
-    print(f"API key present: {'OPENROUTER_API_KEY' in os.environ}")
-
-    try:
-        asyncio.run(async_main())
-    except KeyboardInterrupt:
-        print("\nProcess interrupted by user")
-    except Exception as e:
-        print(f"An error occurred in main: {str(e)}")
-        import traceback
-        traceback.print_exc()
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

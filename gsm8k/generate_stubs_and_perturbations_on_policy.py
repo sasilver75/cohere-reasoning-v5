@@ -29,8 +29,8 @@ STUB_N_TOKENS = 100
 N_PROBLEMS = 100  # None means "All" problems
 OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
 COHERE_TOKEN_BUCKET = TokenBucket(400)
-COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
-HEADERS = {
+OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
     "Content-Type": "application/json"
 }

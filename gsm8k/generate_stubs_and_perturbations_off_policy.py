@@ -27,7 +27,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
 # CONFIGURATION
 STUB_N_TOKENS = 100
 N_PROBLEMS = 100  # None means "All" problems
-TOKEN_BUCKET = TokenBucket(400)
+OPENROUTER_TOKEN_BUCKET = TokenBucket(400)
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_HEADERS = {
@@ -48,7 +48,7 @@ async def generate_solution_stub(problem: str, session: aiohttp.ClientSession) -
     """
     Generate the first STUB_TOKENS tokesn of a solution to a problem.
     """
-    await TOKEN_BUCKET.acquire()
+    await OPENROUTER_TOKEN_BUCKET.acquire()
     
     async with session.post(
         OPENROUTER_COMPLETION_URL,
@@ -78,7 +78,7 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
     """
     Perturb a stub solution
     """
-    await TOKEN_BUCKET.acquire()
+    await OPENROUTER_TOKEN_BUCKET.acquire()
     
     async with session.post(
         OPENROUTER_COMPLETION_URL,
