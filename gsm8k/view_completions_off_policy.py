@@ -24,7 +24,7 @@ except Exception as e:
 
 def create_verification_plot():
     # Calculate rates by model
-    stats = df.groupby('model').agg({
+    stats = df.groupby('completion_model').agg({
         'problem_id': 'count',  # total problems
         'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
     }).assign(
@@ -47,6 +47,7 @@ def create_verification_plot():
     ax.set_ylabel('Rate')
     ax.set_xticks(x)
     ax.set_xticklabels(stats.index, rotation=45, ha='right')
+    ax.set_ylim(0, 1)  # Set y-axis limits from 0 to 1
     ax.legend()
     plt.grid(axis='y', linestyle='--', alpha=0.7)
 
@@ -74,7 +75,7 @@ def create_verification_plot():
 @app.route("/")
 def stats():
     # Calculate statistics for each model
-    model_stats = df.groupby(['model', 'provider']).agg({
+    model_stats = df.groupby(['completion_model', 'completion_model_provider']).agg({
         'problem_id': 'count',
         'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
     })
@@ -218,7 +219,7 @@ def view_completions():
         return "Model parameter is required", 400
     
     # Filter dataframe for selected model
-    model_df = df[df['model'] == model].copy()
+    model_df = df[df['completion_model'] == model].copy()
     
     # Get problem_id from query parameters if provided
     problem_id = request.args.get("problem_id", type=int)

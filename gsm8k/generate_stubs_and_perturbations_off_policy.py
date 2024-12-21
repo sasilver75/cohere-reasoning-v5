@@ -27,7 +27,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
 # CONFIGURATION
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
-N_PROBLEMS = 100  # None means "All" problems
+N_PROBLEMS = 5  # None means "All" problems
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 
 # ~ Rate limiting
