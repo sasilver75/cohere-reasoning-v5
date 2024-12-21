@@ -10,8 +10,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Load the CSV file
-ON_POLICY = False
-csv_path = f"gsm8k/datasets/gsm8k_completions_{"on_policy" if ON_POLICY else "off_policy"}.csv"
+csv_path = f"gsm8k/datasets/gsm8k_completions_off_policy.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
     exit(1)
