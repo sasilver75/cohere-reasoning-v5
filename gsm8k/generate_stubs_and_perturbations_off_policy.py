@@ -1,7 +1,7 @@
 import random
 import sys
 import os
-from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
+from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel
 import pandas as pd
 from tqdm import tqdm
 from dotenv import load_dotenv
@@ -10,8 +10,8 @@ import asyncio
 import re
 import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
-from gsm8k import gsm_prompts
-from gsm8k.gsm_utils import TokenBucket
+import gsm_prompts
+from gsm_utils import TokenBucket
 
 """
 This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
@@ -106,7 +106,7 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
     pattern = r'<perturbed_stub>\s*(.*?)\s*</perturbed_stub>'
     match = re.search(pattern, response_content, re.DOTALL)
     if match:
-        return match.group(1).strip()
+        return match.group(1)
     else:
         raise ValueError(f"Couldn't find perturbed stub in response: {response_content}")
     

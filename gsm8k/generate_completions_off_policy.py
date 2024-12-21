@@ -4,16 +4,16 @@ import time
 import aiohttp
 import sys
 import os
-from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, CohereModel
+from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, CohereModel
 import pandas as pd
 from tqdm import tqdm
 import requests
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 import logging
-from gsm8k.gsm_utils import TokenBucket
+from gsm_utils import TokenBucket
 import cohere
-from gsm8k import gsm_prompts
+import gsm_prompts
 """
 For every model under evaluation, generate completions and verifications for every model under evaluation,
 on top of the off-policy stubs and perturbations generated in generate_stubs_and_perturbations_off_policy.py.

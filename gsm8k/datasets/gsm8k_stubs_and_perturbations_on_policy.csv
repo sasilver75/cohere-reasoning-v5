@@ -1,0 +1,110 @@
+problem_id,problem,answer,stub_model,stub_model_provider,perturb_model,perturb_model_provider,stub,perturbed_stub
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,command-r7b-12-2024,Cohere,deepseek/deepseek-chat,Hyperbolic,"To determine how much Janet makes every day at the farmers' market, we need to follow these steps:
+
+1. Calculate the total number of eggs laid by the ducks per day.
+2. Subtract the number of eggs Janet eats for breakfast and the number of eggs used for baking muffins.
+3. Determine the number of eggs left to sell at the farmers' market.
+4. Multiply the number of eggs left by the price per egg.
+
+Let's go through each","To determine how much Janet makes every day at the farmers' market, we need to follow these steps:
+
+1. Calculate the total number of eggs laid by the ducks per day.
+2. Add the number of eggs Janet eats for breakfast and the number of eggs used for baking muffins.
+3. Determine the number of eggs left to sell at the farmers' market.
+4. Multiply the number of eggs left by the price per egg.
+
+Let's go through each"
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,google/gemma-2-27b-it,DeepInfra,deepseek/deepseek-chat,Hyperbolic,"
+
+Here's how to solve the problem:
+
+**1. Calculate the total eggs used:**
+
+* Janet uses 3 eggs for breakfast + 4 eggs for muffins = 7 eggs per day.
+
+**2. Calculate the number of eggs remaining:**
+
+* Janet starts with 16 eggs - 7 eggs used = 9 eggs remaining.
+
+**3. Calculate daily earnings:**
+
+* Janet sells 9 eggs at $2 per egg = $18.
+
+
+**","Here's how to solve the problem:
+
+**1. Calculate the total eggs used:**
+
+* Janet uses 3 eggs for breakfast + 4 eggs for muffins = 7 eggs per day.
+
+**2. Calculate the number of eggs remaining:**
+
+* Janet starts with 16 eggs - 7 eggs used = 9 eggs remaining.
+
+**3. Calculate daily earnings:**
+
+* Janet sells 9 eggs at $3 per egg = $27."
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,command-r7b-12-2024,Cohere,deepseek/deepseek-chat,Hyperbolic,"To determine the total number of bolts needed for the robe, we need to follow these steps:
+
+1. **Identify the amount of blue fiber required:**
+   - The robe takes 2 bolts of blue fiber.
+
+2. **Determine the amount of white fiber required:**
+   - The robe takes half the amount of blue fiber in white fiber.
+   - Half of 2 bolts is calculated as:
+     \[
+     \frac{2}{2} = 1 \text{ bolt}","To determine the total number of bolts needed for the robe, we need to follow these steps:
+
+1. **Identify the amount of blue fiber required:**
+   - The robe takes 2 bolts of blue fiber.
+
+2. **Determine the amount of white fiber required:**
+   - The robe takes half the amount of blue fiber in white fiber.
+   - Half of 2 bolts is calculated as:
+     \[
+     \frac{2}{1} = 2 \text{ bolts}"
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,google/gemma-2-27b-it,DeepInfra,deepseek/deepseek-chat,Hyperbolic,"
+
+Here's how to solve the problem:
+
+* **Find the amount of white fiber:** Half of 2 bolts of blue fiber is 2 / 2 = 1 bolt of white fiber.
+* **Add the amounts together:** 2 bolts of blue fiber + 1 bolt of white fiber = 3 bolts total.
+
+
+**Answer:** It takes a total of 3 bolts to make the robe. 
+","Here's how to solve the problem:
+
+* **Find the amount of white fiber:** Half of 2 bolts of blue fiber is 2 / 2 = 2 bolts of white fiber.
+* **Add the amounts together:** 2 bolts of blue fiber + 2 bolts of white fiber = 4 bolts total.
+
+**Answer:** It takes a total of 4 bolts to make the robe."
+2,"Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?",70000,command-r7b-12-2024,Cohere,deepseek/deepseek-chat,Hyperbolic,"To determine Josh's profit, we need to calculate the final value of the house and then subtract the total cost (initial purchase price + repair costs) from it.
+
+1. **Calculate the increase in value due to repairs:**
+   - The value of the house increased by 150%. This means the new value is 250% of the original value (100% original value + 150% increase).
+
+2. **Determine the original value of","To determine Josh's profit, we need to calculate the final value of the house and then subtract the total cost (initial purchase price + repair costs) from it.
+
+1. **Calculate the increase in value due to repairs:**
+   - The value of the house increased by 150%. This means the new value is 150% of the original value (100% original value + 150% increase).
+
+2. **Determine the original value of"
+2,"Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?",70000,google/gemma-2-27b-it,DeepInfra,deepseek/deepseek-chat,Hyperbolic,"
+
+Here's how to solve the problem:
+
+**1. Calculate the value increase:**
+
+* The house's value increased by 150% of its original price: $80,000 * 1.50 = $120,000
+
+**2. Calculate the new value of the house:**
+
+* Add the value increase to the original price: $80,000 + $120,000 =","Here's how to solve the problem:
+
+**1. Calculate the value increase:**
+
+* The house's value increased by 150% of its original price: $80,000 * 1.50 = $120,000
+
+**2. Calculate the new value of the house:**
+
+* Add the value increase to the original price: $80,000 - $120,000 ="
