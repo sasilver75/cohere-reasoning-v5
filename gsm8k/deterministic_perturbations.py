@@ -72,44 +72,51 @@ class NumericModification(PerturbationStrategy):
 class OperatorSwapModification(PerturbationStrategy):
     """
     Swaps mathematical operators with their opposites.
-    
-    Applicability:
-        - Text contains any of these operator pairs:
-        - Addition/subtraction (+/-)
-        - Multiplication/division (*/)
-        - Greater/less than (>/< or >=/<= )
-    
-    Perturbation:
-        Replaces one operator with its opposite:
-        - + → -
-        - * → /
-        - > → <
-        - >= → <=
     """
     NAME = "OperatorSwapModification"
 
-    OPERATOR_PAIRS = [
-        (r'\+', '-'),
-        (r'\*', '/'),
-        (r'>', '<'),
-        (r'>=', '<='),
+    # Define regex patterns for matching operators in mathematical contexts
+    OPERATOR_PATTERNS = [
+        # Match + or - only when between numbers, not at start of line
+        (r'(?<=[0-9])(\s*)\+(\s*)(?=[0-9])', r'\1-\2'),  # + between numbers
+        (r'(?<=[0-9])(\s*)-(\s*)(?=[0-9])', r'\1+\2'),  # - between numbers
+        # Match * and / between numbers
+        (r'(?<=[0-9])(\s*)\*(\s*)(?=[0-9])', r'\1/\2'),  # * between numbers
+        (r'(?<=[0-9])(\s*)/(\s*)(?=[0-9])', r'\1*\2'),  # / between numbers
+        # Match comparison operators between numbers
+        (r'(?<=[0-9])(\s*)>(\s*)(?=[0-9])', r'\1<\2'),  # > between numbers
+        (r'(?<=[0-9])(\s*)<(\s*)(?=[0-9])', r'\1>\2'),  # < between numbers
+        # Match compound comparison operators
+        (r'(?<=[0-9])(\s*)>=(\s*)(?=[0-9])', r'\1<=\2'),
+        (r'(?<=[0-9])(\s*)<=(\s*)(?=[0-9])', r'\1>=\2')
     ]
     
     @staticmethod
     def is_applicable(text: str) -> bool:
-        return any(re.search(op[0], text) for op in OperatorSwapModification.OPERATOR_PAIRS)
+        # Check if any pattern matches in a mathematical context
+        return any(re.search(pattern[0], text) 
+                  for pattern in OperatorSwapModification.OPERATOR_PATTERNS)
     
     @staticmethod
     def apply(text: str) -> str:
+        # Find all applicable patterns
         applicable_pairs = [
-            pair for pair in OperatorSwapModification.OPERATOR_PAIRS 
+            pair for pair in OperatorSwapModification.OPERATOR_PATTERNS 
             if re.search(pair[0], text)
         ]
         if not applicable_pairs:
             return text
             
+        # Choose and apply a random pattern
         op_pair = random.choice(applicable_pairs)
-        return re.sub(op_pair[0], op_pair[1], text, count=1)
+        print(f"Found applicable operator pair: {op_pair}")  # Debug print
+        print(f"Matches found: {re.findall(op_pair[0], text)}")  # Debug print
+        
+        # Apply the substitution
+        result = re.sub(op_pair[0], op_pair[1], text, count=1)
+        print(f"Text before: {text}")  # Debug print
+        print(f"Text after: {result}")  # Debug print
+        return result
 
 class UnitModification(PerturbationStrategy):
     """
@@ -280,7 +287,7 @@ class EquationBalanceErrorModification(PerturbationStrategy):
         - Adds or subtracts 1 (off-by-one errors)
         - Doubles or halves the result
         - Drops decimal places
-        This creates a mismatch between the calculation and its stated result.
+    This creates a mismatch between the calculation and its stated result.
     """
     NAME = "EquationBalanceErrorModification"
     
@@ -310,6 +317,10 @@ class EquationBalanceErrorModification(PerturbationStrategy):
         ]
         
         new_num = random.choice(strategies)(num)
+        # Make sure we actually changed the number
+        while new_num == num:
+            new_num = random.choice(strategies)(num)
+            
         return text[:match.start(2)] + str(new_num) + text[match.end(2):]
     
 class NothingModification(PerturbationStrategy):

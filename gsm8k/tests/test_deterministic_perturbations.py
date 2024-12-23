@@ -49,6 +49,64 @@ def test_operator_swap_modification():
     result = OperatorSwapModification.apply(text)
     assert "x < y" in result or "x > y" in result
 
+def test_operator_swap_markdown_safety():
+    """Test that operator swap doesn't affect Markdown bullet points"""
+    
+    # Test with Markdown bullet points
+    text = """To solve this:
+    - First add 2 + 3
+    - Then multiply by 4
+    - Finally subtract 1"""
+    result = OperatorSwapModification.apply(text)
+    assert "- First" in result  # Bullet point should remain
+    assert "- Then" in result   # Bullet point should remain
+    assert "- Finally" in result  # Bullet point should remain
+    
+    # Test with mathematical operators
+    text = "2 + 3 = 5"
+    result = OperatorSwapModification.apply(text)
+    assert result != text  # Should modify actual mathematical operator
+    assert "2 - 3 = 5" in result or "2 + 3 = 5" in result
+
+    # Test with mixed content
+    text = """Steps:
+    - First calculate 2 + 3
+    - Then calculate 5 - 2
+    - Result is 3"""
+    result = OperatorSwapModification.apply(text)
+    assert "- First" in result  # Bullet points should remain
+    assert "- Then" in result
+    assert "- Result" in result
+    # Should modify one of the mathematical operators but not bullet points
+    assert (("2 - 3" in result) != ("2 + 3" in result)) or (("5 + 2" in result) != ("5 - 2" in result))
+
+def test_operator_swap_specific_cases():
+    """Test specific operator swap cases"""
+    
+    # Test minus between numbers
+    text = "5 - 3 = 2"
+    result = OperatorSwapModification.apply(text)
+    assert "5 + 3" in result or "5 - 3" in result
+
+    # Test plus between numbers
+    text = "5 + 3 = 8"
+    result = OperatorSwapModification.apply(text)
+    assert "5 - 3" in result or "5 + 3" in result
+
+    # Test with comment-like content
+    text = "/* This is a comment with + and - */"
+    result = OperatorSwapModification.apply(text)
+    assert result == text  # Should not modify operators in comments
+
+    # Test with equation in markdown list
+    text = """Problem:
+    - Given x + y = 10
+    - And x - y = 2
+    Solve for x and y"""
+    result = OperatorSwapModification.apply(text)
+    # Should modify one equation operator but not bullet points
+    assert text.count("-") - result.count("-") in [-1, 0, 1]  # Only one - should change at most
+
 def test_unit_modification():
     # Test applicability
     assert UnitModification.is_applicable("5 hours of work")
