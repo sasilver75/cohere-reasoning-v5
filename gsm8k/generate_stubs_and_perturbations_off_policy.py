@@ -12,6 +12,7 @@ import aiohttp
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 import gsm_prompts
 from gsm_utils import TokenBucket
+from deterministic_perturbations import get_perturbed_stub_deterministic
 
 """
 This generates "off-policy" stubs and perturbations from GSM8k, using the off-policy model of DeepSeek 2.5.
@@ -79,7 +80,7 @@ async def generate_solution_stub(problem: str, session: aiohttp.ClientSession) -
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSession) -> str:
+async def get_perturbed_stub_lm(problem: str, stub: str, session: aiohttp.ClientSession) -> str:
     """
     Perturb a stub solution
     """
@@ -111,60 +112,16 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
         raise ValueError(f"Couldn't find perturbed stub in response: {response_content}")
     
 
-def get_perturbed_stub_deterministic(stub: str) -> str:
-    """
-    Perturb a stub solution deterministically
-    """
-
-    possible_perturbations = []
-    
-    # Check for numbers
-    if re.search(r'\d+(?:\.\d+)?', stub):
-        possible_perturbations.append('number_modification')
-        
-    # Check for operators
-    if any(op in stub for op in ['+', '-', '*', '/', '>', '<']):
-        possible_perturbations.append('operator_swap')
-        
-    # Check for units
-    if any(unit in stub.lower() for unit in ['hours', 'dollars', 'meters']):
-        possible_perturbations.append('unit_swap')
-        
-    # Check for percentages
-    if re.search(r'\d+(?:\s)?(?:%|percent)', stub):
-        possible_perturbations.append('percentage_modification')
-        
-    # Check for fractions
-    if re.search(r'\d+/\d+', stub):
-        possible_perturbations.append('fraction_inversion')
-    
-    if not possible_perturbations:
-        return stub  # No perturbation possible
-        
-    # Choose and apply a perturbation strategy
-    strategy = random.choice(possible_perturbations)
-    
-    # Apply the chosen strategy
-    if strategy == 'number_modification':
-        # Implementation here
-        pass
-    elif strategy == 'operator_swap':
-        # Implementation here
-        pass
-    # ... etc for other strategies
-    
-    return stub
-
-
-
 async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     problem_id = row["problem_id"]
     problem = row["problem"]
-    answer = row["solution"]  # TODO: This is a little messy, can we just change what we name it in download_gsm8k.py?
+    answer = row["solution"]
 
     stub = await generate_solution_stub(problem, session)
-    perturbed_stub = await get_perturbed_stub(problem, stub, session)
-    # perturbed_stub_deterministic = get_perturbed_stub_deterministic(stub)
+
+    # Get the LM-based and deterministic perturbations of the stub
+    perturbed_stub_lm = await get_perturbed_stub_lm(problem, stub, session)
+    perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
     
     return {
         "problem_id": problem_id,
@@ -173,9 +130,9 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
         "stub_and_perturb_model": PREFIX_AND_PERTURB_MODEL.value,
         "stub_and_perturb_model_provider": OPENROUTER_MODEL_PROVIDERS[PREFIX_AND_PERTURB_MODEL].value,
         "stub": stub,
-        "perturbed_stub_lm": perturbed_stub,
-        # perturbed_stub_deterministic: ...
-        # perturbed_stub_deterministic_perturbation_type: ...
+        "perturbed_stub_lm": perturbed_stub_lm,
+        "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        "perturbed_stub_deterministic_type": perturbation_type
     }
 
 

@@ -1,6 +1,7 @@
 import random
 import sys
 import os
+from gsm8k.deterministic_perturbations import get_perturbed_stub_deterministic
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, CohereModel
 from gsm_utils import TokenBucket
 import pandas as pd
@@ -153,8 +154,10 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
 
     # Generate an on-policy stub
     stub = await generate_solution_stub(problem, model, session)
-    # Perturb the stub using the "impartial" PERTURB_MODEL
-    perturbed_stub = await get_perturbed_stub(problem, stub, session)
+    
+    # Get the LM-based and deterministic perturbations of the stub
+    perturbed_stub_lm = await get_perturbed_stub(problem, stub, session)
+    perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
     
     return {
         "problem_id": problem_id,
@@ -165,9 +168,9 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
         "perturb_model": PERTURB_MODEL.value,
         "perturb_model_provider": OPENROUTER_MODEL_PROVIDERS[PERTURB_MODEL].value,
         "stub": stub,
-        "perturbed_stub": perturbed_stub,
-        # perturbed_stub_deterministic: ...,
-        # perturbed_stub_deterministic_perturbation_type: ...
+        "perturbed_stub_lm": perturbed_stub_lm,
+        "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        "perturbed_stub_deterministic_type": perturbation_type
     }
 
 async def main():

@@ -178,40 +178,67 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     """Handle a single problem evaluation"""
     problem_id: int = row["problem_id"]
     problem: str = row["problem"]
-    answer: int = row["answer"] # eg "18"
+    answer: int = row["answer"]
     stub: str = row["stub"]
+    
+    # LM perturbation data
     perturbed_stub_lm: str = row["perturbed_stub_lm"]
+    
+    # Deterministic perturbation data
+    perturbed_stub_deterministic: str = row["perturbed_stub_deterministic"]
+    perturbed_stub_deterministic_type: str = row["perturbed_stub_deterministic_type"]
+    
+    # Model info
     stub_and_perturb_model: str = row["stub_and_perturb_model"]
     stub_and_perturb_model_provider: str = row["stub_and_perturb_model_provider"]
 
     print(f"Testing model {model.value} on problem {problem_id}")
 
-    # TODO: Consider wrapping all of the below in a try/except block, and return "placeholder" values if the tasks actually fail; This would only happen if we 
-
-    # Get the completion using the LM-perturbed stub
-    perturbed_stub_lm_completion = await get_completion(session, model, problem, perturbed_stub_lm)
+    # Get completions for both perturbation types in parallel
+    perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
+        get_completion(session, model, problem, perturbed_stub_lm),
+        get_completion(session, model, problem, perturbed_stub_deterministic)
+    )
     
-    # Get the verification and correction detection results
-    perturbed_stub_lm_verified = await verify_solution(session, problem, answer, f"{perturbed_stub_lm}{perturbed_stub_lm_completion}") # Does the full solution match the answer?
-    
+    # Get verifications for both perturbation types in parallel
+    perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
+        verify_solution(
+            session, 
+            problem, 
+            answer, 
+            f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
+        ),
+        verify_solution(
+            session, 
+            problem, 
+            answer, 
+            f"{perturbed_stub_deterministic}{perturbed_stub_deterministic_completion}"
+        )
+    )
 
-    # TODO: is this the ordering we want?
     return {
+        # Problem metadata
         "problem_id": problem_id,
         "problem": problem,
         "answer": answer,
+        "stub": stub,
+        
+        # Model information
         "stub_and_perturb_model": stub_and_perturb_model,
         "stub_and_perturb_model_provider": stub_and_perturb_model_provider,
-        "stub": stub,
         "completion_model": model.value,
         "completion_model_provider": OPENROUTER_MODEL_PROVIDERS[model].value if isinstance(model, OpenRouterModel) else "Cohere",
+        
+        # LM perturbation results
         "perturbed_stub_lm": perturbed_stub_lm,
         "perturbed_stub_lm_completion": perturbed_stub_lm_completion,
         "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
-        # perturbed_stub_deterministic: ...
-        # perturbed_stub_deterministic_perturbation_type: ...
-        # perturbed_stub_deterministic_completion: ...
-        # perturbed_stub_deterministic_solution_verified: ...
+        
+        # Deterministic perturbation results
+        "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        "perturbed_stub_deterministic_type": perturbed_stub_deterministic_type,
+        "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
+        "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
     }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, df: pd.DataFrame) -> list[dict]:

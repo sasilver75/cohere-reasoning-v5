@@ -163,21 +163,44 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     
     print(f"Testing model {model.value} on problem {result['problem_id']}")
 
-    # Get the completion using the perturbed stub
-    completion = await get_completion(session, model, result["problem"], result["perturbed_stub"])
+    # Get completions for both perturbation types in parallel
+    perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
+        get_completion(session, model, result["problem"], result["perturbed_stub_lm"]),
+        get_completion(session, model, result["problem"], result["perturbed_stub_deterministic"])
+    )
     
-    # Get the verification result
-    full_solution = f"{result['perturbed_stub']}{completion}"
-    verified = await verify_solution(session, result["problem"], result["answer"], full_solution)
+    # Get verifications for both perturbation types in parallel
+    perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
+        verify_solution(
+            session, 
+            result["problem"], 
+            result["answer"], 
+            f"{result['perturbed_stub_lm']}{perturbed_stub_lm_completion}"
+        ),
+        verify_solution(
+            session, 
+            result["problem"], 
+            result["answer"], 
+            f"{result['perturbed_stub_deterministic']}{perturbed_stub_deterministic_completion}"
+        )
+    )
 
     # Add new completion-related fields
     result.update({
         "completer_model": model.value,
         "completer_model_provider": OPENROUTER_MODEL_PROVIDERS[model].value if isinstance(model, OpenRouterModel) else "Cohere",
-        "completion": completion,
+        
+        # LM perturbation results
+        "perturbed_stub_lm_completion": perturbed_stub_lm_completion,
+        "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
+        
+        # Deterministic perturbation results
+        "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
+        "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
+        
+        # Verifier model info
         "verifier_model": VERIFIER_MODEL.value,
         "verifier_model_provider": OPENROUTER_MODEL_PROVIDERS[VERIFIER_MODEL].value,
-        "verification": verified
     })
 
     return result
