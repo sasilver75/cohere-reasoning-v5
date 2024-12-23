@@ -267,3 +267,108 @@ def test_at_least_one_strategy_applicable(text, expected_applicable):
     ]
     
     assert any(s.is_applicable(text) for s in strategies) == expected_applicable
+
+def test_order_of_operations_strict_matching():
+    """Test that OrderOfOperationsModification only matches simple arithmetic expressions"""
+    
+    # Should match these simple cases
+    assert OrderOfOperationsModification.is_applicable("(2 + 3) * 4")
+    assert OrderOfOperationsModification.is_applicable("(5 - 1) / 2")
+    assert OrderOfOperationsModification.is_applicable("(10 + 20) * 3")
+    assert OrderOfOperationsModification.is_applicable("2 + (3 * 4)")  # Different parentheses position
+    assert OrderOfOperationsModification.is_applicable("5 * (2 + 1)")  # Different parentheses position
+    
+    # Should NOT match these cases
+    assert not OrderOfOperationsModification.is_applicable(r"Total is \( 0.4 \times 200 = 80 \)")  # LaTeX
+    assert not OrderOfOperationsModification.is_applicable("First (add 2 and 3) then multiply")  # Text description
+    assert not OrderOfOperationsModification.is_applicable("(x + y) * z")  # Variables
+    assert not OrderOfOperationsModification.is_applicable("(2 + 3 + 4) * 5")  # More than two numbers
+    
+    # Test application on valid cases with parentheses at start
+    text = "(2 + 3) * 4"
+    result = OrderOfOperationsModification.apply(text)
+    assert result in [
+        "2 + 3 * 4",  # Removed parentheses
+        "2 * (3 * 4)"  # Shifted parentheses
+    ]
+    
+    # Test application on valid cases with parentheses in middle
+    text = "2 + (3 * 4)"
+    result = OrderOfOperationsModification.apply(text)
+    assert result in [
+        "2 + 3 * 4",  # Removed parentheses
+        "(2 + 3) * 4"  # Shifted parentheses
+    ]
+    
+    # Test that complex expressions are preserved
+    text = r"The formula is \( (a + b) * c \) in math notation"
+    assert OrderOfOperationsModification.apply(text) == text
+    
+    # Test mixed content
+    text = """Here's the calculation:
+    (5 + 3) * 2 = 16
+    And also \( (x + y) * z \) in LaTeX"""
+    result = OrderOfOperationsModification.apply(text)
+    # Should only modify the simple arithmetic expression
+    assert r"\( (x + y) * z \)" in result  # LaTeX preserved
+    assert result != text  # But something was modified
+
+def test_order_of_operations_pattern_consistency():
+    """Test that BASE_PATTERNS and CAPTURE_PATTERNS match the same expressions"""
+    
+    test_cases = [
+        # Should match both pattern sets
+        "(2 + 3) * 4",
+        "(5 - 1) / 2",
+        "2 + (3 * 4)",
+        "5 * (2 + 1)",
+        "(10 + 20) * 3",
+        "4 + (6 * 2)",
+        
+        # Should match neither pattern set
+        r"Total is \( 0.4 \times 200 = 80 \)",  # LaTeX
+        "First (add 2 and 3) then multiply",    # Text description
+        "(x + y) * z",                          # Variables
+        "(2 + 3 + 4) * 5",                      # More than two numbers
+        "2 * 3 + 4",                            # No parentheses
+    ]
+    
+    for text in test_cases:
+        # Check if base patterns match
+        base_matches = any(bool(re.search(pattern, text)) 
+                         for pattern in OrderOfOperationsModification.BASE_PATTERNS)
+        
+        # Check if capture patterns match
+        capture_matches = any(bool(re.search(pattern, text)) 
+                            for pattern, _ in OrderOfOperationsModification.CAPTURE_PATTERNS)
+        
+        # Both pattern sets should agree
+        assert base_matches == capture_matches, \
+            f"Pattern mismatch for '{text}': base_matches={base_matches}, capture_matches={capture_matches}"
+        
+        # If applicable, verify that apply() actually modifies the text
+        if base_matches:
+            result = OrderOfOperationsModification.apply(text)
+            assert result != text, f"apply() didn't modify applicable text: '{text}'"
+        else:
+            result = OrderOfOperationsModification.apply(text)
+            assert result == text, f"apply() modified non-applicable text: '{text}'"
+
+def test_order_of_operations_transformations():
+    """Test specific transformations of the OrderOfOperationsModification"""
+    
+    # Test front parentheses transformations
+    text = "(2 + 3) * 4"
+    result = OrderOfOperationsModification.apply(text)
+    assert result in [
+        "2 + 3 * 4",      # Removed parentheses
+        "2 * (3 * 4)"     # Shifted parentheses
+    ]
+    
+    # Test middle parentheses transformations
+    text = "2 + (3 * 4)"
+    result = OrderOfOperationsModification.apply(text)
+    assert result in [
+        "2 + 3 * 4",      # Removed parentheses
+        "(2 + 3) * 4"     # Shifted parentheses
+    ]

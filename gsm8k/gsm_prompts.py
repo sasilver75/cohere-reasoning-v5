@@ -81,7 +81,7 @@ Here is the reasoning stub that I want you to perturb:
 {stub}
 </reasoning_stub>
 
-Apply one a single perturbation to the reasoning stub.
+Apply a single perturbation to the reasoning stub.
 
 Provide your perturbed version of the reasoning stub inside <perturbed_stub> tags. 
 Ensure that your perturbation is impactful and that it maintains the original structure and length of the stub as closely as possible.

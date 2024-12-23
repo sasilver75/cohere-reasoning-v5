@@ -248,39 +248,56 @@ class FractionModification(PerturbationStrategy):
 
 class OrderOfOperationsModification(PerturbationStrategy):
     """
-    Modifies mathematical expressions by changing parentheses placement.
+    Modifies simple mathematical expressions by changing parentheses placement.
     
     Applicability:
-        - Text contains arithmetic expressions with parentheses
-        - Example: "(2 + 3) * 4"
-    
-    Perturbation:
-        Either:
-        - Removes parentheses entirely
-        - Shifts parentheses to change operation order
-        This changes the order of operations and thus the result.
+        - Text contains SIMPLE arithmetic expressions with parentheses
+        - ONLY matches patterns like:
+          - "(2 + 3) * 4"
+          - "(5 - 1) / 2"
+          - "2 + (3 * 4)"
+          - "5 * (2 + 1)"
+        - Does NOT match:
+          - LaTeX equations \( ... \)
+          - Complex expressions
+          - Text descriptions of math
     """
     NAME = "OrderOfOperationsModification"
 
+    # Define the basic patterns without capture groups
+    BASE_PATTERNS = [
+        r'\(\d+\s*[+\-*/]\s*\d+\)\s*[+\-*/]\s*\d+',  # (2 + 3) * 4
+        r'\d+\s*[+\-*/]\s*\(\d+\s*[+\-*/]\s*\d+\)'   # 2 + (3 * 4)
+    ]
+
+    # Define the patterns with capture groups for extraction
+    CAPTURE_PATTERNS = [
+        (r'(\(\d+\s*[+\-*/]\s*\d+\))\s*([+\-*/])\s*(\d+)',  # (2 + 3) * 4
+         lambda m: [
+             f"{m.group(1)[1:-1]} {m.group(2)} {m.group(3)}",  # Remove parentheses
+             f"{m.group(1).split()[0][1:]} {m.group(2)} ({m.group(1).split()[-1][:-1]} {m.group(2)} {m.group(3)})"  # Shift parentheses
+         ]),
+        (r'(\d+)\s*([+\-*/])\s*(\(\d+\s*[+\-*/]\s*\d+\))',  # 2 + (3 * 4)
+         lambda m: [
+             f"{m.group(1)} {m.group(2)} {m.group(3)[1:-1]}",  # Remove parentheses
+             f"({m.group(1)} {m.group(2)} {m.group(3).split()[0][1:]}) {m.group(3).split()[1]} {m.group(3).split()[-1][:-1]}"  # Shift parentheses
+         ])
+    ]
+
     @staticmethod
     def is_applicable(text: str) -> bool:
-        return bool(re.search(r'\([^()]+\)', text))
+        return any(bool(re.search(pattern, text)) for pattern in OrderOfOperationsModification.BASE_PATTERNS)
     
     @staticmethod
     def apply(text: str) -> str:
-        matches = list(re.finditer(r'\(([^()]+)\)', text))
-        if not matches:
-            return text
-            
-        match = random.choice(matches)
-        strategies = [
-            lambda expr: expr.group(1),  # Remove parentheses
-            # Shift parentheses left if possible
-            lambda expr: f"({expr.group(1).split()[0]}) {' '.join(expr.group(1).split()[1:])}"
-        ]
-        
-        new_expr = random.choice(strategies)(match)
-        return text[:match.start()] + new_expr + text[match.end():]
+        for pattern, strategy_generator in OrderOfOperationsModification.CAPTURE_PATTERNS:
+            matches = list(re.finditer(pattern, text))
+            if matches:
+                match = random.choice(matches)
+                strategies = strategy_generator(match)
+                new_expr = random.choice(strategies)
+                return text[:match.start()] + new_expr + text[match.end():]
+        return text
     
 
 class EquationBalanceErrorModification(PerturbationStrategy):
