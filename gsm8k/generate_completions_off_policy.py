@@ -187,8 +187,8 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     perturbed_stub_lm: str = row["perturbed_stub_lm"]
     
     # Deterministic perturbation data
-    perturbed_stub_deterministic: str = row["perturbed_stub_deterministic"]
-    perturbed_stub_deterministic_type: str = row["perturbed_stub_deterministic_type"]
+    # perturbed_stub_deterministic: str = row["perturbed_stub_deterministic"]
+    # perturbed_stub_deterministic_type: str = row["perturbed_stub_deterministic_type"]
     
     # Model info
     stub_and_perturb_model: str = row["stub_and_perturb_model"]
@@ -197,26 +197,28 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     print(f"Testing model {model.value} on problem {problem_id}")
 
     # Get completions for both perturbation types in parallel
-    perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
-        get_completion(session, model, problem, perturbed_stub_lm),
-        get_completion(session, model, problem, perturbed_stub_deterministic)
-    )
+    # perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
+    #     get_completion(session, model, problem, perturbed_stub_lm),
+    #     get_completion(session, model, problem, perturbed_stub_deterministic)
+    # )
+    perturbed_stub_lm_completion = get_completion(session, model, problem, perturbed_stub_lm)
     
     # Get verifications for both perturbation types in parallel
-    perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
-        verify_solution(
-            session, 
-            problem, 
-            answer, 
-            f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
-        ),
-        verify_solution(
-            session, 
-            problem, 
-            answer, 
-            f"{perturbed_stub_deterministic}{perturbed_stub_deterministic_completion}"
-        )
-    )
+    # perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
+    #     verify_solution(
+    #         session, 
+    #         problem, 
+    #         answer, 
+    #         f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
+    #     ),
+    #     verify_solution(
+    #         session, 
+    #         problem, 
+    #         answer, 
+    #         f"{perturbed_stub_deterministic}{perturbed_stub_deterministic_completion}"
+    #     )
+    # )
+    perturbed_stub_lm_verified = verify_solution(session, problem, answer, perturbed_stub_lm_completion)
 
     return {
         # Problem metadata
@@ -237,10 +239,10 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
         "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
         
         # Deterministic perturbation results
-        "perturbed_stub_deterministic": perturbed_stub_deterministic,
-        "perturbed_stub_deterministic_type": perturbed_stub_deterministic_type,
-        "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
-        "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
+        # "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        # "perturbed_stub_deterministic_type": perturbed_stub_deterministic_type,
+        # "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
+        # "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
     }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, df: pd.DataFrame) -> list[dict]:

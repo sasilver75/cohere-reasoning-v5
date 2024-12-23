@@ -121,8 +121,9 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     print(f"Generated stub for problem {problem_id}")
 
     # Get the LM-based and deterministic perturbations of the stub
+    # TODO: For now, I'm not going to consider the deterministic perturbations.
     perturbed_stub_lm = await get_perturbed_stub_lm(problem, stub, session)
-    perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
+    # perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
     print(f"Generated perturbations for problem {problem_id}")
 
     return {
@@ -133,8 +134,8 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
         "stub_and_perturb_model_provider": OPENROUTER_MODEL_PROVIDERS[PREFIX_AND_PERTURB_MODEL].value,
         "stub": stub,
         "perturbed_stub_lm": perturbed_stub_lm,
-        "perturbed_stub_deterministic": perturbed_stub_deterministic,
-        "perturbed_stub_deterministic_type": perturbation_type
+        # "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        # "perturbed_stub_deterministic_type": perturbation_type
     }
 
 

@@ -157,7 +157,7 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
     
     # Get the LM-based and deterministic perturbations of the stub
     perturbed_stub_lm = await get_perturbed_stub(problem, stub, session)
-    perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
+    # perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
     
     return {
         "problem_id": problem_id,
@@ -169,8 +169,8 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
         "perturb_model_provider": OPENROUTER_MODEL_PROVIDERS[PERTURB_MODEL].value,
         "stub": stub,
         "perturbed_stub_lm": perturbed_stub_lm,
-        "perturbed_stub_deterministic": perturbed_stub_deterministic,
-        "perturbed_stub_deterministic_type": perturbation_type
+        # "perturbed_stub_deterministic": perturbed_stub_deterministic,
+        # "perturbed_stub_deterministic_type": perturbation_type
     }
 
 async def main():
