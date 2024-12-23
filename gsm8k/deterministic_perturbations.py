@@ -121,18 +121,18 @@ class OperatorSwapModification(PerturbationStrategy):
 
     # Define regex patterns for matching operators in mathematical contexts
     OPERATOR_PATTERNS = [
-        # Match + or - only when between numbers, not at start of line
-        (r'(?<=[0-9])(\s*)\+(\s*)(?=[0-9])', r'\1-\2'),  # + between numbers
-        (r'(?<=[0-9])(\s*)-(\s*)(?=[0-9])', r'\1+\2'),  # - between numbers
+        # Match + or - between numbers with optional whitespace
+        (r'(?<=\d)\s*\+\s*(?=\d)', r'-'),  # + between numbers
+        (r'(?<=\d)\s*-\s*(?=\d)', r'+'),  # - between numbers
         # Match * and / between numbers
-        (r'(?<=[0-9])(\s*)\*(\s*)(?=[0-9])', r'\1/\2'),  # * between numbers
-        (r'(?<=[0-9])(\s*)/(\s*)(?=[0-9])', r'\1*\2'),  # / between numbers
+        (r'(?<=\d)\s*\*\s*(?=\d)', r'/'),  # * between numbers
+        (r'(?<=\d)\s*/\s*(?=\d)', r'*'),  # / between numbers
         # Match comparison operators between numbers
-        (r'(?<=[0-9])(\s*)>(\s*)(?=[0-9])', r'\1<\2'),  # > between numbers
-        (r'(?<=[0-9])(\s*)<(\s*)(?=[0-9])', r'\1>\2'),  # < between numbers
+        (r'(?<=\d)\s*>\s*(?=\d)', r'<'),  # > between numbers
+        (r'(?<=\d)\s*<\s*(?=\d)', r'>'),  # < between numbers
         # Match compound comparison operators
-        (r'(?<=[0-9])(\s*)>=(\s*)(?=[0-9])', r'\1<=\2'),
-        (r'(?<=[0-9])(\s*)<=(\s*)(?=[0-9])', r'\1>=\2')
+        (r'(?<=\d)\s*>=\s*(?=\d)', r'<='),
+        (r'(?<=\d)\s*<=\s*(?=\d)', r'>=')
     ]
     
     @staticmethod
@@ -153,13 +153,13 @@ class OperatorSwapModification(PerturbationStrategy):
             
         # Choose and apply a random pattern
         op_pair = random.choice(applicable_pairs)
-        print(f"Found applicable operator pair: {op_pair}")  # Debug print
-        print(f"Matches found: {re.findall(op_pair[0], text)}")  # Debug print
+        # print(f"Found applicable operator pair: {op_pair}")  # Debug print
+        # print(f"Matches found: {re.findall(op_pair[0], text)}")  # Debug print
         
         # Apply the substitution
         result = re.sub(op_pair[0], op_pair[1], text, count=1)
-        print(f"Text before: {text}")  # Debug print
-        print(f"Text after: {result}")  # Debug print
+        # print(f"Text before: {text}")  # Debug print
+        # print(f"Text after: {result}")  # Debug print
         return result
 
 class UnitModification(PerturbationStrategy):

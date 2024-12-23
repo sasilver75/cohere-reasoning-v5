@@ -138,7 +138,7 @@ async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel 
         raise ValueError(f"Unknown model type: {type(model)}")
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -168,6 +168,8 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
         timeout=60
     ) as response:
         response_json = await response.json()
+        if "error" in response_json:
+            print("Provider error: ", response_json)
         response_content = response_json["choices"][0]["message"]["content"]
 
     verified = response_content.lower() == 'correct'

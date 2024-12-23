@@ -27,7 +27,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
 
 # CONFIGURATION
 # ~ Experiment parameters
-N_PROBLEMS = 10  # None means "All" problems
+N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 
@@ -118,11 +118,13 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     answer = row["solution"]
 
     stub = await generate_solution_stub(problem, session)
+    print(f"Generated stub for problem {problem_id}")
 
     # Get the LM-based and deterministic perturbations of the stub
     perturbed_stub_lm = await get_perturbed_stub_lm(problem, stub, session)
     perturbed_stub_deterministic, perturbation_type = get_perturbed_stub_deterministic(stub)
-    
+    print(f"Generated perturbations for problem {problem_id}")
+
     return {
         "problem_id": problem_id,
         "problem": problem,
