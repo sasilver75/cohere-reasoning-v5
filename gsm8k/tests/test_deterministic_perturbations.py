@@ -243,21 +243,60 @@ def test_order_of_operations_modification():
     assert "2" in result and "3" in result and "4" in result
 
 def test_equation_balance_error_modification():
-    # Test applicability
-    assert EquationBalanceErrorModification.is_applicable("2 + 2 = 4")
-    assert EquationBalanceErrorModification.is_applicable("x = 5")
-    assert not EquationBalanceErrorModification.is_applicable("no equations here")
-
-    # Test application
+    """Test equation balance error modifications with various formats"""
+    
+    # Test basic equation results
     text = "2 + 2 = 4"
     result = EquationBalanceErrorModification.apply(text)
-    assert result != text
-    assert "2 + 2 =" in result  # Left side should remain unchanged
-
-    text = "x = 5.5"
+    assert "2 + 2 =" in result  # Left side unchanged
+    assert result != text  # Result should be modified
+    modified_num = float(result.split('=')[1])
+    assert modified_num != 4  # Result should be different
+    
+    # Test equations with units
+    text = "Distance = 60 mph × 3 hours = 180 miles"
     result = EquationBalanceErrorModification.apply(text)
-    assert result != text
-    assert "x =" in result
+    assert "60 mph × 3 hours =" in result  # Left side unchanged
+    assert "miles" in result  # Unit preserved
+    modified_num = float(re.search(r'= (\d+) miles', result).group(1))
+    assert modified_num != 180  # Result should be different
+    
+    # Test multiple equations - should only modify one
+    text = """To solve this:
+    Speed × Time = 180 miles
+    Distance ÷ Time = 60 mph"""
+    result = EquationBalanceErrorModification.apply(text)
+    assert result != text  # Something should change
+    assert len(re.findall(r'= \d+', text)) == len(re.findall(r'= \d+', result))  # Same number of equations
+    
+    # Test format preservation
+    cases = [
+        ("x = 100", lambda r: '.' not in r.split('=')[1]),  # Whole numbers stay whole
+        ("y = 3.14", lambda r: '.' in r.split('=')[1]),     # Decimals stay decimal
+        ("z = 50 mph", lambda r: 'mph' in r),               # Units preserved
+    ]
+    for text, check in cases:
+        result = EquationBalanceErrorModification.apply(text)
+        assert check(result), f"Format not preserved for {text}"
+    
+    # Test that only results are modified
+    text = "60 × 3 = 180"
+    for _ in range(10):  # Try multiple times due to random choice
+        result = EquationBalanceErrorModification.apply(text)
+        assert "60 × 3" in result  # Left side unchanged
+        modified_num = float(result.split('=')[1])
+        assert modified_num != 180  # Result should be different
+    
+    # Test that modifications are meaningful
+    text = "2 × 3 = 6"
+    results = set()
+    for _ in range(20):  # Try multiple times to see different modifications
+        result = EquationBalanceErrorModification.apply(text)
+        num = float(result.split('=')[1])
+        results.add(num)
+    # Should see different types of modifications
+    assert len(results) > 1, "Should produce different modifications"
+    assert 6 not in results, "Should not keep original result"
 
 def test_nothing_modification():
     # Test applicability (should always be applicable)

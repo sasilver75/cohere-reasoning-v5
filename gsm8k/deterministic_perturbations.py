@@ -341,7 +341,7 @@ class EquationBalanceErrorModification(PerturbationStrategy):
     
     Applicability:
         - Text contains an equation where the right side is a number
-        - Example: "2 + 2 = 4", "3 * 5 = 15"
+        - Example: "2 + 2 = 4", "3 * 5 = 15", "60 × 3 = 180"
     
     Perturbation:
         Modifies only the result (right side) while keeping the calculation:
@@ -354,19 +354,20 @@ class EquationBalanceErrorModification(PerturbationStrategy):
     
     @staticmethod
     def is_applicable(text: str) -> bool:
-        # Look for patterns like "X = Y" where Y is a number
-        return bool(re.search(r'=\s*\d+(?:\.\d+)?', text))
+        # Look for patterns like "X = Y" or "X × Y = Z"
+        return bool(re.search(r'(?:=|×)\s*\d+(?:\.\d+)?(?:\s*(?:miles|mph))?', text))
     
     @staticmethod
     def apply(text: str) -> str:
-        # Find all equations where the right side is a number
-        matches = list(re.finditer(r'(=\s*)(\d+(?:\.\d+)?)', text))
+        # Find equations with their results
+        matches = list(re.finditer(r'([×=])\s*(\d+(?:\.\d+)?)(\s*(?:miles|mph)?)', text))
         if not matches:
             return text
         
         # Choose a random equation to modify
         match = random.choice(matches)
-        num = float(match.group(2))
+        operator, num_str, unit = match.groups()
+        num = float(num_str)
         
         # Strategies for modifying the result
         strategies = [
@@ -381,8 +382,12 @@ class EquationBalanceErrorModification(PerturbationStrategy):
         # Make sure we actually changed the number
         while new_num == num:
             new_num = random.choice(strategies)(num)
-            
-        return text[:match.start(2)] + str(new_num) + text[match.end(2):]
+        
+        # Format the new number to match original style (whole number if original was whole)
+        if '.' not in num_str:
+            new_num = int(new_num)
+        
+        return text[:match.start(2)] + str(new_num) + unit + text[match.end()]
     
 class NothingModification(PerturbationStrategy):
     """Applies minimal text changes that preserve mathematical meaning.
