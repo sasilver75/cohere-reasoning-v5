@@ -13,7 +13,7 @@ from gsm8k.deterministic_perturbations import (
     PercentageModification,
     FractionModification,
     OrderOfOperationsModification,
-    EquationBalanceErrorModification,
+    # EquationBalanceErrorModification,
     NothingModification
 )
 
@@ -242,61 +242,61 @@ def test_order_of_operations_modification():
     assert result != text
     assert "2" in result and "3" in result and "4" in result
 
-def test_equation_balance_error_modification():
-    """Test equation balance error modifications with various formats"""
+# def test_equation_balance_error_modification():
+#     """Test equation balance error modifications with various formats"""
     
-    # Test basic equation results
-    text = "2 + 2 = 4"
-    result = EquationBalanceErrorModification.apply(text)
-    assert "2 + 2 =" in result  # Left side unchanged
-    assert result != text  # Result should be modified
-    modified_num = float(result.split('=')[1])
-    assert modified_num != 4  # Result should be different
+#     # Test basic equation results
+#     text = "2 + 2 = 4"
+#     result = EquationBalanceErrorModification.apply(text)
+#     assert "2 + 2 =" in result  # Left side unchanged
+#     assert result != text  # Result should be modified
+#     modified_num = float(result.split('=')[1])
+#     assert modified_num != 4  # Result should be different
     
-    # Test equations with units
-    text = "Distance = 60 mph × 3 hours = 180 miles"
-    result = EquationBalanceErrorModification.apply(text)
-    assert "60 mph × 3 hours =" in result  # Left side unchanged
-    assert "miles" in result  # Unit preserved
-    modified_num = float(re.search(r'= (\d+) miles', result).group(1))
-    assert modified_num != 180  # Result should be different
+#     # Test equations with units
+#     text = "Distance = 60 mph × 3 hours = 180 miles"
+#     result = EquationBalanceErrorModification.apply(text)
+#     assert "60 mph × 3 hours =" in result  # Left side unchanged
+#     assert "miles" in result  # Unit preserved
+#     modified_num = float(re.search(r'= (\d+) miles', result).group(1))
+#     assert modified_num != 180  # Result should be different
     
-    # Test multiple equations - should only modify one
-    text = """To solve this:
-    Speed × Time = 180 miles
-    Distance ÷ Time = 60 mph"""
-    result = EquationBalanceErrorModification.apply(text)
-    assert result != text  # Something should change
-    assert len(re.findall(r'= \d+', text)) == len(re.findall(r'= \d+', result))  # Same number of equations
+#     # Test multiple equations - should only modify one
+#     text = """To solve this:
+#     Speed × Time = 180 miles
+#     Distance ÷ Time = 60 mph"""
+#     result = EquationBalanceErrorModification.apply(text)
+#     assert result != text  # Something should change
+#     assert len(re.findall(r'= \d+', text)) == len(re.findall(r'= \d+', result))  # Same number of equations
     
-    # Test format preservation
-    cases = [
-        ("x = 100", lambda r: '.' not in r.split('=')[1]),  # Whole numbers stay whole
-        ("y = 3.14", lambda r: '.' in r.split('=')[1]),     # Decimals stay decimal
-        ("z = 50 mph", lambda r: 'mph' in r),               # Units preserved
-    ]
-    for text, check in cases:
-        result = EquationBalanceErrorModification.apply(text)
-        assert check(result), f"Format not preserved for {text}"
+#     # Test format preservation
+#     cases = [
+#         ("x = 100", lambda r: '.' not in r.split('=')[1]),  # Whole numbers stay whole
+#         ("y = 3.14", lambda r: '.' in r.split('=')[1]),     # Decimals stay decimal
+#         ("z = 50 mph", lambda r: 'mph' in r),               # Units preserved
+#     ]
+#     for text, check in cases:
+#         result = EquationBalanceErrorModification.apply(text)
+#         assert check(result), f"Format not preserved for {text}"
     
-    # Test that only results are modified
-    text = "60 × 3 = 180"
-    for _ in range(10):  # Try multiple times due to random choice
-        result = EquationBalanceErrorModification.apply(text)
-        assert "60 × 3" in result  # Left side unchanged
-        modified_num = float(result.split('=')[1])
-        assert modified_num != 180  # Result should be different
+#     # Test that only results are modified
+#     text = "60 × 3 = 180"
+#     for _ in range(10):  # Try multiple times due to random choice
+#         result = EquationBalanceErrorModification.apply(text)
+#         assert "60 × 3" in result  # Left side unchanged
+#         modified_num = float(result.split('=')[1])
+#         assert modified_num != 180  # Result should be different
     
-    # Test that modifications are meaningful
-    text = "2 × 3 = 6"
-    results = set()
-    for _ in range(20):  # Try multiple times to see different modifications
-        result = EquationBalanceErrorModification.apply(text)
-        num = float(result.split('=')[1])
-        results.add(num)
-    # Should see different types of modifications
-    assert len(results) > 1, "Should produce different modifications"
-    assert 6 not in results, "Should not keep original result"
+#     # Test that modifications are meaningful
+#     text = "2 × 3 = 6"
+#     results = set()
+#     for _ in range(20):  # Try multiple times to see different modifications
+#         result = EquationBalanceErrorModification.apply(text)
+#         num = float(result.split('=')[1])
+#         results.add(num)
+#     # Should see different types of modifications
+#     assert len(results) > 1, "Should produce different modifications"
+#     assert 6 not in results, "Should not keep original result"
 
 def test_nothing_modification():
     # Test applicability (should always be applicable)
@@ -317,7 +317,7 @@ def test_nothing_modification():
     ("20%", True),       # PercentageModification
     ("3/4", True),       # FractionModification
     ("(2 + 3)", True),   # OrderOfOperationsModification
-    ("x = 5", True),     # EquationBalanceErrorModification
+    # ("x = 5", True),     # EquationBalanceErrorModification
     ("no numbers", True), # NothingModification (always applicable)
 ])
 def test_at_least_one_strategy_applicable(text, expected_applicable):
@@ -329,7 +329,7 @@ def test_at_least_one_strategy_applicable(text, expected_applicable):
         PercentageModification,
         FractionModification,
         OrderOfOperationsModification,
-        EquationBalanceErrorModification,
+        # EquationBalanceErrorModification,
         NothingModification
     ]
     
@@ -534,3 +534,81 @@ def test_numeric_modification_consistency():
         modified_num = re.search(r'\d+(?:,\d{3})*', result.split('$')[1]).group()
         assert ',' in modified_num  # Should always have commas
         assert '.' not in modified_num  # Should never add decimals
+
+# def test_equation_balance_error_with_units():
+#     """Test equation balance modifications with various unit formats"""
+    
+#     test_cases = [
+#         # Basic equation with miles
+#         ("Distance = 60 × 3 = 180 miles", 
+#          lambda r: "60 × 3" in r and "miles" in r and "180" not in r),
+        
+#         # Multiple units
+#         ("Speed = 60 mph × 3 hours = 180 miles",
+#          lambda r: "60 mph × 3 hours" in r and "miles" in r and "180" not in r),
+        
+#         # Multiple equations with units
+#         ("""To solve:
+#         Distance = 60 × 3 = 180 miles
+#         Speed = Distance ÷ Time = 60 mph""",
+#          lambda r: r.count("=") == r.count("=") and ("180" not in r or "60" not in r)),
+        
+#         # Equation with no units
+#         ("2 × 3 = 6",
+#          lambda r: "2 × 3" in r and "6" not in r),
+        
+#         # Equation with decimal and units
+#         ("Average speed = 27.5 mph",
+#          lambda r: "27.5" not in r and "mph" in r),
+#     ]
+    
+#     for text, check in test_cases:
+#         result = EquationBalanceErrorModification.apply(text)
+#         assert check(result), f"Failed to properly modify: {text}\nGot: {result}"
+
+# def test_equation_balance_error_edge_cases():
+#     """Test equation balance modifications with edge cases"""
+    
+#     # Test that only the result is modified, not the calculation
+#     text = "Distance = 60 × 3 = 180 miles"
+#     result = EquationBalanceErrorModification.apply(text)
+#     assert "60 × 3" in result  # Calculation preserved
+#     assert "180" not in result  # Result modified
+#     assert "miles" in result   # Unit preserved
+    
+#     # Test that whitespace is preserved
+#     text = "Speed =   60   mph"  # Extra spaces
+#     result = EquationBalanceErrorModification.apply(text)
+#     assert "Speed =   " in result  # Leading spaces preserved
+#     assert "   mph" in result      # Trailing spaces preserved
+    
+#     # Test multiple equations - only one should be modified
+#     text = """Steps:
+#     1. Distance = 180 miles
+#     2. Time = 3 hours
+#     3. Speed = 60 mph"""
+#     result = EquationBalanceErrorModification.apply(text)
+#     original_numbers = set(re.findall(r'\d+', text))
+#     modified_numbers = set(re.findall(r'\d+', result))
+#     assert len(original_numbers - modified_numbers) <= 1  # At most one number changed
+    
+#     # Test that modifications are meaningful
+#     text = "Distance = 100 miles"
+#     results = set()
+#     for _ in range(20):
+#         result = EquationBalanceErrorModification.apply(text)
+#         num = float(re.search(r'= (\d+)', result).group(1))
+#         results.add(num)
+#         assert num != 100  # Should never keep original result
+#     assert len(results) > 1  # Should see different modifications
+    
+#     # Test format preservation
+#     cases = [
+#         ("x = 100", lambda r: not ('.' in r.split('=')[1].strip())),  # Whole numbers stay whole
+#         ("y = 3.14", lambda r: '.' in r.split('=')[1].strip()),       # Decimals stay decimal
+#         ("z = 50 mph", lambda r: 'mph' in r),                         # Units preserved
+#         ("w = 1,234", lambda r: ',' not in r.split('=')[1].strip()),  # Don't preserve commas
+#     ]
+#     for text, check in cases:
+#         result = EquationBalanceErrorModification.apply(text)
+#         assert check(result), f"Format not preserved for {text}\nGot: {result}"

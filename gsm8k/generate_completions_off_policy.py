@@ -32,12 +32,12 @@ if not "COHERE_API_KEY" in os.environ:
 # ~ Experiment parameters
 N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
 MODELS = [
-    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
-    # CohereModel.COHERE_R7B,
+    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    CohereModel.COHERE_R7B,
     # CohereModel.COHERE_CRP,
-    # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
-    # OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
-    # OpenRouterModel.GEMMA_2_27B_INSTRUCT,
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
+    OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
 VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT

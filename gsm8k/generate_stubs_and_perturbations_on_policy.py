@@ -1,7 +1,7 @@
 import random
 import sys
 import os
-from gsm8k.deterministic_perturbations import get_perturbed_stub_deterministic
+from deterministic_perturbations import get_perturbed_stub_deterministic
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, CohereModel
 from gsm_utils import TokenBucket
 import pandas as pd
@@ -29,7 +29,7 @@ if not "COHERE_API_KEY" in os.environ:
 # CONFIGURATION
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
-N_PROBLEMS = 200  # None means "All" problems
+N_PROBLEMS = 15  # None means "All" problems
 PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,

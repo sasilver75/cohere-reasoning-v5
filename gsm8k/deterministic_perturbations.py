@@ -335,59 +335,72 @@ class OrderOfOperationsModification(PerturbationStrategy):
         return text
     
 
-class EquationBalanceErrorModification(PerturbationStrategy):
-    """
-    Introduces errors in equation results while preserving the calculation.
+# class EquationBalanceErrorModification(PerturbationStrategy):
+#     """
+#     Introduces errors in equation results while preserving the calculation.
     
-    Applicability:
-        - Text contains an equation where the right side is a number
-        - Example: "2 + 2 = 4", "3 * 5 = 15", "60 × 3 = 180"
+#     Applicability:
+#         - Text contains an equation where the right side is a number
+#         - Example: "2 + 2 = 4", "3 * 5 = 15", "60 × 3 = 180"
     
-    Perturbation:
-        Modifies only the result (right side) while keeping the calculation:
-        - Adds or subtracts 1 (off-by-one errors)
-        - Doubles or halves the result
-        - Drops decimal places
-    This creates a mismatch between the calculation and its stated result.
-    """
-    NAME = "EquationBalanceErrorModification"
+#     Perturbation:
+#         Modifies only the result (right side) while keeping the calculation:
+#         - Adds or subtracts 1 (off-by-one errors)
+#         - Doubles or halves the result
+#         - Drops decimal places
+#     This creates a mismatch between the calculation and its stated result.
+#     """
+#     NAME = "EquationBalanceErrorModification"
     
-    @staticmethod
-    def is_applicable(text: str) -> bool:
-        # Look for patterns like "X = Y" or "X × Y = Z"
-        return bool(re.search(r'(?:=|×)\s*\d+(?:\.\d+)?(?:\s*(?:miles|mph))?', text))
+#     @staticmethod
+#     def is_applicable(text: str) -> bool:
+#         # Look for equations with two equals signs (intermediate calculation = final result)
+#         return bool(re.search(r'=.*?=\s*\d+(?:\.\d+)?(?:\s*(?:miles|mph))?(?:\n|$)', text))
     
-    @staticmethod
-    def apply(text: str) -> str:
-        # Find equations with their results
-        matches = list(re.finditer(r'([×=])\s*(\d+(?:\.\d+)?)(\s*(?:miles|mph)?)', text))
-        if not matches:
-            return text
+#     @staticmethod
+#     def apply(text: str) -> str:
+#         # Find equations with two equals signs (to modify final results)
+#         double_equals_pattern = r'(.*?=.*?=\s*)(\d+(?:\.\d+)?)(\s*(?:miles|mph)?(?:\n|$))'
+#         # Or single equals with final result
+#         single_equals_pattern = r'(=\s*)(\d+(?:\.\d+)?)(\s*(?:miles|mph)?(?:\n|$))'
         
-        # Choose a random equation to modify
-        match = random.choice(matches)
-        operator, num_str, unit = match.groups()
-        num = float(num_str)
+#         # Try double equals first (for intermediate calculations)
+#         matches = list(re.finditer(double_equals_pattern, text, re.MULTILINE))
+#         if not matches:
+#             # Fall back to single equals
+#             matches = list(re.finditer(single_equals_pattern, text, re.MULTILINE))
+#             if not matches:
+#                 return text
         
-        # Strategies for modifying the result
-        strategies = [
-            lambda x: x + 1,    # Off by one
-            lambda x: x - 1,    # Off by one (negative)
-            lambda x: x * 2,    # Double
-            lambda x: x / 2,    # Half
-            lambda x: int(x),   # Drop decimal
-        ]
+#         # Choose a random equation to modify
+#         match = random.choice(matches)
+#         prefix, num_str, suffix = match.groups()
+#         num = float(num_str.replace(',', ''))  # Remove commas for conversion
         
-        new_num = random.choice(strategies)(num)
-        # Make sure we actually changed the number
-        while new_num == num:
-            new_num = random.choice(strategies)(num)
+#         # Strategies for modifying the result
+#         strategies = [
+#             lambda x: x + 1,    # Off by one
+#             lambda x: x - 1,    # Off by one (negative)
+#             lambda x: x * 2,    # Double
+#             lambda x: x / 2,    # Half
+#         ]
         
-        # Format the new number to match original style (whole number if original was whole)
-        if '.' not in num_str:
-            new_num = int(new_num)
+#         new_num = random.choice(strategies)(num)
+#         while new_num == num:
+#             new_num = random.choice(strategies)(num)
         
-        return text[:match.start(2)] + str(new_num) + unit + text[match.end()]
+#         # Format the new number to match original style
+#         if '.' in num_str:
+#             # Keep same number of decimal places
+#             decimal_places = len(num_str.split('.')[1])
+#             formatted_num = f"{new_num:.{decimal_places}f}"
+#         else:
+#             formatted_num = str(int(new_num))
+        
+#         # Never include commas in the result
+#         formatted_num = formatted_num.replace(',', '')
+        
+#         return text[:match.start(2)] + formatted_num + text[match.end(2):]
     
 class NothingModification(PerturbationStrategy):
     """Applies minimal text changes that preserve mathematical meaning.
@@ -428,7 +441,7 @@ def get_perturbed_stub_deterministic(stub: str) -> Tuple[str, Optional[str]]:
         PercentageModification,
         FractionModification,
         OrderOfOperationsModification,
-        EquationBalanceErrorModification,
+        # EquationBalanceErrorModification,
     ]
     
     # Find applicable strategies
