@@ -80,7 +80,7 @@ def create_verification_plot():
 
 @app.route("/")
 def stats():
-    # Calculate statistics for each model
+    # Original model stats calculation
     model_stats = df.groupby(['completion_model', 'completion_model_provider']).agg({
         'problem_id': 'count',
         'perturbed_stub_lm_solution_verified': 'sum',
@@ -91,11 +91,15 @@ def stats():
     model_stats['lm_verified_rate'] = model_stats['perturbed_stub_lm_solution_verified'] / model_stats['problem_id']
     model_stats['deterministic_verified_rate'] = model_stats['perturbed_stub_deterministic_solution_verified'] / model_stats['problem_id']
     
-    # Rename columns for clarity
-    model_stats.columns = ['total_problems', 'lm_verified_count', 'deterministic_verified_count', 
-                          'lm_verified_rate', 'deterministic_verified_rate']
+    # Calculate stats by perturbation type
+    perturbation_stats = df.groupby('perturbed_stub_deterministic_type').agg({
+        'problem_id': 'count',
+        'perturbed_stub_deterministic_solution_verified': 'sum'
+    })
+    perturbation_stats['success_rate'] = perturbation_stats['perturbed_stub_deterministic_solution_verified'] / perturbation_stats['problem_id']
+    perturbation_stats = perturbation_stats.sort_values('success_rate', ascending=False)
     
-    # Create the plot
+    # Create the plots
     plot_url = create_verification_plot()
     
     return render_template_string("""
@@ -214,12 +218,36 @@ def stats():
                 </table>
             </div>
 
+            <div class="stats-container">
+                <h2>Deterministic Perturbation Type Performance</h2>
+                <table class="model-stats-table">
+                    <thead>
+                        <tr>
+                            <th>Perturbation Type</th>
+                            <th>Total Problems</th>
+                            <th>Successful Recoveries</th>
+                            <th>Recovery Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type, stats in perturbation_stats.iterrows() %}
+                        <tr>
+                            <td>{{ type }}</td>
+                            <td>{{ stats.problem_id }}</td>
+                            <td>{{ stats.perturbed_stub_deterministic_solution_verified }}</td>
+                            <td>{{ "%.1f%%"|format(stats.success_rate * 100) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
             <div class="chart-container">
                 <img src="data:image/png;base64,{{ plot_url }}" alt="Verification Rates">
             </div>
         </body>
         </html>
-    """, model_stats=model_stats, plot_url=plot_url)
+    """, model_stats=model_stats, perturbation_stats=perturbation_stats, plot_url=plot_url)
 
 @app.route("/completions")
 def view_completions():
@@ -540,8 +568,13 @@ def view_problems():
                 </div>
                 
                 <div class="problem-box">
-                    <div class="section-title">Perturbed Stub:</div>
+                    <div class="section-title">LM-Perturbed Stub:</div>
                     {{ problem.perturbed_stub_lm }}
+                </div>
+
+                <div class="problem-box">
+                    <div class="section-title">Deterministically-Perturbed Stub ({{ problem.perturbed_stub_deterministic_type }}):</div>
+                    {{ problem.perturbed_stub_deterministic }}
                 </div>
             </div>
             {% endfor %}

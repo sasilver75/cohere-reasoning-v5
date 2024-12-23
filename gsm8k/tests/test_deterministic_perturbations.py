@@ -78,6 +78,34 @@ def test_numeric_modification_formatting():
     # Should maintain one decimal place
     assert len(modified_num.split('.')[-1]) == 1
 
+def test_numeric_modification_large_numbers():
+    """Test that numeric modifications handle large numbers and commas correctly"""
+    
+    # Test large numbers with commas
+    text = "The house costs $80,000"
+    result = NumericModification.apply(text)
+    # Should preserve comma formatting
+    modified_num = re.search(r'\d+(?:,\d{3})*', result.split('$')[1]).group()
+    assert ',' in modified_num
+    assert len(modified_num.replace(',', '')) >= 3  # Should still be a reasonable number
+    
+    # Test multiple large numbers
+    text = "First price $80,000, second price $120,000"
+    result = NumericModification.apply(text)
+    numbers = re.findall(r'\d+(?:,\d{3})*', result)
+    for num in numbers:
+        assert ',' in num  # All large numbers should have commas
+    
+    # Test mixed format numbers
+    text = "Price range: $80,000.50 to $120,000.75"
+    result = NumericModification.apply(text)
+    numbers = re.findall(r'\d+(?:,\d{3})*\.\d+', result)
+    for num in numbers:
+        # Should preserve both commas and decimal places
+        assert ',' in num and '.' in num
+        whole, decimal = num.split('.')
+        assert len(decimal) == 2  # Should preserve 2 decimal places
+
 def test_operator_swap_modification():
     # Test applicability
     assert OperatorSwapModification.is_applicable("2 + 2 = 4")
@@ -372,3 +400,98 @@ def test_order_of_operations_transformations():
         "2 + 3 * 4",      # Removed parentheses
         "(2 + 3) * 4"     # Shifted parentheses
     ]
+
+def test_numeric_modification_edge_cases():
+    """Test numeric modifications with various edge cases"""
+    
+    # Test trailing zeros in decimals
+    text = "Temperature is 98.00 degrees"
+    result = NumericModification.apply(text)
+    modified_num = re.search(r'\d+\.\d+', result).group()
+    assert len(modified_num.split('.')[1]) == 2, "Should preserve trailing zeros"
+    
+    # Test very large numbers with commas
+    text = "The budget is $1,234,567,890"
+    result = NumericModification.apply(text)
+    modified_num = re.search(r'\d+(?:,\d{3})*', result.split('$')[1]).group()
+    # Verify comma placement is correct (every 3 digits from right)
+    digits = modified_num.replace(',', '')
+    expected_commas = (len(digits) - 1) // 3  # Number of commas there should be
+    assert modified_num.count(',') == expected_commas, f"Expected {expected_commas} commas in {modified_num}"
+    # Verify each group is exactly 3 digits (except possibly first group)
+    groups = modified_num.split(',')
+    assert all(len(g) == 3 for g in groups[1:]), f"All groups after first should be length 3: {groups}"
+    assert 1 <= len(groups[0]) <= 3, f"First group should be 1-3 digits, got {len(groups[0])}"
+    
+    # Test mixed formats in same text
+    text = "Cost ranges from $1,234.50 to $5,678.00"
+    result = NumericModification.apply(text)
+    numbers = re.findall(r'\d+(?:\.\d+)?', result)  # Find all numbers first
+    for num in numbers:
+        # Only check for commas if number is large enough
+        if len(num.split('.')[0]) > 3:  # More than 3 digits before decimal
+            num_with_commas = re.search(r'\d+(?:,\d{3})*(?:\.\d+)?', result).group()
+            assert ',' in num_with_commas, f"Large number {num} should have commas"
+        if '.' in num:
+            assert len(num.split('.')[1]) == 2, f"Number {num} should have 2 decimal places"
+    
+    # Test negative numbers
+    text = "Temperature dropped to -15.5 degrees"
+    result = NumericModification.apply(text)
+    modified_num = re.search(r'-?\d+\.\d+', result).group()
+    assert len(modified_num.split('.')[1]) == 1, "Should preserve single decimal place"
+    assert modified_num.startswith('-') or float(modified_num) < 0, "Should preserve negative value"
+    
+    # Test currency format preservation
+    text = "Price: $1,234.99"
+    result = NumericModification.apply(text)
+    # First verify we can find a number
+    modified_num = re.search(r'\d+(?:\.\d+)?', result)
+    assert modified_num is not None, "Could not find modified number in result"
+    modified_num = modified_num.group()
+    
+    # If original had decimal places, modified version should maintain 2 decimal places
+    if '.' in modified_num:
+        whole_part, decimal_part = modified_num.split('.')
+        assert len(decimal_part) == 2, f"Currency decimal places should be 2, got {len(decimal_part)}"
+    
+    # Check comma formatting if number is large enough (≥1000)
+    whole_part = modified_num.split('.')[0] if '.' in modified_num else modified_num
+    if len(whole_part) >= 4:  # Only expect commas for numbers >= 1000
+        num_with_commas = re.search(r'\d+(?:,\d{3})*(?:\.\d+)?', result)
+        assert num_with_commas is not None, f"Large number {modified_num} should have commas"
+        assert ',' in num_with_commas.group(), f"Large number {modified_num} should have commas"
+
+    # Test additional currency cases
+    for test_case in ["$5", "$1,234", "$1.99", "$999.99", "$1,000.00"]:
+        result = NumericModification.apply(test_case)
+        # Use a pattern that can handle commas in the number
+        modified_num = re.search(r'\d+(?:,\d{3})*(?:\.\d+)?', result.split('$')[1]).group()
+
+        # If original had decimals, keep 2 decimal places
+        if '.' in test_case:
+            assert '.' in modified_num, f"Should preserve decimal format from {test_case}"
+            assert len(modified_num.split('.')[1]) == 2, f"Should keep 2 decimal places from {test_case}"
+        
+        # If number is ≥1000, should have commas
+        whole_part = modified_num.split('.')[0] if '.' in modified_num else modified_num
+        if len(whole_part) >= 4:
+            assert ',' in modified_num, f"Number >= 1000 ({modified_num}) should have commas"
+
+def test_numeric_modification_consistency():
+    """Test that numeric modifications are consistent in their formatting"""
+    
+    # Run multiple times to ensure consistency despite random choices
+    for _ in range(10):
+        # Test decimal places preservation
+        text = "Value is 123.4500"
+        result = NumericModification.apply(text)
+        modified_num = re.search(r'\d+\.\d+', result).group()
+        assert len(modified_num.split('.')[1]) == 4  # Should always keep 4 decimal places
+        
+        # Test comma formatting preservation
+        text = "Cost is $1,234,567"
+        result = NumericModification.apply(text)
+        modified_num = re.search(r'\d+(?:,\d{3})*', result.split('$')[1]).group()
+        assert ',' in modified_num  # Should always have commas
+        assert '.' not in modified_num  # Should never add decimals

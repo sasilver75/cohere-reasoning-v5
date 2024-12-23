@@ -139,9 +139,9 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
 
 async def main():
     # Load dataset
-    print(f"Loading GSM8k datasset...")
+    print(f"Loading GSM8K dataset...")
     df = pd.read_csv("datasets/original/gsm8k.csv")
-    print(f"Loaded GSM8k datasset with {len(df)} rows and columns {list(df.columns)}")
+    print(f"Loaded GSM8K dataset with {len(df)} rows and columns {list(df.columns)}")
 
 
     if N_PROBLEMS is not None:  

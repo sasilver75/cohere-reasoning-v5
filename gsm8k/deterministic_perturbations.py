@@ -32,49 +32,84 @@ class NumericModification(PerturbationStrategy):
     
     Applicability:
         - Text contains any number (integer or decimal)
-        - Examples: "5", "3.14", "100"
+        - Examples: "5", "3.14", "100", "$1,234.99"
     
     Perturbation:
-        Applies one of several transformations to a randomly chosen number:
+        Applies one of several transformations while preserving format:
         - Increase by 50% (multiply by 1.5)
         - Decrease by 50% (multiply by 0.5)
         - Increase by order of magnitude (multiply by 10)
         - Decrease by order of magnitude (multiply by 0.1)
         - Change sign (multiply by -1)
+        
+        Format preservation:
+        - Maintains comma grouping for large numbers
+        - Preserves decimal precision
+        - Always shows 2 decimal places for currency values
     """
     NAME = "NumericModification"
 
     @staticmethod
+    def format_with_commas(number_str: str) -> str:
+        """Helper to add commas to a number string"""
+        parts = []
+        while number_str:
+            parts.append(number_str[-3:])
+            number_str = number_str[:-3]
+        return ','.join(reversed(parts))
+
+    @staticmethod
     def is_applicable(text: str) -> bool:
-        return bool(re.search(r'\d+(?:\.\d+)?', text))
+        return bool(re.search(r'\d+(?:,\d{3})*(?:\.\d+)?', text))
     
     @staticmethod
     def apply(text: str) -> str:
-        numbers = re.finditer(r'\d+(?:\.\d+)?', text)
-        numbers = list(numbers)
+        # Include optional $ in the pattern, but in a non-capturing group
+        numbers = list(re.finditer(r'(?P<currency>\$)?(?P<number>\d+(?:,\d{3})*(?:\.\d+)?)', text))
         if not numbers:
             return text
         
         target = random.choice(numbers)
-        num = float(target.group())
+        original_text = target.group('number')  # Get just the number part
+        is_currency = bool(target.group('currency'))  # Check if we matched a $ sign
+        original_had_decimal = '.' in target.group()  # Check if original had decimal
         
-        strategies = [
-            lambda x: x * 1.5,  # Increase by 50%
-            lambda x: x * 0.5,  # Decrease by 50%
-            lambda x: x * 10,   # Order of magnitude up
-            lambda x: x * 0.1,  # Order of magnitude down
-            lambda x: -x,       # Change sign
-        ]
-        new_num = random.choice(strategies)(num)
+        # Determine format from original text
+        had_commas = ',' in original_text
+        had_decimal = '.' in original_text
+        decimal_places = len(original_text.split('.')[1]) if had_decimal else 0
         
-        # Format the number appropriately:
-        # - If original was an integer, format as integer
-        # - If original had decimals, keep same precision
-        if '.' not in target.group():
-            formatted_num = f"{int(new_num)}"
+        # Convert and transform
+        num_str = original_text.replace(',', '')
+        num = float(num_str)
+        new_num = random.choice([
+            lambda x: x * 1.5,
+            lambda x: x * 0.5,
+            lambda x: x * 10,
+            lambda x: x * 0.1,
+            lambda x: -x,
+        ])(num)
+        
+        # Format according to original format
+        whole_part = str(abs(int(new_num)))
+        
+        # Add commas if original had them or if it's a large number in currency format
+        needs_commas = (had_commas or (is_currency and len(whole_part) >= 4))
+        if needs_commas:
+            whole_part = NumericModification.format_with_commas(whole_part)
+        
+        # Add decimal places if original had them
+        if original_had_decimal:  # Use original_had_decimal here
+            decimal_part = abs(new_num) % 1
+            decimal_str = str(decimal_part)[2:].ljust(2 if is_currency else decimal_places, '0')
+            decimal_str = decimal_str[:2 if is_currency else decimal_places]
+            formatted_num = f"{'-' if new_num < 0 else ''}{whole_part}.{decimal_str}"
         else:
-            decimal_places = len(target.group().split('.')[1])
-            formatted_num = f"{new_num:.{decimal_places}f}"
+            formatted_num = f"{'-' if new_num < 0 else ''}{whole_part}"
+        
+        # Add back the $ if it was present
+        if is_currency:
+            formatted_num = f"${formatted_num}"
         
         return text[:target.start()] + formatted_num + text[target.end():]
 
