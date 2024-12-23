@@ -1,6 +1,7 @@
 import pytest
 import sys
 from pathlib import Path
+import re
 
 # Add the parent directory to sys.path; I don't want to fight with imports
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -33,6 +34,49 @@ def test_numeric_modification():
     result = NumericModification.apply(text)
     assert result != text
     assert "The price is" in result
+
+def test_numeric_modification_formatting():
+    """Test that numeric modifications preserve appropriate number formatting"""
+    
+    # Test integer formatting
+    text = "The cost is $130000"
+    result = NumericModification.apply(text)
+    # Should still be an integer, no decimal points
+    assert '.' not in result.split('$')[1]
+    
+    # Test decimal precision preservation
+    text = "The price is 3.14159"
+    result = NumericModification.apply(text)
+    # Should maintain 5 decimal places
+    decimal_part = result.split('.')[-1]
+    assert len(decimal_part) == 5
+    
+    # Test multiple numbers in text
+    text = "First number 100, second number 3.14"
+    result = NumericModification.apply(text)
+    numbers = re.findall(r'\d+(?:\.\d+)?', result)
+    for num in numbers:
+        if '.' in num:
+            # If it was a decimal, should have 2 decimal places
+            assert len(num.split('.')[-1]) == 2
+        else:
+            # If it was an integer, should still be an integer
+            assert '.' not in num
+    
+    # Test large numbers
+    text = "The total is 1000000"
+    result = NumericModification.apply(text)
+    modified_num = re.search(r'\d+', result).group()
+    # Should be an integer, no scientific notation
+    assert 'e' not in modified_num.lower()
+    assert '.' not in modified_num
+    
+    # Test zero decimal places
+    text = "The temperature is 98.0 degrees"
+    result = NumericModification.apply(text)
+    modified_num = re.search(r'\d+\.\d+', result).group()
+    # Should maintain one decimal place
+    assert len(modified_num.split('.')[-1]) == 1
 
 def test_operator_swap_modification():
     # Test applicability

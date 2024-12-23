@@ -67,7 +67,16 @@ class NumericModification(PerturbationStrategy):
         ]
         new_num = random.choice(strategies)(num)
         
-        return text[:target.start()] + str(new_num) + text[target.end():]
+        # Format the number appropriately:
+        # - If original was an integer, format as integer
+        # - If original had decimals, keep same precision
+        if '.' not in target.group():
+            formatted_num = f"{int(new_num)}"
+        else:
+            decimal_places = len(target.group().split('.')[1])
+            formatted_num = f"{new_num:.{decimal_places}f}"
+        
+        return text[:target.start()] + formatted_num + text[target.end():]
 
 class OperatorSwapModification(PerturbationStrategy):
     """
