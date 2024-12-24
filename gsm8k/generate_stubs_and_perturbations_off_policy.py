@@ -109,6 +109,8 @@ async def get_perturbed_stub_lm(problem: str, stub: str, session: aiohttp.Client
         timeout=60
     ) as response:
         response_json = await response.json()
+        if "error" in response_json:
+            print("Provider error: ", response_json)
 
     response_content = response_json["choices"][0]["message"]["content"]
 

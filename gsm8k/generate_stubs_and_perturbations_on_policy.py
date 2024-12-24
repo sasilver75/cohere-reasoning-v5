@@ -74,6 +74,10 @@ async def generate_solution_stub_openrouter(problem: str, model: OpenRouterModel
             "messages": [
                 {"role": "user", "content": gsm_prompts.get_solution_prompt(problem)},
             ],
+            "provider": {
+                "order": [OPENROUTER_MODEL_PROVIDERS[model].value],
+                "allow_fallbacks": False,
+            },
             "temperature": .2,
             "top_p": 0.8,
             "max_tokens": STUB_N_TOKENS,
@@ -131,6 +135,10 @@ async def get_perturbed_stub(problem: str, stub: str, session: aiohttp.ClientSes
             "messages": [
                 {"role": "user", "content": gsm_prompts.get_perturb_prompt(problem=problem, stub=stub)},
             ],
+            "provider": {
+                "order": [OPENROUTER_MODEL_PROVIDERS[PERTURB_MODEL].value],
+                "allow_fallbacks": False,
+            },
             "temperature": 0,
             "top_k": 0,  # Greedy
         },
