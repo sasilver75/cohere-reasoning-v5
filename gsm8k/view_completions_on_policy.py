@@ -25,9 +25,9 @@ def create_verification_plot():
     # Calculate rates by model
     stats = df.groupby('completer_model').agg({
         'problem_id': 'count',  # total problems
-        'verification': 'sum'  # sum of True values
+        'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
     }).assign(
-        verification_rate=lambda x: x['verification'] / x['problem_id']
+        verification_rate=lambda x: x['perturbed_stub_lm_solution_verified'] / x['problem_id']
     )
 
     # Create the plot
@@ -41,7 +41,7 @@ def create_verification_plot():
                    label='Correct Answer Rate', color='#2196F3')
 
     # Customize the plot
-    ax.set_title('Correct Answer Rate by Model')
+    ax.set_title('Correct Answer Rate by Model (On-Policy Prefix)')
     ax.set_xlabel('Model')
     ax.set_ylabel('Rate')
     ax.set_xticks(x)
@@ -76,11 +76,11 @@ def stats():
     # Calculate statistics for each model
     model_stats = df.groupby(['completer_model', 'completer_model_provider']).agg({
         'problem_id': 'count',
-        'verification': 'sum'  # sum of True values
+        'perturbed_stub_lm_solution_verified': 'sum'  # Changed from 'verification'
     })
     
     # Calculate the rate manually
-    model_stats['verified_rate'] = model_stats['verification'] / model_stats['problem_id']
+    model_stats['verified_rate'] = model_stats['perturbed_stub_lm_solution_verified'] / model_stats['problem_id']
     
     # Rename columns for clarity
     model_stats.columns = ['total_problems', 'verified_count', 'verified_rate']
@@ -243,9 +243,9 @@ def view_completions():
         "problem": str(row.get("problem", "N/A")),
         "answer": str(row.get("answer", "N/A")),
         "stub": str(row.get("stub", "N/A")),
-        "perturbed_stub": str(row.get("perturbed_stub", "N/A")),
-        "completion": str(row.get("completion", "N/A")),
-        "verified": bool(row.get("verification", False))
+        "perturbed_stub": str(row.get("perturbed_stub_lm", "N/A")),
+        "completion": str(row.get("perturbed_stub_lm_completion", "N/A")),
+        "verified": bool(row.get("perturbed_stub_lm_solution_verified", False))
     }
 
     return render_template_string("""

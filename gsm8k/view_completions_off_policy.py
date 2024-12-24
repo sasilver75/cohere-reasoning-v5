@@ -22,33 +22,29 @@ except Exception as e:
     exit(1)
 
 def create_verification_plot():
-    # Calculate rates by model for both perturbation types
+    # Calculate rates by model for LM perturbation only
     stats = df.groupby('completion_model').agg({
         'problem_id': 'count',  # total problems
         'perturbed_stub_lm_solution_verified': 'sum',  # LM perturbation successes
-        'perturbed_stub_deterministic_solution_verified': 'sum'  # Deterministic perturbation successes
     }).assign(
         lm_verification_rate=lambda x: x['perturbed_stub_lm_solution_verified'] / x['problem_id'],
-        deterministic_verification_rate=lambda x: x['perturbed_stub_deterministic_solution_verified'] / x['problem_id']
     )
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(12, 6))
     
     # Set the width of each bar and positions of the bars
-    width = 0.35  # narrower bars
+    width = 0.5  # wider bars for single bar
     x = np.arange(len(stats.index))
     
-    # Create bars for both perturbation types, positioned right next to each other
-    rects1 = ax.bar(x - width/2, stats['lm_verification_rate'], width, 
-                    label='LM Perturbation', color='#2196F3')
-    rects2 = ax.bar(x + width/2, stats['deterministic_verification_rate'], width,
-                    label='Deterministic Perturbation', color='#4CAF50')
+    # Create bars for LM perturbation only
+    rects1 = ax.bar(x, stats['lm_verification_rate'], width, 
+                    label='Correct Answer Rate', color='#2196F3')
 
     # Customize the plot
-    ax.set_title('Recovery Rates by Model and Perturbation Type')
+    ax.set_title('Correct Answer Rate by Model (Off-Policy Prefix)')
     ax.set_xlabel('Model')
-    ax.set_ylabel('Recovery Rate')
+    ax.set_ylabel('Rate')
     ax.set_xticks(x)
     ax.set_xticklabels(stats.index, rotation=45, ha='right')
     ax.set_ylim(0, 1)
@@ -64,10 +60,9 @@ def create_verification_plot():
                        xytext=(0, 3),
                        textcoords="offset points",
                        ha='center', va='bottom',
-                       fontsize=8)  # smaller font for better fit
+                       fontsize=8)
 
     autolabel(rects1)
-    autolabel(rects2)
     plt.tight_layout()
     
     # Convert plot to base64 string
@@ -84,20 +79,13 @@ def stats():
     model_stats = df.groupby(['completion_model', 'completion_model_provider']).agg({
         'problem_id': 'count',
         'perturbed_stub_lm_solution_verified': 'sum',
-        'perturbed_stub_deterministic_solution_verified': 'sum'
+    }).rename(columns={
+        'problem_id': 'total_problems',
+        'perturbed_stub_lm_solution_verified': 'lm_verified_count'
     })
     
-    # Calculate rates for both perturbation types
-    model_stats['lm_verified_rate'] = model_stats['perturbed_stub_lm_solution_verified'] / model_stats['problem_id']
-    model_stats['deterministic_verified_rate'] = model_stats['perturbed_stub_deterministic_solution_verified'] / model_stats['problem_id']
-    
-    # Calculate stats by perturbation type
-    perturbation_stats = df.groupby('perturbed_stub_deterministic_type').agg({
-        'problem_id': 'count',
-        'perturbed_stub_deterministic_solution_verified': 'sum'
-    })
-    perturbation_stats['success_rate'] = perturbation_stats['perturbed_stub_deterministic_solution_verified'] / perturbation_stats['problem_id']
-    perturbation_stats = perturbation_stats.sort_values('success_rate', ascending=False)
+    # Calculate rates for LM perturbation only
+    model_stats['lm_verified_rate'] = model_stats['lm_verified_count'] / model_stats['total_problems']
     
     # Create the plots
     plot_url = create_verification_plot()
@@ -195,7 +183,6 @@ def stats():
                             <th>Provider</th>
                             <th>Total Problems</th>
                             <th>LM Recovery Rate</th>
-                            <th>Deterministic Recovery Rate</th>
                             <th>View Results</th>
                         </tr>
                     </thead>
@@ -206,7 +193,6 @@ def stats():
                             <td>{{ provider }}</td>
                             <td>{{ stats.total_problems }}</td>
                             <td>{{ "%.1f%%"|format(stats.lm_verified_rate * 100) }}</td>
-                            <td>{{ "%.1f%%"|format(stats.deterministic_verified_rate * 100) }}</td>
                             <td>
                                 <a href="{{ url_for('view_completions', model=model) }}" class="model-link">
                                     View Completions
@@ -218,36 +204,12 @@ def stats():
                 </table>
             </div>
 
-            <div class="stats-container">
-                <h2>Deterministic Perturbation Type Performance</h2>
-                <table class="model-stats-table">
-                    <thead>
-                        <tr>
-                            <th>Perturbation Type</th>
-                            <th>Total Problems</th>
-                            <th>Successful Recoveries</th>
-                            <th>Recovery Rate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for type, stats in perturbation_stats.iterrows() %}
-                        <tr>
-                            <td>{{ type }}</td>
-                            <td>{{ stats.problem_id }}</td>
-                            <td>{{ stats.perturbed_stub_deterministic_solution_verified }}</td>
-                            <td>{{ "%.1f%%"|format(stats.success_rate * 100) }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
             <div class="chart-container">
                 <img src="data:image/png;base64,{{ plot_url }}" alt="Verification Rates">
             </div>
         </body>
         </html>
-    """, model_stats=model_stats, perturbation_stats=perturbation_stats, plot_url=plot_url)
+    """, model_stats=model_stats, plot_url=plot_url)
 
 @app.route("/completions")
 def view_completions():
@@ -287,11 +249,11 @@ def view_completions():
         "perturbed_stub_lm_completion": str(row.get("perturbed_stub_lm_completion", "N/A")),
         "perturbed_stub_lm_verified": bool(row.get("perturbed_stub_lm_solution_verified", False)),
         
-        # Deterministic perturbation results
-        "perturbed_stub_deterministic": str(row.get("perturbed_stub_deterministic", "N/A")),
-        "perturbed_stub_deterministic_type": str(row.get("perturbed_stub_deterministic_type", "N/A")),
-        "perturbed_stub_deterministic_completion": str(row.get("perturbed_stub_deterministic_completion", "N/A")),
-        "perturbed_stub_deterministic_verified": bool(row.get("perturbed_stub_deterministic_solution_verified", False))
+        # Commenting out deterministic perturbation results
+        # "perturbed_stub_deterministic": str(row.get("perturbed_stub_deterministic", "N/A")),
+        # "perturbed_stub_deterministic_type": str(row.get("perturbed_stub_deterministic_type", "N/A")),
+        # "perturbed_stub_deterministic_completion": str(row.get("perturbed_stub_deterministic_completion", "N/A")),
+        # "perturbed_stub_deterministic_verified": bool(row.get("perturbed_stub_deterministic_solution_verified", False))
     }
 
     return render_template_string("""
@@ -374,7 +336,7 @@ def view_completions():
                 }
                 .perturbation-grid {
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
+                    grid-template-columns: 1fr;
                     gap: 20px;
                     margin-top: 20px;
                 }
@@ -433,20 +395,13 @@ def view_completions():
                         </div>
                     </div>
 
+                    <!-- Comment out deterministic perturbation column -->
+                    <!--
                     <div class="perturbation-column">
-                        <div class="perturbation-type">Deterministic Perturbation ({{ completion_data.perturbed_stub_deterministic_type }})</div>
-                        
-                        <h3>Perturbed Stub:</h3>
-                        <div class="content-box">{{ completion_data.perturbed_stub_deterministic }}</div>
-                        
-                        <h3>Completion:</h3>
-                        <div class="content-box">{{ completion_data.perturbed_stub_deterministic_completion }}</div>
-                        
-                        <h3>Verification:</h3>
-                        <div class="verification-box verification-{{ completion_data.perturbed_stub_deterministic_verified|lower }}">
-                            {{ completion_data.perturbed_stub_deterministic_verified }}
-                        </div>
+                        <div class="perturbation-type">Deterministic Perturbation...</div>
+                        ...
                     </div>
+                    -->
                 </div>
             </div>
         </body>
@@ -572,10 +527,13 @@ def view_problems():
                     {{ problem.perturbed_stub_lm }}
                 </div>
 
+                <!-- Comment out deterministic perturbation box -->
+                <!--
                 <div class="problem-box">
                     <div class="section-title">Deterministically-Perturbed Stub ({{ problem.perturbed_stub_deterministic_type }}):</div>
                     {{ problem.perturbed_stub_deterministic }}
                 </div>
+                -->
             </div>
             {% endfor %}
             
