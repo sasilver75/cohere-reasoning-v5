@@ -1,7 +1,6 @@
 import random
 import sys
 import os
-from distutils.sysconfig import PREFIX
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel
 import pandas as pd
 from tqdm import tqdm
