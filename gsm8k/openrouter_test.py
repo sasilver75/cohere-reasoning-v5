@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-from gsm8k.gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
+from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider
 
 load_dotenv()
 import requests
@@ -31,7 +31,7 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+MODEL = OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT
 PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 

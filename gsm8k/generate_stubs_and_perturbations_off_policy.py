@@ -1,6 +1,7 @@
 import random
 import sys
 import os
+from distutils.sysconfig import PREFIX
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel
 import pandas as pd
 from tqdm import tqdm
@@ -64,6 +65,10 @@ async def generate_solution_stub(problem: str, session: aiohttp.ClientSession) -
             "messages": [
                 {"role": "user", "content": gsm_prompts.get_solution_prompt(problem)},
             ],
+            "provider": {
+                "order": [OPENROUTER_MODEL_PROVIDERS[PREFIX_AND_PERTURB_MODEL].value],
+                "allow_fallbacks": False,
+            },
             "temperature": .2,
             "top_p": 0.8,
             "max_tokens": STUB_N_TOKENS,
@@ -94,6 +99,10 @@ async def get_perturbed_stub_lm(problem: str, stub: str, session: aiohttp.Client
             "messages": [
                 {"role": "user", "content": gsm_prompts.get_perturb_prompt(problem=problem, stub=stub)},
             ],
+            "provider": {
+                "order": [OPENROUTER_MODEL_PROVIDERS[PREFIX_AND_PERTURB_MODEL].value],
+                "allow_fallbacks": False,
+            },
             "temperature": 0,
             "top_k": 0,  # Greedy
         },

@@ -30,10 +30,10 @@ if not "COHERE_API_KEY" in os.environ:
 # ~ Experiment parameters
 N_PROBLEMS = None  # None = All problems
 MODELS = [
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     CohereModel.COHERE_R7B,
-    CohereModel.COHERE_CRP,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    # CohereModel.COHERE_CRP,
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
@@ -83,6 +83,8 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
         timeout=60
     ) as response:
         response_json = await response.json()
+        if "error" in response_json:
+            print("Provider error: ", response_json)
         return response_json["choices"][0]["message"]["content"]
 
 @retry(
@@ -150,6 +152,8 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
         timeout=60
     ) as response:
         response_json = await response.json()
+        if "error" in response_json:
+            print("Provider error: ", response_json)
         response_content = response_json["choices"][0]["message"]["content"]
         
     verified = response_content.lower() == 'correct'

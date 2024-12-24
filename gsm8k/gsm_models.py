@@ -25,7 +25,7 @@ class OpenRouterProvider(Enum):
     HYPERBOLIC = "Hyperbolic"
     NOVITA = "Novita"
     AVIAN = "Avian"
-    SF_COMPUTE = "SF Compute"
+    SF_COMPUTE = "SF Compute"  # BAD! Fuck these guys.
     DEEPSEEK = "DeepSeek"
     MISTRAL = "Mistral"
     AZURE = "Azure"
@@ -37,7 +37,7 @@ OPENROUTER_MODEL_PROVIDERS = {
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.SF_COMPUTE,  # Check: Shuld this be SF compute? Or should it be DeepInfra?
+    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  # Check: Shuld this be SF compute? Or should it be DeepInfra?
     # OpenRouterModel.MISTRAL_8x22B_INSTRUCT: OpenRouterProvider.MISTRAL,  # No providers list precision; Mistral doesn't do completions.
     # OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Only provider is Azure and it just returns EOS tokens when doing completions
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check
