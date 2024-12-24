@@ -89,6 +89,8 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
             timeout=60
         ) as response:
             response_json = await response.json()
+            if "error" in response_json:
+                print("Provider error: ", response_json)
             return response_json["choices"][0]["message"]["content"]
 
 @retry(
@@ -201,7 +203,7 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     #     get_completion(session, model, problem, perturbed_stub_lm),
     #     get_completion(session, model, problem, perturbed_stub_deterministic)
     # )
-    perturbed_stub_lm_completion = get_completion(session, model, problem, perturbed_stub_lm)
+    perturbed_stub_lm_completion = await get_completion(session, model, problem, perturbed_stub_lm)
     
     # Get verifications for both perturbation types in parallel
     # perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
@@ -218,7 +220,7 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     #         f"{perturbed_stub_deterministic}{perturbed_stub_deterministic_completion}"
     #     )
     # )
-    perturbed_stub_lm_verified = verify_solution(session, problem, answer, perturbed_stub_lm_completion)
+    perturbed_stub_lm_verified = await verify_solution(session, problem, answer, perturbed_stub_lm_completion)
 
     return {
         # Problem metadata

@@ -168,7 +168,7 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     #     get_completion(session, model, result["problem"], result["perturbed_stub_lm"]),
     #     get_completion(session, model, result["problem"], result["perturbed_stub_deterministic"])
     # )
-    perturbed_stub_lm_completion = get_completion(session, model, result["problem"], result["perturbed_stub_lm"])
+    perturbed_stub_lm_completion = await get_completion(session, model, result["problem"], result["perturbed_stub_lm"])
     
     # Get verifications for both perturbation types in parallel
     # perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
@@ -185,7 +185,7 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     #         f"{result['perturbed_stub_deterministic']}{perturbed_stub_deterministic_completion}"
     #     )
     # )
-    perturbed_stub_lm_verified = verify_solution(session, result["problem"], result["answer"], perturbed_stub_lm_completion)
+    perturbed_stub_lm_verified = await verify_solution(session, result["problem"], result["answer"], perturbed_stub_lm_completion)
 
     # Add new completion-related fields
     result.update({
