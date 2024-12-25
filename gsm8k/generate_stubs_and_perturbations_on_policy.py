@@ -184,7 +184,7 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
 async def main():
     # Load dataset
     print(f"Loading GSM8k dataset...")
-    df = pd.read_csv("datasets/original/gsm8k.csv")
+    df = pd.read_csv("datasets/original/gsm-symbolic.csv")
     print(f"Loaded GSM8k dataset with {len(df)} rows and columns {list(df.columns)}")
 
     if N_PROBLEMS is not None:  
