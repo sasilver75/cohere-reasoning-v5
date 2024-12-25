@@ -153,7 +153,7 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
 async def main():
     # Load dataset
     print(f"Loading GSM8K dataset...")
-    df = pd.read_csv("datasets/original/gsm-symbolic.csv")
+    df = pd.read_csv("datasets/original/gsm8k_matched_gsm_symbolic.csv")
     print(f"Loaded GSM8K dataset with {len(df)} rows and columns {list(df.columns)}")
 
 
