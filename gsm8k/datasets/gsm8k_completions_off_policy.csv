@@ -13,11 +13,11 @@ problem_id,problem,answer,stub,stub_and_perturb_model,stub_and_perturb_model_pro
 4. Total eggs used: 3 (eaten) + 6 (baking) = 9 eggs
 5. Eggs left to sell: 16 - 9 = 7 eggs","
 
-Since Janet sells each egg for $2, we can calculate her daily earnings at the farmers' market by multiplying the number of eggs left by the price per egg.
+Since Janet sells each egg for $2, we can calculate her daily earnings by multiplying the number of eggs left by the price per egg:
 
 Daily earnings = 7 eggs * $2/egg = $14
 
-Final Answer: $14",False
+Final Answer: 14",False
 0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,"To find out how much Janet makes every day at the farmers' market, we first need to calculate how many eggs she has left after eating and baking.
 
 1. Total eggs laid per day: 16 eggs
@@ -31,11 +31,7 @@ Final Answer: $14",False
 3. Eggs used for baking muffins: 6 eggs
 4. Total eggs used: 3 (eaten) + 6 (baking) = 9 eggs
 5. Eggs left to sell: 16 - 9 = 7 eggs","
-
-Since she sells each egg for $2, her daily earnings are:
-
-6. Daily earnings: 7 eggs * $2/egg = $14
-
+6. Earnings from selling eggs: 7 eggs * $2/egg = $14
 
 **Answer:** Janet makes $14 every day at the farmers' market.",False
 0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,"To find out how much Janet makes every day at the farmers' market, we first need to calculate how many eggs she has left after eating and baking.
@@ -52,11 +48,9 @@ Since she sells each egg for $2, her daily earnings are:
 4. Total eggs used: 3 (eaten) + 6 (baking) = 9 eggs
 5. Eggs left to sell: 16 - 9 = 7 eggs","
 
-Since Janet sells the remaining eggs at $2 per egg, we multiply the number of eggs she has left by the price per egg to find out how much she makes every day.
+Since she sells each egg for $2, we multiply the number of eggs she sells by the price per egg:
 
-Daily earnings = Number of eggs left * Price per egg
-Daily earnings = 7 eggs * $2/egg
-Daily earnings = $14
+7 eggs * $2 per egg = $14
 
 Therefore, Janet makes $14 every day at the farmers' market.",False
 0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,"To find out how much Janet makes every day at the farmers' market, we first need to calculate how many eggs she has left after eating and baking.
@@ -73,9 +67,9 @@ Therefore, Janet makes $14 every day at the farmers' market.",False
 4. Total eggs used: 3 (eaten) + 6 (baking) = 9 eggs
 5. Eggs left to sell: 16 - 9 = 7 eggs","
 
-Now, we know that Janet sells each egg for $2. So, to find out her daily earnings, we multiply the number of eggs she sells by the price per egg:
+Now, we know that Janet sells each egg for $2. So, the total amount she makes from selling 7 eggs is:
 
-6. Daily earnings: 7 eggs * $2/egg = $14
+7 eggs * $2/egg = $14
 
 Therefore, Janet makes $14 every day at the farmers' market.",False
 0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,"To find out how much Janet makes every day at the farmers' market, we first need to calculate how many eggs she has left after eating and baking.

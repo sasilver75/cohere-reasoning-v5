@@ -30,7 +30,7 @@ if not "COHERE_API_KEY" in os.environ:
 
 # CONFIGURATION
 # ~ Experiment parameters
-N_PROBLEMS = 1 # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
+N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     CohereModel.COHERE_R7B,
