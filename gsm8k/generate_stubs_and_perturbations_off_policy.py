@@ -25,6 +25,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
     raise ValueError("OPENROUTER_API_KEY must be set in the environment")
 
 
+# TODO: MOVE THE SOURCE DATASET TO THE CONFIGURATION UP HERE; IT MIGHT BE GSM-SYMBOLIC
 # CONFIGURATION
 # ~ Experiment parameters
 N_PROBLEMS = None  # None means "All" problems
@@ -125,7 +126,7 @@ async def get_perturbed_stub_lm(problem: str, stub: str, session: aiohttp.Client
 async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
     problem_id = row["problem_id"]
     problem = row["problem"]
-    answer = row["solution"]
+    answer = row["answer"]
 
     stub = await generate_solution_stub(problem, session)
     print(f"Generated stub for problem {problem_id}")

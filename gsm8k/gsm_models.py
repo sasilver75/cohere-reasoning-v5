@@ -11,7 +11,7 @@ class OpenRouterModel(Enum):
     LLAMA_3_3_70B_INSTRUCT = "meta-llama/llama-3.3-70b-instruct"
     GEMMA_2_27B_INSTRUCT = "google/gemma-2-27b-it"
     # LLAMA_3_1_405B_INSTRUCT = "meta-llama/llama-3.1-405b-instruct"  # Waiting on this one; We don't have a good provider (quant, completion) on OpenRouter (https://sasilver0051g-lbx2356.slack.com/archives/C07E794RAFJ/p1734480088017999?thread_ts=1734479625.429039&cid=C07E794RAFJ)
-    DEEPSEEK_2_5_1210_INSTRUCT = "deepseek/deepseek-chat"
+    DEEPSEEK_2_5_1210_INSTRUCT = "deepseek/deepseek-chat-v2.5"
     MISTRAL_NEMO_12B_INSTRUCT = "mistralai/mistral-nemo"
     NEMOTRON_4_340B_INSTRUCT = "nvidia/nemotron-4-340b-instruct"
     MISTRAL_8x22B_INSTRUCT = "mistralai/mixtral-8x22b-instruct"
@@ -33,7 +33,7 @@ class OpenRouterProvider(Enum):
 
 OPENROUTER_MODEL_PROVIDERS = {
     # Using Deepseek for prefix/perturbation generation; Unfortuantely Hyperbolic (bf16) has very low rate limits, so I'm going to try to use Deepseek (fp8); I think it will still be wsmart enough.
-    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.DEEPSEEK, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often. But I can use it for prefix/perturbation generation, which doesn't need that.
+    OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often. But I can use it for prefix/perturbation generation, which doesn't need that. OKAY had to swap to hyperbolic because deepseek stealth-changed...
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,

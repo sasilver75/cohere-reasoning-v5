@@ -12,21 +12,17 @@ sub_df = df[df["instance"] == 0]
 print(f"Yielded {len(sub_df)} rows")
 
 
-def get_reasoning(answer: str) -> str:
-    return answer.split("####")[0].strip()
-
 def get_final_answer(answer: str) -> str:
     return answer.split("####")[1].strip()
 
 # Compute/rename to final columns
 sub_df = sub_df.rename(columns={"id": "problem_id", "question": "problem"})
-sub_df["reasoning"] = sub_df["answer"].apply(get_reasoning)
-sub_df["solution"] = sub_df["answer"].apply(get_final_answer)
-sub_df = sub_df[["problem_id", "problem", "reasoning", "solution"]]
+sub_df["answer"] = sub_df["answer"].apply(get_final_answer)
+sub_df = sub_df[["problem_id", "problem", "answer"]]
 
 print(f"Final columns: {", ".join(sub_df.columns.tolist())}")
 
 # Save to CSV
-filename = "datasets/original/gsm-symbolic.csv"
-sub_df.to_csv(filename, index=False)
-print(f"Saved to CSV at {filename}")
+output_filepath = "gsm8k/datasets/original/gsm-symbolic.csv"
+sub_df.to_csv(output_filepath, index=False)
+print(f"Saved to CSV at {output_filepath}")

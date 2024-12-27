@@ -26,6 +26,8 @@ if not "OPENROUTER_API_KEY" in os.environ:
 if not "COHERE_API_KEY" in os.environ:
     raise ValueError("COHERE_API_KEY must be set in the environment")
 
+
+# TODO: MOVE THE SOURCE DATASET TO THE CONFIGURATION UP HERE; IT MIGHT BE GSM-SYMBOLIC
 # CONFIGURATION
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
@@ -158,7 +160,7 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
     """Process a single row for a specific model"""
     problem_id = row["problem_id"]
     problem = row["problem"]
-    answer = row["solution"]
+    answer = row["answer"]
 
     # Generate an on-policy stub
     stub = await generate_solution_stub(problem, model, session)

@@ -1,0 +1,236 @@
+problem_id,problem,answer,solution_model,solution_model_provider,solution,solution_verified
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,command-r7b-12-2024,Cohere,"<|START_RESPONSE|>To determine how much Janet makes every day at the farmers' market, we need to follow these steps:
+
+1. Calculate the total number of eggs laid by the ducks per day.
+2. Subtract the number of eggs Janet eats and uses for baking.
+3. Determine the number of eggs left to sell.
+4. Multiply the number of eggs left by the price per egg.
+
+Let's go through each step:
+
+1. Total number of eggs laid per day:
+   - The ducks lay 16 eggs per day.
+
+2. Number of eggs Janet eats:
+   - Janet eats 3 eggs for breakfast every morning.
+
+3. Number of eggs used for baking:
+   - Janet uses 4 eggs to bake muffins every day.
+
+4. Total number of eggs used (eaten or baked):
+   - 3 (eaten) + 4 (baked) = 7 eggs.
+
+5. Number of eggs left to sell:
+   - Total eggs laid: 16
+   - Eggs used: 7
+   - Eggs left to sell: 16 - 7 = 9 eggs.
+
+6. Calculate the daily earnings:
+   - Each egg is sold for $2.
+   - Number of eggs left to sell: 9
+   - Total daily earnings: 9 * $2 = $18.
+
+Therefore, the amount Janet makes every day at the farmers' market is $18.",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,command-r7b-12-2024,Cohere,"<|START_RESPONSE|>To determine the total number of bolts needed for the robe, we need to follow these steps:
+
+1. Identify the amount of blue fiber required: The problem states that the robe takes 2 bolts of blue fiber.
+2. Identify the amount of white fiber required: The problem states that the robe takes half the amount of blue fiber for white fiber. Since 2 bolts of blue fiber are required, half of 2 bolts is 1 bolt of white fiber.
+3. Calculate the total number of bolts: Add the number of bolts of blue fiber and white fiber together. 
+   Total bolts = 2 (blue) + 1 (white) = 3 bolts
+
+Final Answer: 3",True
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,google/gemma-2-27b-it,DeepInfra,"
+
+Here's how to solve the problem:
+
+**1. Calculate the total eggs used:**
+
+* Janet uses 3 eggs for breakfast + 4 eggs for muffins = 7 eggs per day.
+
+**2. Calculate the number of eggs remaining:**
+
+* Janet starts with 16 eggs - 7 eggs used = 9 eggs remaining.
+
+**3. Calculate daily earnings:**
+
+* Janet sells 9 eggs at $2 per egg = $18.
+
+
+**Answer:** Janet makes $18 every day at the farmers' market.",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,google/gemma-2-27b-it,DeepInfra,"
+
+Here's how to solve the problem:
+
+* **Find the amount of white fiber:** Half of 2 bolts of blue fiber is 2 / 2 = 1 bolt of white fiber.
+* **Add the amounts together:** The robe needs 2 bolts of blue fiber + 1 bolt of white fiber = 3 bolts in total.
+
+
+**Answer:** It takes a total of 3 bolts to make the robe. 
+",True
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,meta-llama/llama-3.3-70b-instruct,Novita,"To find out how much Janet makes every day at the farmers' market, we first need to determine how many eggs she sells there. 
+
+1. Janet's ducks lay 16 eggs per day.
+2. She eats 3 eggs for breakfast.
+3. She uses 4 eggs to bake muffins.
+
+Total eggs used = 3 (for breakfast) + 4 (for muffins) = 7 eggs.
+
+So, the number of eggs she has left to sell at the farmers' market = Total eggs laid - Total eggs used
+= 16 - 7
+= 9 eggs.
+
+Since she sells each egg for $2, the total amount she makes every day at the farmers' market = Number of eggs sold * Price per egg
+= 9 * $2
+= $18.
+
+Therefore, Janet makes $18 every day at the farmers' market.",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,meta-llama/llama-3.3-70b-instruct,Novita,"To find the total number of bolts needed for the robe, we first need to determine the amount of white fiber required, since it's based on the amount of blue fiber.
+
+1. The robe takes 2 bolts of blue fiber.
+2. It takes half that much white fiber, so for the white fiber, we calculate 2 / 2 = 1 bolt.
+
+Now, we add the bolts of blue and white fiber together to get the total:
+
+2 bolts (blue) + 1 bolt (white) = 3 bolts
+
+Therefore, it takes 3 bolts in total to make the robe.",True
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,mistralai/mistral-nemo,DeepInfra,"Let's break down this problem step by step:
+
+1. Janet's ducks lay 16 eggs per day.
+2. She eats 3 eggs for breakfast.
+3. She uses 4 eggs to bake muffins.
+
+First, we need to find out how many eggs are left after Janet has taken her breakfast and baked her muffins:
+
+Eggs left = Total eggs laid - Eggs eaten for breakfast - Eggs used for muffins
+Eggs left = 16 - 3 - 4
+Eggs left = 9
+
+Now, we know that Janet sells the remaining eggs at the farmers' market for $2 each. So, to find out how much she makes every day, we multiply the number of eggs left by the price per egg:
+
+Money made = Eggs left * Price per egg
+Money made = 9 * $2
+Money made = $18
+
+Therefore, Janet makes $18 every day at the farmers' market from selling the eggs.",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,mistralai/mistral-nemo,DeepInfra,"Let's break down this problem step-by-step:
+
+1. The robe requires 2 bolts of blue fiber.
+2. It also requires half that amount of white fiber. So, the amount of white fiber needed is:
+   Half of 2 bolts = 2 bolts / 2 = 1 bolt
+
+3. To find the total amount of bolts needed, we add the blue and white fiber together:
+   Total bolts = Blue fiber + White fiber
+   Total bolts = 2 bolts + 1 bolt
+   Total bolts = 3 bolts
+
+Therefore, it takes 3 bolts in total to make the robe.",True
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,qwen/qwen-2.5-72b-instruct,DeepInfra,"To solve this problem, we need to determine how many eggs Janet has left to sell after using some for her own consumption and baking. We will then calculate the revenue from selling these remaining eggs.
+
+1. **Total eggs laid per day:**
+   Janet’s ducks lay 16 eggs per day.
+
+2. **Eggs used for breakfast:**
+   Janet eats 3 eggs for breakfast every morning.
+
+3. **Eggs used for baking:**
+   Janet uses 4 eggs to bake muffins for her friends every day.
+
+4. **Total eggs used:**
+   \[
+   \text{Total eggs used} = \text{Eggs for breakfast} + \text{Eggs for baking} = 3 + 4 = 7
+   \]
+
+5. **Eggs remaining for sale:**
+   \[
+   \text{Eggs remaining for sale} = \text{Total eggs laid} - \text{Total eggs used} = 16 - 7 = 9
+   \]
+
+6. **Revenue from selling the eggs:**
+   Janet sells each egg for $2.
+   \[
+   \text{Revenue} = \text{Eggs remaining for sale} \times \text{Price per egg} = 9 \times 2 = 18
+   \]
+
+Therefore, Janet makes \(\boxed{18}\) dollars every day at the farmers' market.",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,qwen/qwen-2.5-72b-instruct,DeepInfra,"To solve the problem, let's break it down step by step:
+
+1. **Determine the amount of blue fiber needed:**
+   - The problem states that a robe takes 2 bolts of blue fiber.
+
+2. **Determine the amount of white fiber needed:**
+   - The problem also states that the robe takes half as much white fiber as blue fiber.
+   - Since 2 bolts of blue fiber are needed, half of that amount is:
+     \[
+     \frac{2}{2} = 1 \text{ bolt of white fiber}
+     \]
+
+3. **Calculate the total number of bolts needed:**
+   - Add the bolts of blue fiber and the bolts of white fiber:
+     \[
+     2 \text{ bolts of blue fiber} + 1 \text{ bolt of white fiber} = 3 \text{ bolts in total}
+     \]
+
+Therefore, the total number of bolts needed to make the robe is \(\boxed{3}\).",True
+0,Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?,18,qwen/qwq-32b-preview,DeepInfra,"Alright, so I've got this problem about Janet and her ducks laying eggs. Let's see what it's asking.
+
+First, it says that Janet’s ducks lay 16 eggs per day. So, every day, she gets 16 eggs from her ducks.
+
+Next, she eats three eggs for breakfast every morning. So, from those 16 eggs, she consumes 3 herself. That means the number of eggs left after she eats is 16 minus 3, which is 13 eggs.
+
+Then, she bakes muffins for her friends every day and uses four eggs for that. So, from the remaining 13 eggs, she uses 4 for baking. That leaves her with 13 minus 4, which is 9 eggs.
+
+Now, she sells these remaining eggs at the farmers' market daily for $2 per fresh duck egg. So, she has 9 eggs to sell, and each egg sells for $2.
+
+To find out how much she makes every day from selling the eggs, I need to multiply the number of eggs she sells by the price per egg. That is, 9 eggs times $2 per egg.
+
+Let me do the math: 9 times 2 is 18.
+
+So, she makes $18 every day from selling the eggs at the farmers' market.
+
+Wait a minute, let me double-check that I didn't miss anything.
+
+Starting with 16 eggs:
+
+- She eats 3, so 16 - 3 = 13 eggs left.
+
+- She uses 4 for baking, so 13 - 4 = 9 eggs left.
+
+- She sells these 9 eggs at $2 each, so 9 * 2 = $18.
+
+Yes, that seems correct.
+
+I think that's the answer: $18 per day.
+
+**Final Answer**
+
+\[ \boxed{18} \]",True
+1,A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?,3,qwen/qwq-32b-preview,DeepInfra,"So I've got this problem here: ""A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?"" Okay, let's break this down.
+
+First, it says the robe takes 2 bolts of blue fiber. So, blue fiber bolts = 2.
+
+Next, it says ""half that much white fiber."" So, white fiber bolts = half of the blue fiber bolts.
+
+Since blue fiber bolts are 2, half of that would be 1. So, white fiber bolts = 1.
+
+Now, to find the total bolts, I need to add the blue and white fiber bolts together.
+
+Total bolts = blue fiber bolts + white fiber bolts = 2 + 1 = 3.
+
+Wait a minute, is there anything else I need to consider? Is there any other type of fiber or any additional information in the problem?
+
+Let me read the problem again: ""A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?""
+
+No, that's all the information given. So, the total bolts needed are 3.
+
+I think that's straightforward. But just to be thorough, let's consider if ""bolt"" is a unit of measurement I should know about.
+
+A bolt is a unit of length, but in this context, it's being used as a unit of quantity for fibers. So, it's likely that a bolt here refers to a standard amount of fiber material.
+
+Given that, the calculation seems correct.
+
+So, the final answer is 3 bolts in total.
+
+**Final Answer**
+
+\[ \boxed{3} \]",True
