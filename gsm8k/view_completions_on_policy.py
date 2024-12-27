@@ -23,7 +23,7 @@ except Exception as e:
 
 def create_verification_plot():
     # Calculate rates by model
-    stats = df.groupby('completer_model').agg({
+    stats = df.groupby('completion_model').agg({
         'problem_id': 'count',  # total problems
         'perturbed_stub_lm_solution_verified': 'sum'  # sum of True values
     }).assign(
@@ -74,9 +74,9 @@ def create_verification_plot():
 @app.route("/")
 def stats():
     # Calculate statistics for each model
-    model_stats = df.groupby(['completer_model', 'completer_model_provider']).agg({
+    model_stats = df.groupby(['completion_model', 'completion_model_provider']).agg({
         'problem_id': 'count',
-        'perturbed_stub_lm_solution_verified': 'sum'  # Changed from 'verification'
+        'perturbed_stub_lm_solution_verified': 'sum'
     })
     
     # Calculate the rate manually
@@ -218,7 +218,7 @@ def view_completions():
         return "Model parameter is required", 400
     
     # Filter dataframe for selected model
-    model_df = df[df['completer_model'] == model].copy()
+    model_df = df[df['completion_model'] == model].copy()
     
     # Get problem_id from query parameters if provided
     problem_id = request.args.get("problem_id", type=int)
@@ -238,7 +238,7 @@ def view_completions():
     
     completion_data = {
         "model": model,
-        "provider": str(row.get("completer_model_provider", "N/A")),
+        "provider": str(row.get("completion_model_provider", "N/A")),
         "problem_id": int(row.get("problem_id", 0)),
         "problem": str(row.get("problem", "N/A")),
         "answer": str(row.get("answer", "N/A")),

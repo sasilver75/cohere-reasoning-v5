@@ -28,7 +28,7 @@ if not "COHERE_API_KEY" in os.environ:
 
 # CONFIGURATION
 # ~ Experiment parameters
-N_PROBLEMS = None  # None = All problems
+N_PROBLEMS = None  # None = All problems  # Note that this has a different meaning for on_policy, since selecting the first problem only selects a problem for a single model
 MODELS = [
     OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
@@ -162,58 +162,44 @@ async def verify_solution(session: aiohttp.ClientSession, problem: str, answer: 
 async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, row: pd.Series) -> dict:
     """Process a single problem for a model using its own stub"""
     # Get all existing fields from input row
-    result = row.to_dict()
+    problem_id: int = row["problem_id"]
+    problem: str = row["problem"]
+    answer: int = row["answer"]
+    stub: str = row["stub"]
+    perturbed_stub_lm: str = row["perturbed_stub_lm"]
+    perturb_model: str = row["perturb_model"]
+    perturb_model_provider: str = row["perturb_model_provider"]
     
-    print(f"Testing model {model.value} on problem {result['problem_id']}")
+    print(f"Testing model {model.value} on problem {problem_id}")
 
-    # Get completions for both perturbation types in parallel
-    # perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
-    #     get_completion(session, model, result["problem"], result["perturbed_stub_lm"]),
-    #     get_completion(session, model, result["problem"], result["perturbed_stub_deterministic"])
-    # )
-    perturbed_stub_lm_completion = await get_completion(session, model, result["problem"], result["perturbed_stub_lm"])
-    
-    # Get verifications for both perturbation types in parallel
-    # perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
-    #     verify_solution(
-    #         session, 
-    #         result["problem"], 
-    #         result["answer"], 
-    #         f"{result['perturbed_stub_lm']}{perturbed_stub_lm_completion}"
-    #     ),
-    #     verify_solution(
-    #         session, 
-    #         result["problem"], 
-    #         result["answer"], 
-    #         f"{result['perturbed_stub_deterministic']}{perturbed_stub_deterministic_completion}"
-    #     )
-    # )
-    perturbed_stub_lm_verified = await verify_solution(session, result["problem"], result["answer"], perturbed_stub_lm_completion)
+    perturbed_stub_lm_completion = await get_completion(session, model, problem, perturbed_stub_lm)
+    perturbed_stub_lm_solution = f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
+    perturbed_stub_lm_verified = await verify_solution(session, problem, answer, perturbed_stub_lm_solution)
 
-    # Add new completion-related fields
-    result.update({
-        "completer_model": model.value,
-        "completer_model_provider": OPENROUTER_MODEL_PROVIDERS[model].value if isinstance(model, OpenRouterModel) else "Cohere",
+    return {
+        # Problem metadata
+        "problem_id": problem_id,
+        "problem": problem,
+        "answer": answer,
+        "stub": stub,
+        
+        # Model information
+        "perturb_model": perturb_model,
+        "perturb_model_provider": perturb_model_provider,
+        "completion_model": model.value,
+        "completion_model_provider": OPENROUTER_MODEL_PROVIDERS[model].value if isinstance(model, OpenRouterModel) else "Cohere",
         
         # LM perturbation results
+        "perturbed_stub_lm": perturbed_stub_lm,
         "perturbed_stub_lm_completion": perturbed_stub_lm_completion,
         "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
-        
-        # Deterministic perturbation results
-        # "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
-        # "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
-        
-        # Verifier model info
-        "verifier_model": VERIFIER_MODEL.value,
-        "verifier_model_provider": OPENROUTER_MODEL_PROVIDERS[VERIFIER_MODEL].value,
-    })
-
-    return result
+    }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, df: pd.DataFrame) -> list[dict]:
     """Test all problems for a given model using its own stubs"""
     # Filter dataframe to only include rows where this model generated the stub
     model_df = df[df["stub_model"] == model.value].copy()
+
     print(f"Testing {len(model_df)} problems for model {model.value}")
     
     semaphore = asyncio.Semaphore(30)
@@ -223,8 +209,13 @@ async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | Co
             return await test_single_problem(session, model, row)
     
     tasks = [rate_limited_test(row) for _, row in model_df.iterrows()]
-    
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    results = []
+    with tqdm(total=len(tasks), desc=f"Processing rows for {model.value}") as pbar:
+        for coro in asyncio.as_completed(tasks):
+            result = await coro
+            results.append(result)
+            pbar.update(1)
     
     valid_results = []
     for result in results:
@@ -255,13 +246,13 @@ async def main():
 
     
     print("Saving results...")
-    df = pd.DataFrame(acc)
+    result_df = pd.DataFrame(acc)
 
     # sorting by stub should be the same thing as sorting by completer_model, since it's on_policy.
-    df = df.sort_values(by=["completer_model", "problem_id"], ascending=[True, True])
+    result_df = result_df.sort_values(by=["completion_model", "problem_id"], ascending=[True, True])
     
     filepath = "gsm8k/datasets/gsm8k_completions_on_policy.csv"
-    df.to_csv(filepath, index=False)
+    result_df.to_csv(filepath, index=False)
     print(f"Results saved to {filepath}")
 
 if __name__ == "__main__":

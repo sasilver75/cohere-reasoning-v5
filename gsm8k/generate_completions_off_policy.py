@@ -30,7 +30,7 @@ if not "COHERE_API_KEY" in os.environ:
 
 # CONFIGURATION
 # ~ Experiment parameters
-N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
+N_PROBLEMS = 1 # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     CohereModel.COHERE_R7B,
@@ -183,43 +183,16 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     problem: str = row["problem"]
     answer: int = row["answer"]
     stub: str = row["stub"]
-    
-    # LM perturbation data
     perturbed_stub_lm: str = row["perturbed_stub_lm"]
-    
-    # Deterministic perturbation data
-    # perturbed_stub_deterministic: str = row["perturbed_stub_deterministic"]
-    # perturbed_stub_deterministic_type: str = row["perturbed_stub_deterministic_type"]
-    
-    # Model info
     stub_and_perturb_model: str = row["stub_and_perturb_model"]
     stub_and_perturb_model_provider: str = row["stub_and_perturb_model_provider"]
 
     print(f"Testing model {model.value} on problem {problem_id}")
 
-    # Get completions for both perturbation types in parallel
-    # perturbed_stub_lm_completion, perturbed_stub_deterministic_completion = await asyncio.gather(
-    #     get_completion(session, model, problem, perturbed_stub_lm),
-    #     get_completion(session, model, problem, perturbed_stub_deterministic)
-    # )
+  
     perturbed_stub_lm_completion = await get_completion(session, model, problem, perturbed_stub_lm)
-    
-    # Get verifications for both perturbation types in parallel
-    # perturbed_stub_lm_verified, perturbed_stub_deterministic_verified = await asyncio.gather(
-    #     verify_solution(
-    #         session, 
-    #         problem, 
-    #         answer, 
-    #         f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
-    #     ),
-    #     verify_solution(
-    #         session, 
-    #         problem, 
-    #         answer, 
-    #         f"{perturbed_stub_deterministic}{perturbed_stub_deterministic_completion}"
-    #     )
-    # )
-    perturbed_stub_lm_verified = await verify_solution(session, problem, answer, perturbed_stub_lm_completion)
+    perturbed_stub_lm_solution = f"{perturbed_stub_lm}{perturbed_stub_lm_completion}"
+    perturbed_stub_lm_verified = await verify_solution(session, problem, answer, perturbed_stub_lm_solution)
 
     return {
         # Problem metadata
@@ -238,17 +211,11 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
         "perturbed_stub_lm": perturbed_stub_lm,
         "perturbed_stub_lm_completion": perturbed_stub_lm_completion,
         "perturbed_stub_lm_solution_verified": perturbed_stub_lm_verified,
-        
-        # Deterministic perturbation results
-        # "perturbed_stub_deterministic": perturbed_stub_deterministic,
-        # "perturbed_stub_deterministic_type": perturbed_stub_deterministic_type,
-        # "perturbed_stub_deterministic_completion": perturbed_stub_deterministic_completion,
-        # "perturbed_stub_deterministic_solution_verified": perturbed_stub_deterministic_verified,
     }
 
 async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, df: pd.DataFrame) -> list[dict]:
     """Test all problems for a given model concurrently"""
-    semaphore = asyncio.Semaphore(15)
+    semaphore = asyncio.Semaphore(30)
     
     async def rate_limited_test(row: pd.Series):
         async with semaphore:
@@ -263,7 +230,12 @@ async def test_model(session: aiohttp.ClientSession, model: OpenRouterModel | Co
     # TODO(SAM): Below could use some polish (use as_completed, etc.)
 
     # Run tasks concurrently and collect results
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+    results = []
+    with tqdm(total=len(tasks), desc=f"Processing rows for {model.value}") as pbar:
+        for coro in asyncio.as_completed(tasks):
+            result = await coro
+            results.append(result)
+            pbar.update(1)
     
     # Filter out any None results and handle exceptions
     valid_results = []
