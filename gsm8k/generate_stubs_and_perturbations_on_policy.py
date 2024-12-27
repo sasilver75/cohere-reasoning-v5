@@ -42,6 +42,9 @@ MODELS = [
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
 
+INPUT_FILENAME = "gsm8k/datasets/original/gsm8k.csv"
+OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_on_policy.csv"
+
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(250)
 COHERE_TOKEN_BUCKET = TokenBucket(400)
@@ -185,8 +188,8 @@ async def process_row(row: pd.Series, model: OpenRouterModel | CohereModel, sess
 async def main():
     # Load dataset
     print(f"Loading GSM8k dataset...")
-    df = pd.read_csv("datasets/original/gsm8k_matched_gsm_symbolic.csv")
-    print(f"Loaded GSM8k dataset with {len(df)} rows and columns {list(df.columns)}")
+    df = pd.read_csv(INPUT_FILENAME)
+    print(f"Loaded GSM8k dataset with {len(df)} rows and columns {list(df.columns)} from {INPUT_FILENAME}")
 
     if N_PROBLEMS is not None:  
         print(f"Using first {N_PROBLEMS} problems of {len(df)} problems")
@@ -211,9 +214,8 @@ async def main():
     # Make sure that we're ordered by stub_model problem_id asc.
     df_results = df_results.sort_values(by=["stub_model", "problem_id"], ascending=[True, True])
     
-    filepath = "gsm8k/datasets/gsm8k_stubs_and_perturbations_on_policy.csv"    
-    df_results.to_csv(filepath, index=False)
-    print(f"Saved to {filepath}")
+    df_results.to_csv(OUTPUT_FILENAME, index=False)
+    print(f"Saved to {OUTPUT_FILENAME}")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -27,7 +27,7 @@ if not "COHERE_API_KEY" in os.environ:
 # CONFIGURATION
 # ~ Experiment parameters
 N_PROBLEMS = None  # None = All problems
-INPUT_FILEPATH = "datasets/original/gsm8k.csv"
+INPUT_FILEPATH = "gsm8k/datasets/original/gsm8k.csv"
 OUTPUT_FILEPATH = "gsm8k/datasets/gsm8k_straight_shot_solutions.csv"
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,

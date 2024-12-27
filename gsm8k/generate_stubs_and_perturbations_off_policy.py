@@ -32,6 +32,9 @@ N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_3
 
+INPUT_FILENAME = "gsm8k/datasets/original/gsm8k.csv"
+OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"
+
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350)
 
@@ -154,8 +157,8 @@ async def process_row(row: pd.Series, session: aiohttp.ClientSession) -> dict:
 async def main():
     # Load dataset
     print(f"Loading GSM8K dataset...")
-    df = pd.read_csv("datasets/original/gsm8k_matched_gsm_symbolic.csv")
-    print(f"Loaded GSM8K dataset with {len(df)} rows and columns {list(df.columns)}")
+    df = pd.read_csv(INPUT_FILENAME)
+    print(f"Loaded GSM8K dataset with {len(df)} rows and columns {list(df.columns)} from {INPUT_FILENAME}")
 
 
     if N_PROBLEMS is not None:  
@@ -178,10 +181,9 @@ async def main():
 
     # Make sure that the rows are ordered by problem_id asc; just aesthetics :)
     df = df.sort_values(by="problem_id", ascending=True)
-
-    filepath = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"    
-    df.to_csv(filepath, index=False)
-    print(f"Saved to {filepath}")
+    
+    df.to_csv(OUTPUT_FILENAME, index=False)
+    print(f"Saved to {OUTPUT_FILENAME}")
 
     
 
