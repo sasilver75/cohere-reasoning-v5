@@ -31,8 +31,26 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT
+MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
 PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+
+# What model am I?
+data = {
+    "model": MODEL.value,  # Specify the model you want to use
+    "messages": [
+        {"role": "user", "content": "Hello deepseek model. What version are you?"},  # Using your existing prefix
+    ],
+    "provider": {
+    "order": [
+            "Hyperbolic"
+        ],
+        "allow_fallbacks": False,
+    },
+    "temperature": 0.2,
+    "top_p": 0.8
+}
+response = requests.post(url, headers=headers, json=data)
+print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
 
 
 # Completion test examples
@@ -51,26 +69,26 @@ prompts = [
         "1, 3, 5, 7, 9, 11, 13, 15, 17" # Will it add ", 19"?
     )
 ]
-for user_turn, assistant_turn in prompts:
-    data = {
-        "model": MODEL.value,  # Specify the model you want to use
-        "messages": [
-            {"role": "user", "content": user_turn},  # Using your existing prefix
-            {"role": "assistant", "content": assistant_turn}  # Prefill example
-        ],
-        "provider": {
-        "order": [
-                PROVIDER.value
-            ],
-            "allow_fallbacks": False,
-        },
-        "temperature": 0.2,
-        "top_p": 0.8
-    }
-    print("sending request")
-    response = requests.post(url, headers=headers, json=data)
-    print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
-print(f"END OF COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")   
+# for user_turn, assistant_turn in prompts:
+#     data = {
+#         "model": MODEL.value,  # Specify the model you want to use
+#         "messages": [
+#             {"role": "user", "content": user_turn},  # Using your existing prefix
+#             {"role": "assistant", "content": assistant_turn}  # Prefill example
+#         ],
+#         "provider": {
+#         "order": [
+#                 PROVIDER.value
+#             ],
+#             "allow_fallbacks": False,
+#         },
+#         "temperature": 0.2,
+#         "top_p": 0.8
+#     }
+#     print("sending request")
+#     response = requests.post(url, headers=headers, json=data)
+#     print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
+# print(f"END OF COMPLETION EXAMPLES \n ~~~~~~~~~~~~~~~~~~ \n")   
 
 
 # '[\n  {\n    "received": "SFCompute",\n    "code": "invalid_enum_value",\n    "options": [\n      "OpenAI",\n      "Anthropic",\n      "Google",\n      "Google AI Studio",\n      "Amazon Bedrock",\n      "Groq",\n      "SambaNova",\n      "Cohere",\n      "Mistral",\n      "Together",\n      "Together 2",\n      "Fireworks",\n      "DeepInfra",\n      "Lepton",\n      "Novita",\n      "Avian",\n      "Lambda",\n      "Azure",\n      "Modal",\n      "AnyScale",\n      "Replicate",\n      "Perplexity",\n      "Recursal",\n      "OctoAI",\n      "DeepSeek",\n      "Infermatic",\n      "AI21",\n      "Featherless",\n      "Inflection",\n      "xAI",\n      "Cloudflare",\n      "SF Compute",\n      "01.AI",\n      "HuggingFace",\n      "Mancer",\n      "Mancer 2",\n      "Hyperbolic",\n      "Hyperbolic 2",\n      "Lynn 2",\n      "Lynn",\n      "Reflection"\n    ],\n    "path": [\n      "provider",\n      "order",\n      0\n    ],\n    "message": "Invalid enum value. Expected \'OpenAI\' | \'Anthropic\' | \'Google...
