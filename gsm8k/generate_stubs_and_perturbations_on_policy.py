@@ -32,7 +32,7 @@ if not "COHERE_API_KEY" in os.environ:
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
 N_PROBLEMS = None  # None means "All" problems
-PERTURB_MODEL = OpenRouterModel.DEEPSEEK_3
+PERTURB_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
     CohereModel.COHERE_R7B,
@@ -61,7 +61,7 @@ OPENROUTER_HEADERS = {
 logger = logging.getLogger(__name__)
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -92,7 +92,7 @@ async def generate_solution_stub_openrouter(problem: str, model: OpenRouterModel
         return response_json["choices"][0]["message"]["content"]
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -122,7 +122,7 @@ async def generate_solution_stub(problem: str, model: OpenRouterModel | CohereMo
         raise ValueError(f"Unknown model type: {type(model)}")
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)

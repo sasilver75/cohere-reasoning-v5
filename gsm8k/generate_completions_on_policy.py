@@ -37,7 +37,7 @@ MODELS = [
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
-VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_3
+VERIFIER_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
@@ -54,7 +54,7 @@ OPENROUTER_HEADERS = {
 logger = logging.getLogger(__name__)
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -87,7 +87,7 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
         return response_json["choices"][0]["message"]["content"]
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -124,7 +124,7 @@ async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel 
         raise ValueError(f"Unknown model type: {type(model)}")
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)

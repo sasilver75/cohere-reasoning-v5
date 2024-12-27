@@ -39,7 +39,7 @@ MODELS = [
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
-VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_3
+VERIFIER_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")

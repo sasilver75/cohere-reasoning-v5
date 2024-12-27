@@ -30,7 +30,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
 # ~ Experiment parameters
 N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
-PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_3
+PREFIX_AND_PERTURB_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
 INPUT_FILENAME = "gsm8k/datasets/original/gsm8k.csv"
 OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"
@@ -49,7 +49,7 @@ OPENROUTER_HEADERS = {
 logger = logging.getLogger(__name__)
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -83,7 +83,7 @@ async def generate_solution_stub(problem: str, session: aiohttp.ClientSession) -
     
 
 @retry(
-    stop=stop_after_attempt(5),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)

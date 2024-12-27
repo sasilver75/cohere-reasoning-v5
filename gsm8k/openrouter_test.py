@@ -31,7 +31,7 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 # What model am I?
@@ -42,7 +42,7 @@ data = {
     ],
     "provider": {
     "order": [
-            "Hyperbolic"
+            PROVIDER.value
         ],
         "allow_fallbacks": False,
     },
@@ -50,6 +50,8 @@ data = {
     "top_p": 0.8
 }
 response = requests.post(url, headers=headers, json=data)
+print(response.status_code)
+print(dir(response.reason))
 print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
 
 
