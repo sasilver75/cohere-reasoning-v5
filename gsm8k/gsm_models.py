@@ -18,6 +18,7 @@ class OpenRouterModel(Enum):
     PHI_3_128K_MEDIUM_INSTRUCT = "microsoft/phi-3-medium-128k-instruct"
     QWEN_QWQ_32B_PREVIEW = "qwen/qwq-32b-preview"
     PHI_3_5_MINI_128K_INSTRUCT = "microsoft/phi-3.5-mini-128k-instruct"
+    DEEPSEEK_3 = "deepseek/deepseek-chat"
 
 
 class OpenRouterProvider(Enum):
@@ -34,6 +35,7 @@ class OpenRouterProvider(Enum):
 OPENROUTER_MODEL_PROVIDERS = {
     # Using Deepseek for prefix/perturbation generation; Unfortuantely Hyperbolic (bf16) has very low rate limits, so I'm going to try to use Deepseek (fp8); I think it will still be wsmart enough.
     OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT: OpenRouterProvider.HYPERBOLIC, # Don't have a good provider for this one. DeepSeek ddoesn't do completions. Hyperbolic hangs way too often. But I can use it for prefix/perturbation generation, which doesn't need that. OKAY had to swap to hyperbolic because deepseek stealth-changed...
+    OpenRouterModel.DEEPSEEK_3: OpenRouterProvider.DEEPSEEK,
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT: OpenRouterProvider.DEEPINFRA,  
     OpenRouterModel.LLAMA_3_3_70B_INSTRUCT: OpenRouterProvider.NOVITA,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT: OpenRouterProvider.DEEPINFRA,

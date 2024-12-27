@@ -30,7 +30,7 @@ if not "OPENROUTER_API_KEY" in os.environ:
 # ~ Experiment parameters
 N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
-PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_2_5_1210_INSTRUCT
+PREFIX_AND_PERTURB_MODEL = OpenRouterModel.DEEPSEEK_3
 
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350)
