@@ -44,7 +44,7 @@ OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
 COHERE_TOKEN_BUCKET = TokenBucket(400, "Cohere")
 
 # ~ Request configuration
-COHERE_SYNC_CLIENT = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
+COHERE_V2_CLIENT = cohere.AsyncClientV2(api_key=os.environ["COHERE_API_KEY"])  # We don't need to generate completions, so we can use the async v2 cilent.
 OPENROUTER_COMPLETION_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_HEADERS = {
     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenRouterModel, problem: str) -> str:
+async def get_solution_openrouter(session: aiohttp.ClientSession, model: OpenRouterModel, problem: str) -> str:
     """Get a completion from an OpenRouter model"""
     await OPENROUTER_TOKEN_BUCKET.acquire()
 
@@ -91,33 +91,26 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
-async def get_completion_cohere(model: CohereModel, problem: str) -> str:
+async def get_solution_cohere(model: CohereModel, problem: str) -> str:
     """Get a completion from a Cohere model"""
     await COHERE_TOKEN_BUCKET.acquire()
+    
+    response = await COHERE_V2_CLIENT.chat(
+        model=model.value,
+        messages=[
+            {"role": "user", "content": gsm_prompts.get_solution_prompt(problem)}
+        ],
+        temperature=0.2,
+        p=0.8,
+    )
+    return response.message.content[0].text
 
-    loop = asyncio.get_event_loop()
-    with ThreadPoolExecutor() as executor:
-        completion_response = await asyncio.wait_for(
-            loop.run_in_executor(
-                executor,
-                lambda: COHERE_SYNC_CLIENT.chat(
-                    model=model.value,
-                    message=gsm_prompts.get_solution_prompt_cohere(problem, ""), # No stub for a straight shot completion
-                    temperature=0.2,
-                    p=0.8,
-                    raw_prompting=True,
-                )
-            ),
-            timeout=90
-        )
-    return completion_response.text.replace("<|END_RESPONSE|>", "")
-
-async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, problem: str) -> str:
+async def get_solution(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, problem: str) -> str:
     """Route completion requests to appropriate provider"""
     if isinstance(model, OpenRouterModel):
-        return await get_completion_openrouter(session, model, problem)
+        return await get_solution_openrouter(session, model, problem)
     elif isinstance(model, CohereModel):
-        return await get_completion_cohere(model, problem)
+        return await get_solution_cohere(model, problem)
     else:
         raise ValueError(f"Unknown model type: {type(model)}")
 
@@ -166,7 +159,7 @@ async def test_single_problem(session: aiohttp.ClientSession, model: OpenRouterM
     print(f"Testing model {model.value} on problem {problem_id}")
 
     # Get completion and verification
-    solution = await get_completion(session, model, problem)
+    solution = await get_solution(session, model, problem)
     solution_verified = await verify_solution(session, problem, answer, solution)
 
     return {
