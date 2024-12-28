@@ -32,7 +32,7 @@ N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
-INPUT_FILENAME = "gsm8k/datasets/original/gsm-symbolic.csv"
+INPUT_FILENAME = "gsm8k/datasets/original/gsm8k_matched_gsm_symbolic.csv"
 OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"
 
 # ~ Rate limiting
