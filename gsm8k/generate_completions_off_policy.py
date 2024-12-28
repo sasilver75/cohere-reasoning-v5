@@ -4,6 +4,8 @@ import time
 import aiohttp
 import sys
 import os
+
+import tenacity
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, OpenRouterProvider, CohereModel
 import pandas as pd
 from tqdm import tqdm
@@ -58,7 +60,7 @@ logger = logging.getLogger(__name__)
 
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -93,7 +95,7 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
             return response_json["choices"][0]["message"]["content"]
 
 @retry(
-    stop=stop_after_attempt(10),
+    stop=stop_after_attempt(20),
     wait=wait_exponential(multiplier=1, min=4, max=10),
     retry=retry_if_exception_type((aiohttp.ClientError, asyncio.TimeoutError, Exception)),
     before_sleep=before_sleep_log(logger, logging.WARNING)
@@ -130,13 +132,17 @@ async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel 
     Get a completion to a prefix, from a model using async request
     ROUTES between OpenRouter and Cohere based on model type 
     """
-    if isinstance(model, OpenRouterModel):
-        return await get_completion_openrouter(session, model, problem, perturbed_stub)
-    elif isinstance(model, CohereModel):
-        return await get_completion_cohere(model, problem, perturbed_stub)
-    else:
-        logger.error(f"FATAL: Unknown model type: {type(model)}")
-        raise ValueError(f"Unknown model type: {type(model)}")
+    try:
+        if isinstance(model, OpenRouterModel):
+            return await get_completion_openrouter(session, model, problem, perturbed_stub)
+        elif isinstance(model, CohereModel):
+            return await get_completion_cohere(model, problem, perturbed_stub)
+        else:
+            logger.error(f"FATAL: Unknown model type: {type(model)}")
+            raise ValueError(f"Unknown model type: {type(model)}")
+    except tenacity.RetryError as e:
+        print(f"Retry error: {e}")
+        return "<RETRIES FAILED>"
 
 @retry(
     stop=stop_after_attempt(20),

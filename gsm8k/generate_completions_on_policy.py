@@ -1,6 +1,8 @@
 import asyncio
 import aiohttp
 import os
+
+import tenacity
 from gsm_models import OPENROUTER_MODEL_PROVIDERS, OpenRouterModel, CohereModel
 import pandas as pd
 from tqdm import tqdm
@@ -116,12 +118,16 @@ async def get_completion_cohere(model: CohereModel, problem: str, perturbed_stub
 
 async def get_completion(session: aiohttp.ClientSession, model: OpenRouterModel | CohereModel, problem: str, perturbed_stub: str) -> str:
     """Route to appropriate completion generator based on model type"""
-    if isinstance(model, OpenRouterModel):
-        return await get_completion_openrouter(session, model, problem, perturbed_stub)
-    elif isinstance(model, CohereModel):
-        return await get_completion_cohere(model, problem, perturbed_stub)
-    else:
-        raise ValueError(f"Unknown model type: {type(model)}")
+    try:
+        if isinstance(model, OpenRouterModel):
+            return await get_completion_openrouter(session, model, problem, perturbed_stub)
+        elif isinstance(model, CohereModel):
+            return await get_completion_cohere(model, problem, perturbed_stub)
+        else:
+            raise ValueError(f"Unknown model type: {type(model)}")
+    except tenacity.RetryError as e:
+        print(f"Retry error: {e}")
+        return "<RETRIES FAILED>"
 
 @retry(
     stop=stop_after_attempt(20),
