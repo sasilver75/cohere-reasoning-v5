@@ -10,7 +10,7 @@ import base64
 app = Flask(__name__)
 
 # Load the CSV file
-csv_path = f"gsm8k/datasets/gsm8k_completions_on_policy.csv"
+csv_path = f"gsm8k/datasets/gsm8k-experiment/gsm8k_completions_on_policy.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
     exit(1)

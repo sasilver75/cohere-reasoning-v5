@@ -1,0 +1,107 @@
+
+
+
+The first thing I did
+
+Skimmed the main body, how many figures do we have to support our results?
+- His reaction was too few.
+It's a dumb way of checking a paper, but it's kind of important!
+
+In particular, table 1, it didn't show the off-policy results.
+Doesn't have to be a table, maybe it can be a figure with a column/bar chart to show that it fits.
+
+
+The biggest main piece of feedback is that it's too heavy on the intro and related work.
+Medium too heavy on the intro, too heavy on related work, too light on results.
+
+To the extent we have room, the limitations and future directions, could be quite nice to state the things that we tried that didn't work.
+It's a little nonstandard.
+
+If we change anything about the figures, it will change the writing.
+
+We should definitely list Ivan as an author
+If Sara reviews it thoroughly, we should add as an author
+So don't put it in the acknowledgements.
+
+He lies in the way he didt teh color coding for some of the appendix figures of how to put a concise version in the main body.
+
+
+------
+
+Jim refelection
+
+For her, the main impression was similar to what Eddy mentioned
+
+We should put more detail into hte results and the experiments sectoin and try to condence the intro and the related works.
+If there's not  enough space we can move parts of the related work to the appendix.
+
+For the perturbation method, she found it difficult to follwo by text - it would be nice if there were a small figure or example that illustrates 
+She things figur 1 is helper but she would want one with an exmaple and a problem...
+
+-------
+
+If we make it eight pages but it's quite clear, it could be fine
+If we think the results are elegant, well supported and clear, but there aren't that many of them, or the novety isn't that high, it could just be a workshop paper too.
+
+Maybe we can try to aim for eight pages, and we can try to do some more analysis
+
+
+-----------
+
+0. 
+1. What figurse would we want in the main body?
+2. What questions might stem from tehse initial results, and do we have any initial attempts to look into new research questions, that would be interesting to include as well.
+- Don't worry about it in advance; if we try to write the paper and try to review it, tha t would tell me what to do next.
+
+Can also share the inital draft with Sara and she might have some good initial ideas to add on.
+
+
+Section 2.1 could just go to the appendix
+Section 2.2 should just start with "In contrast to the paproaches that focus on extrinsic feedback (appendix).
+
+The datset descriptions in Page 3 in the top right corner can be mvoed to the appendix and replaced with a sentence that refers to the appendix.
+
+
+
+Clustered and colored bar charts 
+
+
+
+Off policy is somewhere between off policy 
+Off polciy: If there's a rag model that retrieves some evidence when trying to solve some problem, and if it's corrupt in some way. IT could be idistractor
+The off policy setting migth matter if you were training self-correction reasoning models and... you're trying to train training trajectories DOes it matter if you stay on policy or fcan you stitch togethert model reasoning.
+
+
+Figure 1 should be one of the colored oens (or even 1A and 1B with the)
+The toy example that we use can even by contrived/synthetic -- it doesnn't needto be real. It's nice if we can come up with 
+
+She was looking at Table 3
+She likes this separation of of and on and direct. It's pretty interesting that for for QwQ, it's so much better in correcting onpolicy.
+
+Box plot where each block is a model and each point used t compute the box 
+There are six models, 6 boxes... for each swim lane, there would be four boxes representing the four eval sets...
+And so the box is computed ovr four points.
+3 boxes, direct off and on.
+Each of which would be computed from four points. For a model, can you ask: Is it just better direction off or on.
+
+Model are rows
+Qwen 3.5
+For Qwen, 3 boxes, direct on and off.
+The four poitns would be the four different eval setsThe idealized box plot would be if we took eery eval set out there... and did all of them for every model.
+The reason why we have more than one eveal set is that we're trying to say... for math reasoning, what's a representative set.
+Doesn't have to be a box plot, could be a scatterplot or something, but he thinks that the boxes could be easier to look likes
+If we explain that hte points are not in the same distribution.
+If we have a figure like that... in teh atual results disucssion, we can say: "If you look at the QwQ, the box for on-policy is way higher for off, that's not really true for other models."
+
+MAybe it's simpler as bars?
+Each model has three bars, which are have 
+
+
+For direct performance, the small model don't suck as bad, but for off and on, they fail miserably, which shows the model 
+
+Can we do one other eally small model similar to 
+
+
+
+
+
