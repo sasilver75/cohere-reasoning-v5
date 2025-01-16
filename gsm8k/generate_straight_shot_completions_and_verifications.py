@@ -27,7 +27,7 @@ if not "COHERE_API_KEY" in os.environ:
 # CONFIGURATION
 # ~ Experiment parameters
 N_PROBLEMS = None  # None = All problems
-INPUT_FILEPATH = "gsm8k/datasets/original/math_limited.csv"
+INPUT_FILEPATH = "gsm8k/datasets/original/gsm8k_matched_gsm_symbolic.csv"
 OUTPUT_FILEPATH = "gsm8k/datasets/gsm8k_straight_shot_solutions.csv"
 MODELS = [
     OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
@@ -35,6 +35,7 @@ MODELS = [
     OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
     OpenRouterModel.GEMMA_2_27B_INSTRUCT,
+    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
 ]
 VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_3
 
