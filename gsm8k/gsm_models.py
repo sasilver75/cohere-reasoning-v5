@@ -31,6 +31,8 @@ class OpenRouterProvider(Enum):
     DEEPSEEK = "DeepSeek"
     MISTRAL = "Mistral"
     AZURE = "Azure"
+    FIREWORKS = "Fireworks"
+    TOGETHER = "Together"
 
 
 OPENROUTER_MODEL_PROVIDERS = {

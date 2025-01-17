@@ -1,13 +1,12 @@
 
 [x] Move extrinsic feedback to appendix
-[ ] Lighten up the intro a bit, if needed? (Unsure after lightening appendix)
-[ ] To the extent we have room, the limitations and future diretions section could be quite nice to state the things we tried.
-[ ] List Ivan as an Author
-[ ] Maybe Sara in the future
+[?] Lighten up the intro a bit, if needed? (Unsure after lightening appendix)
+[x] To the extent we have room, the limitations and future diretions section could be quite nice to state the things we tried.
+[x] List Ivan as an Author
+[x] Maybe Sara in the future
 [ ] More figures to support our results
 [ ] A more concise version of the color coding in the main body, somehow
-[ ] Text description of the pertrubation methods difficult to follow
-[ ] 
+[x] Text description of the pertrubation methods difficult to follow 
 
 
 The first thing I did

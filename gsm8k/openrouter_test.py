@@ -31,7 +31,7 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
+MODEL = OpenRouterModel.QWEN_QWQ_32B_PREVIEW
 PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
 
 # What model am I?
@@ -72,6 +72,7 @@ prompts = [
     )
 ]
 for user_turn, assistant_turn in prompts:
+    print("------------------")
     data = {
         "model": MODEL.value,  # Specify the model you want to use
         "messages": [
