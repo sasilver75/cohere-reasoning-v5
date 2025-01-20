@@ -7,10 +7,19 @@ import io
 import base64
 import numpy as np
 
+import os
+os.environ['MPLBACKEND'] = 'Agg'  # Add this line before matplotlib imports
+
+import pandas as pd
+from flask import Flask, render_template_string, request
+from flask.json import provider
+import matplotlib.pyplot as plt
+
+
 app = Flask(__name__)
 
 # Load the CSV file
-csv_path = f"gsm8k/datasets/gsm8k_completions_off_policy.csv"
+csv_path = f"gsm8k/datasets/gsm8k-experiment/gsm8k_completions_off_policy.csv"
 if not os.path.exists(csv_path):
     print(f"Error: CSV file not found at {csv_path}")
     exit(1)
@@ -563,4 +572,4 @@ app.json = NumpyEncoder(app)
 
 if __name__ == "__main__":
     print(f"Starting server. CSV file path: {csv_path}")
-    app.run(debug=True, host="localhost", port=5000)
+    app.run(debug=True, host="localhost", port=5001)
