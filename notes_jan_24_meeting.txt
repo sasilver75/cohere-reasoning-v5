@@ -1,0 +1,58 @@
+
+
+Questions:
+- Spacing on the appendi x -- does itjsuck if one of the appendices take a lot of space?
+- Appendices: Do we have enough? Too many?
+- Dataset: ... Can I just say that we'll make the dataset available, or do we have to cite it?
+    - Making the perturbations available is a good contribution.
+    - Should be a footnote to the huggingface dataset.
+        - How do you do this with an anonymous submission? "Insert link here"
+        - We would add some sentence ot he end of teh intro or the conclusion saying "we make available the data.... which bumps up the contribution level quite a bit"
+        - 
+
+Sam:
+- 3.2 and 3.3 to me are the weakest.
+
+
+Eddie:
+- The "pass@1" is fine and being used correctly.
+- I think we can flesh out results more; a naive metric is the balance between methods and intro to results, and it feels like results aren't as thorough as we could make it; some of our results are in the appendix.
+- For example Appendix D is showing ... At this point, everyone knows that QwQ/o1/R1 models do the "wait a minute, that's wrong"; it's almost like there are specific n-grams that are either learned or hardcoded (who knows), but there are specific n-grams explicit to self correction, and we observe the exact same behavior in normal models, it just has adifferent surface form sometimes (sometimes attached to different styles)
+
+What we did quantify is the actual recovery rate of getting it correct or not
+Anecdotally, when we do a subsample, we find that llama and qwen do sometimes (a minority of the itme) do explicit slef-correction
+But when you look at the overall self-correctionr ate, they're simliarly good at n inner-monelogue rasoning model, which is a surprising result; people though that the 
+
+A paragraph more of discussion on that could be really valuble.
+If you look at the last paragraph of 3.3 in results; what we claim there is that there 
+are different types of self corrections, shere's the nature of the surface cforms... and then we stop
+We can add another paragraph about what's interseting: If we go back to feature 2 and synthesize that info with Appendix D, we see wthat even though models like QwQ have this form... that occurs more often than in regularm  models, hen you look at at actual recovery rate instead.
+
+In this synthetically perturbed case, the larger models seem to hold their own with respect to self-correctoin.
+(We should be careful in the cflaim)
+
+
+
+2.1 doesn't need to be a section.
+Adn then add the stuff above
+
+Then the story of our paper is
+
+In the caption, can you make the green GREEN and the red RED.
+(We played with unbollding text)
+
+Feel for table 1 caption, we should say: "nb, model size ranges from 7b to 70B", say that it's ordered by size ascending.
+Either in the caption or in an asterisk on teh table
+
+
+
+Appendix a
+Says Figure 3, but it should be "Figuere A1"; Same for the tables and such.
+
+
+Figure 6 and 7... Typically you would do something like...
+You would do something like Figure C1A and C1B.
+The split one
+Might want to change the font for the {Continued in next figure}. Here, italiciziing is pretty reasonable.
+
+Re: the spacing of appendices. Don't worry about it for now.
