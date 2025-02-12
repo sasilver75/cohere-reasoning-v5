@@ -1,3 +1,4 @@
+from multiprocessing import process
 import random
 import sys
 import os
@@ -32,17 +33,19 @@ if not "COHERE_API_KEY" in os.environ:
 # ~ Experiment parameters
 STUB_N_TOKENS = 100
 N_PROBLEMS = None  # None means "All" problems
+
 PERTURB_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 MODELS = [
-    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
-    CohereModel.COHERE_R7B,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
-    OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
-    OpenRouterModel.GEMMA_2_27B_INSTRUCT,
-    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    # CohereModel.COHERE_R7B,
+    # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    # OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
+    # OpenRouterModel.GEMMA_2_27B_INSTRUCT,
+    # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    OpenRouterModel.DEEPSEEK_R1
 ]
 
-INPUT_FILENAME = "gsm8k/datasets/original/gsm8k_matched_gsm_symbolic.csv"
+INPUT_FILENAME = "gsm8k/datasets/original/gsm8k.csv"
 OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_on_policy.csv"
 
 # ~ Rate limiting
@@ -85,11 +88,21 @@ async def generate_solution_stub_openrouter(problem: str, model: OpenRouterModel
             "temperature": .2,
             "top_p": 0.8,
             "max_tokens": STUB_N_TOKENS,
+            "include_reasoning": True
         },
         timeout=60
     ) as response:
         response_json = await response.json()
-        return response_json["choices"][0]["message"]["content"]
+        reasoning = response_json["choices"][0]["message"]["reasoning"] if "reasoning" in response_json["choices"][0]["message"] else ""
+        content = response_json["choices"][0]["message"]["content"]
+        if reasoning and content:
+            return f"{reasoning} \n {content}"
+        elif reasoning and not content:
+            # If the truncation means we didn't make it to content
+            return reasoning
+        else:
+            # e.g. non-reasoning model
+            return content
 
 @retry(
     stop=stop_after_attempt(20),
@@ -194,13 +207,19 @@ async def main():
     if N_PROBLEMS is not None:  
         print(f"Using first {N_PROBLEMS} problems of {len(df)} problems")
         df = df.head(N_PROBLEMS)    
-
+    
+    semaphore = asyncio.Semaphore(15)
+    
+    async def rate_limited_test(row: pd.Series):
+        async with semaphore:
+            return await process_row(row, model, session)
+    
     # Process each model
     all_results = []
     async with aiohttp.ClientSession() as session:
         for model in MODELS:
             print(f"\nProcessing model: {model.value}")
-            tasks = [process_row(row, model, session) for _, row in df.iterrows()]
+            tasks = [rate_limited_test(row) for _, row in df.iterrows()]
             
             with tqdm(total=len(tasks), desc=f"Processing rows for {model.value}") as pbar:
                 for coro in asyncio.as_completed(tasks):

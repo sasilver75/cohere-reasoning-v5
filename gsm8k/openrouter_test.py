@@ -31,8 +31,10 @@ headers = {
     "Content-Type": "application/json",
 }
 
-MODEL = OpenRouterModel.QWEN_QWQ_32B_PREVIEW
-PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+MODEL = OpenRouterModel.DEEPSEEK_R1
+# PROVIDER = OPENROUTER_MODEL_PROVIDERS[MODEL]
+PROVIDER = OpenRouterProvider.FIREWORKS
+
 
 # What model am I?
 data = {
@@ -47,12 +49,38 @@ data = {
         "allow_fallbacks": False,
     },
     "temperature": 0.2,
-    "top_p": 0.8
+    "top_p": 0.8,
+    "include_reasoning": True
 }
-response = requests.post(url, headers=headers, json=data)
-print(response.status_code)
-print(dir(response.reason))
-print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
+print("Sending requests...")
+# response = requests.post(url, headers=headers, json=data)
+# print(response.status_code)
+# print(dir(response.reason))
+# print(f"{response.json()["choices"][0]["message"]["content"]} \n --- \n")
+
+
+# What model am I?
+data = {
+    "model": MODEL.value,  # Specify the model you want to use
+    "messages": [
+        {"role": "user", "content": "If Jamie has 2 apples, gives Anna 1, and then receives 3 more before doubling his apples, how many does he have?"},  # Using your existing prefix
+    ],
+    "provider": {
+    "order": [
+            PROVIDER.value
+        ],
+        "allow_fallbacks": False,
+    },
+    "temperature": 0.2,
+    "top_p": 0.8,
+    "include_reasoning": True
+}
+print("Sending requests...")
+response = requests.post(url, headers=headers, json=data).json()
+# print(response.status_code)
+# print(dir(response.reason))
+print(f"{response['choices'][0]['message']['reasoning']} \n {response['choices'][0]['message']['content']} \n --- \n")
+
 
 
 # Completion test examples

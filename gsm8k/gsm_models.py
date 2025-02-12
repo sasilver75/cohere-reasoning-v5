@@ -19,6 +19,7 @@ class OpenRouterModel(Enum):
     QWEN_QWQ_32B_PREVIEW = "qwen/qwq-32b-preview"
     PHI_3_5_MINI_128K_INSTRUCT = "microsoft/phi-3.5-mini-128k-instruct"
     DEEPSEEK_3 = "deepseek/deepseek-chat"
+    DEEPSEEK_R1 = "deepseek/deepseek-r1"
     
 
 
@@ -48,6 +49,8 @@ OPENROUTER_MODEL_PROVIDERS = {
     # OpenRouterModel.PHI_3_128K_MEDIUM_INSTRUCT: OpenRouterProvider.AZURE,  # Only provider is Azure and it just returns EOS tokens when doing completions
     OpenRouterModel.QWEN_QWQ_32B_PREVIEW: OpenRouterProvider.DEEPINFRA,  # Check
     # OpenRouterModel.PHI_3_5_MINI_128K_INSTRUCT: OpenRouterProvider.AZURE,  # Phi doesn't do completions via Azure.
+    # OpenRouterModel.DEEPSEEK_R1: OpenRouterProvider.DEEPSEEK, # IS ALWAYS DOWN!
+    OpenRouterModel.DEEPSEEK_R1: OpenRouterProvider.TOGETHER,
 }
 
 

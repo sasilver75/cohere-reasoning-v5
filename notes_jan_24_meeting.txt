@@ -53,6 +53,6 @@ Says Figure 3, but it should be "Figuere A1"; Same for the tables and such.
 Figure 6 and 7... Typically you would do something like...
 You would do something like Figure C1A and C1B.
 The split one
-Might want to change the font for the {Continued in next figure}. Here, italiciziing is pretty reasonable.
+Might want to change the font for the {Continued in next figure}. Here, italicizing is pretty reasonable.
 
 Re: the spacing of appendices. Don't worry about it for now.

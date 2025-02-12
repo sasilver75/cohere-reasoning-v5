@@ -34,12 +34,13 @@ if not "COHERE_API_KEY" in os.environ:
 # ~ Experiment parameters
 N_PROBLEMS = None # None = All; It's fine if N_PROBLEMS is greater than the number of problems in the source dataset
 MODELS = [
-    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
-    CohereModel.COHERE_R7B,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
-    OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
-    OpenRouterModel.GEMMA_2_27B_INSTRUCT,
-    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    # CohereModel.COHERE_R7B,
+    # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    # OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
+    # OpenRouterModel.GEMMA_2_27B_INSTRUCT,
+    # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    OpenRouterModel.DEEPSEEK_R1
 ]
 VERIFIER_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
@@ -85,14 +86,17 @@ async def get_completion_openrouter(session: aiohttp.ClientSession, model: OpenR
                     "allow_fallbacks": False,
                 },
                 "temperature": 0.2,
-                "top_p": 0.8
+                "top_p": 0.8,
+                "include_reasoning": True
             },
             timeout=60
         ) as response:
             response_json = await response.json()
             if "error" in response_json:
                 print("Provider error: ", response_json)
-            return response_json["choices"][0]["message"]["content"]
+            reasoning = response_json["choices"][0]["message"]["reasoning"] if "reasoning" in response_json["choices"][0]["message"] else ""
+            content = response_json["choices"][0]["message"]["content"]
+            return f"{reasoning} \n {content}" if reasoning else content
 
 @retry(
     stop=stop_after_attempt(20),

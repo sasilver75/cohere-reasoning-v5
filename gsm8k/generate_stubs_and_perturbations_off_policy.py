@@ -25,13 +25,13 @@ if not "OPENROUTER_API_KEY" in os.environ:
     raise ValueError("OPENROUTER_API_KEY must be set in the environment")
 
 
-# TODO: MOVE THE SOURCE DATASET TO THE CONFIGURATION UP HERE; IT MIGHT BE GSM-SYMBOLIC
 # CONFIGURATION
 # ~ Experiment parameters
 N_PROBLEMS = None  # None means "All" problems
 STUB_N_TOKENS = 100
 PREFIX_AND_PERTURB_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
+# Sam Note: For the last-minute R1 addition, we're just moving in off-policy datasets from the respective experiment folders, so no need to change this.
 INPUT_FILENAME = "gsm8k/datasets/original/gsm8k_matched_gsm_symbolic.csv"
 OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_off_policy.csv"
 

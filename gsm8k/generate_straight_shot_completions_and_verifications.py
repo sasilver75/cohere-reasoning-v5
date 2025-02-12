@@ -30,14 +30,15 @@ N_PROBLEMS = None  # None = All problems
 INPUT_FILEPATH = "gsm8k/datasets/original/gsm8k.csv"
 OUTPUT_FILEPATH = "gsm8k/datasets/gsm8k_straight_shot_solutions.csv"
 MODELS = [
-    OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
-    CohereModel.COHERE_R7B,
-    OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
-    OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
-    OpenRouterModel.GEMMA_2_27B_INSTRUCT,
-    OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    # OpenRouterModel.QWEN_2_5_72B_INSTRUCT,
+    # CohereModel.COHERE_R7B,
+    # OpenRouterModel.MISTRAL_NEMO_12B_INSTRUCT,
+    # OpenRouterModel.QWEN_QWQ_32B_PREVIEW,
+    # OpenRouterModel.GEMMA_2_27B_INSTRUCT,
+    # OpenRouterModel.LLAMA_3_3_70B_INSTRUCT,
+    OpenRouterModel.DEEPSEEK_R1,
 ]
-VERIFIER_MODEL = OpenRouterModel.DEEPSEEK_3
+VERIFIER_MODEL = OpenRouterModel.LLAMA_3_1_405B_INSTRUCT
 
 # ~ Rate limiting
 OPENROUTER_TOKEN_BUCKET = TokenBucket(350, "OpenRouter")
@@ -76,14 +77,17 @@ async def get_solution_openrouter(session: aiohttp.ClientSession, model: OpenRou
                     "allow_fallbacks": False,
                 },
                 "temperature": 0.2,
-                "top_p": 0.8
+                "top_p": 0.8,
+                "include_reasoning": True
             },
             timeout=60
         ) as response:
             response_json = await response.json()
             if "error" in response_json:
                 print("Provider error: ", response_json)
-            return response_json["choices"][0]["message"]["content"]
+            reasoning = response_json["choices"][0]["message"]["reasoning"] if "reasoning" in response_json["choices"][0]["message"] else ""
+            content = response_json["choices"][0]["message"]["content"]
+            return f"{reasoning} \n {content}" if reasoning else content
 
 @retry(
     stop=stop_after_attempt(20),
