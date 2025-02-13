@@ -1,0 +1,1367 @@
+problem_id,problem,answer,stub_and_perturb_model,stub_and_perturb_model_provider,stub,perturbed_stub_lm
+0,Rania saw a 210-foot whale with 7 72-inch remoras attached to it. What percentage of the whale's body length is the combined length of the remoras?,20,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the percentage of the whale's body length that is the combined length of the remoras, we need to first convert the length of the remoras from inches to feet and then calculate the combined length of the remoras. After that, we can find the percentage of the whale's body length that the remoras cover.
+
+1. Convert the length of one remora from inches to feet:
+Since there are 12 inches in a foot, a 72-inch remora is 72 /","To find the percentage of the whale's body length that is the combined length of the remoras, we need to first convert the length of the remoras from inches to feet and then calculate the combined length of the remoras. After that, we can find the percentage of the whale's body length that the remoras cover.
+
+1. Convert the length of one remora from inches to feet:
+Since there are 10 inches in a foot, a 72-inch remora is 72 /"
+1,"A fog bank rolls in from the ocean to cover a city. It takes 50 minutes to cover every 77 miles of the city. If the city is 77 miles across from the oceanfront to the opposite inland edge, how many minutes will it take for the fog bank to cover the whole city?",50,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many minutes it will take for the fog bank to cover the whole city, we need to understand the rate at which the fog bank is moving and then apply that rate to the total distance it needs to cover.
+
+Given:
+- The fog bank covers 77 miles in 50 minutes.
+
+Since the city is exactly 77 miles across from the oceanfront to the opposite inland edge, and we know it takes 50 minutes for the fog bank to cover 77 miles, we can","To find out how many minutes it will take for the fog bank to cover the whole city, we need to understand the rate at which the fog bank is moving and then apply that rate to the total distance it needs to cover.
+
+Given:
+- The fog bank covers 77 miles in 30 minutes.
+
+Since the city is exactly 77 miles across from the oceanfront to the opposite inland edge, and we know it takes 30 minutes for the fog bank to cover 77 miles, we can"
+2,Luis is rolling a 4-sided die. How much more likely is it (expressed as a percentage) that he rolls a number greater than 2 than that he rolls two odd numbers in a row?,25,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the probability of two events: rolling a number greater than 2 and rolling two odd numbers in a row. Then, we'll compare these probabilities to find out how much more likely one event is than the other.
+
+1. **Probability of rolling a number greater than 2:**
+
+A 4-sided die has the numbers 1, 2, 3, and 4. The numbers greater than 2 are 3 and 4.","To solve this problem, we need to calculate the probability of two events: rolling a number greater than 2 and rolling two odd numbers in a row. Then, we'll compare these probabilities to find out how much more likely one event is than the other.
+
+1. **Probability of rolling a number greater than 2:**
+
+A 4-sided die has the numbers 1, 2, 3, 5, and 6. The numbers greater than 2 are 3, 5, and 6."
+3,"A group of 190 students has various hobbies. 19 like to paint, 7 like to play football, and the rest like to either bake or hike. How many like to bake if the number that like to hike is twice the number that prefer playing football?",150,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many students like to bake, we first need to determine the number of students who like to hike and then subtract the total number of students who like to paint, play football, and hike from the total number of students.
+
+1. Calculate the number of students who like to hike:
+   - The number of students who like to hike is twice the number that prefer playing football.
+   - Since 7 students like to play football, the number of students who like to hike is ","To find out how many students like to bake, we first need to determine the number of students who like to hike and then subtract the total number of students who like to paint, play football, and hike from the total number of students.
+
+1. Calculate the number of students who like to hike:
+   - The number of students who like to hike is half the number that prefer playing football.
+   - Since 7 students like to play football, the number of students who like to hike is"
+4,"Zahra is popping popcorn for a snack. As the pan of kernels heats up, the kernels start popping faster. 60 pop in the first 30 seconds of cooking, then 4 times that amount in the next 30 seconds. The kernels increase to 6 times the initial popping rate in the next 30 seconds, but in the final 30 seconds, the popping slows down to half the rate as the past 30 seconds. After Zahra takes the pan off the heat, a quarter of the number of kernels that popped in the final 30 seconds of cooking also pop from the residual heat. How many pieces of popcorn does Zahra have to eat?",885,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many pieces of popcorn Zahra has to eat, let's break down the problem step by step.
+
+1. **First 30 seconds**: 60 kernels pop.
+
+2. **Next 30 seconds**: The popping rate is 4 times the initial rate. Since the initial rate was 60 kernels in 30 seconds, the new rate is 4 * 60 = 240 kernels in the next 30 seconds.
+
+3. **Following 30 seconds**: The popping rate","To find out how many pieces of popcorn Zahra has to eat, let's break down the problem step by step.
+
+1. **First 30 seconds**: 60 kernels pop.
+
+2. **Next 30 seconds**: The popping rate is 3 times the initial rate. Since the initial rate was 60 kernels in 30 seconds, the new rate is 3 * 60 = 180 kernels in the next 30 seconds.
+
+3. **Following 30 seconds**: The popping rate"
+5,"Sofia makes coffee using teaspoons of sugar and cups of water in the ratio of 97:37. If she used a total of 1474 teaspoons of sugar and cups of water, calculate the number of teaspoonfuls of sugar she used.",1067,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we can use the concept of ratios and proportions.
+
+Let's denote the number of teaspoons of sugar as ""s"" and the number of cups of water as ""w"". We know that the ratio of sugar to water is 97:37, which means that for every 97 teaspoons of sugar, there are 37 cups of water.
+
+We can write this ratio as a fraction:
+
+s/w = 97/37
+
+We are also given that the total number of teaspoons","To solve this problem, we can use the concept of ratios and proportions.
+
+Let's denote the number of teaspoons of sugar as ""s"" and the number of cups of water as ""w"". We know that the ratio of sugar to water is 97:47, which means that for every 97 teaspoons of sugar, there are 47 cups of water.
+
+We can write this ratio as a fraction:
+
+s/w = 97/47
+
+We are also given that the total number of teaspoons"
+6,Pavel has 30 square yards of orange field. There are 94 oranges per square yard. Pavel can harvest his oranges every 12 months. How many oranges can Pavel harvest within a year?,2820,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many oranges Pavel can harvest within a year, we need to calculate the total number of oranges in his field and then consider the harvesting period.
+
+1. First, we calculate the total number of oranges in Pavel's field by multiplying the area of the field by the number of oranges per square yard.
+
+Total oranges = Area of the field * Oranges per square yard
+Total oranges = 30 square yards * 94 oranges/square yard
+Total oranges = 2820 oranges
+
+","To find out how many oranges Pavel can harvest within a year, we need to calculate the total number of oranges in his field and then consider the harvesting period.
+
+1. First, we calculate the total number of oranges in Pavel's field by multiplying the area of the field by the number of oranges per square yard.
+
+Total oranges = Area of the field * Oranges per square yard
+Total oranges = 30 square yards * 74 oranges/square yard
+Total oranges = 2220 oranges"
+7,"A farmer is buying feed for his alpacas. He buys a variety of apples, wheats, cucumbers and oats. Since oats are a rare treat, he only buys five 3-kg boxes of them for the whole stable. He only wants enough cucumbers to feed the alpacas while the vegetables are fresh, so he buys thirteen 6-kg bags. Apples are the main diet of his alpacas, so he buys thirty one 42-kg packs. Wheats are a staple to supplement the apples, so he buys fifteen 15-kg sacks. If his farm truck can carry 180 kgs at a time, how many trips does the farmer need to transport all the feed?",9,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many trips the farmer needs to make to transport all the feed, we first need to calculate the total weight of all the feed items he has purchased.
+
+1. **Oats**: He bought 5 boxes of oats, each weighing 3 kg.
+   - Total weight of oats = 5 boxes * 3 kg/box = 15 kg
+
+2. **Cucumbers**: He bought 13 bags of cucumbers, each weighing 6 kg.
+  ","To find out how many trips the farmer needs to make to transport all the feed, we first need to calculate the total weight of all the feed items he has purchased.
+
+1. Oats: He bought 5 boxes of oats, each weighing 2 kg.
+   - Total weight of oats = 5 boxes * 2 kg/box = 10 kg
+
+2. Cucumbers: He bought 13 bags of cucumbers, each weighing 6 kg."
+8,"A juggler can juggle 640 balls. An eighth of the balls are tennis balls, and 1/10 of the tennis balls are white. How many white tennis balls are there?",8,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the number of white tennis balls, we need to follow these steps:
+
+1. Calculate the total number of tennis balls.
+2. Calculate the number of white tennis balls.
+
+Step 1: Calculate the total number of tennis balls.
+An eighth of the balls are tennis balls. To find an eighth of 640, we can divide 640 by 8.
+
+640 ÷ 8 = 80
+
+So, there are 80 tennis balls.
+
+Step 2: Calculate the number of","To find the number of white tennis balls, we need to follow these steps:
+
+1. Calculate the total number of tennis balls.
+2. Calculate the number of white tennis balls.
+
+Step 1: Calculate the total number of tennis balls.
+An eighth of the balls are tennis balls. To find an eighth of 640, we can divide 640 by 4.
+
+640 ÷ 4 = 160
+
+So, there are 160 tennis balls.
+
+Step 2: Calculate the number of"
+9,"When Mei watches her brother, she gets out a variety of toys for him. The bag of building blocks has 71 blocks in it. The bin of stuffed animals has 45 stuffed animals inside. The tower of stacking rings has 29 multicolored rings on it. Mei recently bought a tube of bouncy balls, bringing her total number of toys for her brother up to 204. How many bouncy balls came in the tube?",59,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many bouncy balls came in the tube, we need to subtract the total number of toys Mei had before buying the bouncy balls from the total number of toys she has now.
+
+First, let's calculate the total number of toys Mei had before buying the bouncy balls:
+
+- Building blocks: 71
+- Stuffed animals: 45
+- Stacking rings: 29
+
+Total toys before buying bouncy balls = 71 + 45 + 29 = ","To find out how many bouncy balls came in the tube, we need to subtract the total number of toys Mei had before buying the bouncy balls from the total number of toys she has now.
+
+First, let's calculate the total number of toys Mei had before buying the bouncy balls:
+
+- Building blocks: 91
+- Stuffed animals: 45
+- Stacking rings: 29
+
+Total toys before buying bouncy balls = 91 + 45 + 29 ="
+10,"To make a call from a hotel room phone, you must pay $0.9 for each minute of your call. After 20 minutes, that price drops to $0.5 per minute. How much would a 86-minute call cost?",51,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To calculate the cost of an 86-minute call, we need to break it down into two parts: the first 20 minutes and the remaining minutes after that.
+
+1. **First 20 minutes cost:**
+   - Price per minute for the first 20 minutes = $0.9
+   - Total cost for the first 20 minutes = 20 minutes * $0.9/minute = $18
+
+2. **Cost for the minutes after the first 20 minutes:**
+","To calculate the cost of an 86-minute call, we need to break it down into two parts: the first 20 minutes and the remaining minutes after that.
+
+1. First 20 minutes cost:
+   - Price per minute for the first 20 minutes = $0.8
+   - Total cost for the first 20 minutes = 20 minutes * $0.8/minute = $16
+
+2. Cost for the minutes after the first 20 minutes:"
+11,"Pavel wants to make different sized ice cubes with 328 grams of water. He can make giant cubes that use 12 grams per cube, medium cubes that use 11 grams, and small cubes that use 1/5 of gram. If he makes 8 giant cubes, 15 small cubes, and 13 medium cubes, how many grams of water does he have left?",86,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many grams of water Pavel has left, we need to calculate the total amount of water used to make the ice cubes and subtract that from the initial amount of water.
+
+1. Calculate the amount of water used for the giant cubes:
+   - Each giant cube uses 12 grams of water.
+   - Pavel makes 8 giant cubes.
+   - Total water used for giant cubes = 12 grams/cube * 8 cubes = 96 grams.
+
+2. Calculate the amount of","To find out how many grams of water Pavel has left, we need to calculate the total amount of water used to make the ice cubes and subtract that from the initial amount of water.
+
+1. Calculate the amount of water used for the giant cubes:
+   - Each giant cube uses 15 grams of water.
+   - Pavel makes 8 giant cubes.
+   - Total water used for giant cubes = 15 grams/cube * 8 cubes = 120 grams.
+
+2. Calculate the amount of"
+12,"Ravi places crackers on some trays. Each tray can hold 28 crackers. If he has 252 crackers and 7 trays, how many crackers won't he be able to place on the tray?",56,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many crackers Ravi won't be able to place on the trays, we first need to determine the total capacity of the trays he has and then subtract that from the total number of crackers.
+
+Each tray can hold 28 crackers, and Ravi has 7 trays. So, the total capacity of the trays is 28 crackers/tray * 7 trays = 196 crackers.
+
+Ravi has 252 crackers in total. To find out how many he won't be able","To find out how many crackers Ravi won't be able to place on the trays, we first need to determine the total capacity of the trays he has and then subtract that from the total number of crackers.
+
+Each tray can hold 28 crackers, and Ravi has 7 trays. So, the total capacity of the trays is 28 crackers/tray * 7 trays = 196 crackers.
+
+Ravi has 352 crackers in total. To find out how many he won't be able"
+13,"Camila is an avid gardener. Two days ago, she received 29 new potted plants from her favorite plant nursery. She already has 7 potted plants on each of the 52 window ledges of her large country home. Feeling generous, she has decided that she will give 6 potted plants from each ledge to friends and family tomorrow. How many potted plants will Camila remain with?",81,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many potted plants Camila will remain with, we first need to calculate the total number of plants she currently has, including the new ones she received. Then, we'll determine how many she's giving away and subtract that from her total.
+
+1. **Calculate the total number of plants Camila currently has:**
+   - She received 29 new potted plants.
+   - She already had 7 potted plants on each of the 52 window ledges of her","To find out how many potted plants Camila will remain with, we first need to calculate the total number of plants she currently has, including the new ones she received. Then, we'll determine how many she's giving away and subtract that from her total.
+
+1. Calculate the total number of plants Camila currently has:
+   - She received 29 new potted plants.
+   - She already had 7 potted plants on each of the 25 window ledges of her"
+14,Keisha and Andre have 109 minutes to walk to the gym together. It takes them 27 minutes to get to the corner where the cinema is. It takes them another 31 minutes to get to the bank. How much longer do they have to get to gym without being late?,51,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much longer Keisha and Andre have to get to the gym without being late, we need to subtract the time they've already spent walking from the total time they have available.
+
+1. Total time available to get to the gym: 109 minutes.
+2. Time taken to get to the corner where the cinema is: 27 minutes.
+3. Time taken to get from the cinema to the bank: 31 minutes.
+
+Total time spent walking so far = 27 minutes +","To find out how much longer Keisha and Andre have to get to the gym without being late, we need to subtract the time they've already spent walking from the total time they have available.
+
+1. Total time available to get to the gym: 109 minutes.
+2. Time taken to get to the corner where the cinema is: 27 minutes.
+3. Time taken to get from the cinema to the bank: 31 minutes.
+
+Total time spent walking so far = 27 minutes - 31 minutes"
+15,"Jasmine's dog has 1000 puppies, 270 of which have spots. Priya's dog has 640 puppies, 140 of which have spots. What percentage of all the puppies have spots?",25,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the percentage of all the puppies that have spots, we need to first find the total number of puppies and the total number of puppies with spots.
+
+Total number of puppies = Jasmine's puppies + Priya's puppies
+= 1000 + 640
+= 1640
+
+Total number of puppies with spots = Jasmine's puppies with spots + Priya's puppies with spots
+= 270 + 140
+= 410
+
+Now, we can find the percentage of puppies with spots","To find the percentage of all the puppies that have spots, we need to first find the total number of puppies and the total number of puppies with spots.
+
+Total number of puppies = Jasmine's puppies + Priya's puppies
+= 900 + 640
+= 1540
+
+Total number of puppies with spots = Jasmine's puppies with spots + Priya's puppies with spots
+= 270 + 140
+= 410
+
+Now, we can find the percentage of puppies with spots"
+16,"Kai is selling brownie and orange pie for a fundraiser. On Tuesday, he sold 21 boxes of brownie and 18 fewer boxes of orange pie, than on Wednesday. On Wednesday, he sold 13 more boxes of brownies than on Tuesday and 27 boxes of orange pie. If the brownie cost ¥8 and the orange pie cost ¥28, how much did Kai earn for two days?",1448,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much Kai earned over the two days, we first need to calculate the total number of boxes of brownies and orange pies he sold. Then, we can multiply these totals by their respective prices to find the total earnings.
+
+1. **Calculating the total number of boxes sold:**
+
+- **Brownies on Tuesday:** 21 boxes
+- **Brownies on Wednesday:** 21 + 13 = 34 boxes
+- **Total brownies:** 21 + 34","To find out how much Kai earned over the two days, we first need to calculate the total number of boxes of brownies and orange pies he sold. Then, we can multiply these totals by their respective prices to find the total earnings.
+
+1. Calculating the total number of boxes sold:
+
+- Brownies on Tuesday: 21 boxes
+- Brownies on Wednesday: 21 + 23 = 44 boxes
+- Total brownies: 21 + 44"
+17,"Mia walks 24 kilometers every day on her favorite walking trail, which includes 12 kilometers of walking on the beach and 12 kilometers of walking on the sidewalk. On the sidewalk, Mia walks at two times the rate of speed that she does on the beach. If 60 minutes of her walk is spent on the beach, how long does it take for her to complete the entire 24-kilometer walk, in minutes?",90,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to determine the time it takes for Mia to walk the entire 24 kilometers, given that she spends 60 minutes walking on the beach.
+
+First, let's calculate Mia's speed on the beach. We know that she walks 12 kilometers on the beach in 60 minutes. To find her speed, we can use the formula:
+
+Speed = Distance / Time
+
+Speed = 12 km / 60 min
+Speed = 0.2 km/min (on","To solve this problem, we need to determine the time it takes for Mia to walk the entire 24 kilometers, given that she spends 60 minutes walking on the beach.
+
+First, let's calculate Mia's speed on the beach. We know that she walks 12 kilometers on the beach in 30 minutes. To find her speed, we can use the formula:
+
+Speed = Distance / Time
+
+Speed = 12 km / 30 min
+Speed = 0.4 km/min (on"
+18,"Bodhi went to buy some school supplies. He bought 22 rulers which cost ¥4.5 each, 8 colored pencils which cost ¥14.0 each, and a rim of bond paper which cost ¥22. How much did Bodhi spend on everything?",233,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much Bodhi spent on everything, we need to calculate the total cost of the rulers, the total cost of the colored pencils, and then add those amounts to the cost of the rim of bond paper.
+
+1. Calculate the total cost of the rulers:
+   - Number of rulers = 22
+   - Cost per ruler = ¥4.5
+   - Total cost of rulers = Number of rulers * Cost per ruler = 22 * ¥4.5 = ¥99","To find out how much Bodhi spent on everything, we need to calculate the total cost of the rulers, the total cost of the colored pencils, and then add those amounts to the cost of the rim of bond paper.
+
+1. Calculate the total cost of the rulers:
+   - Number of rulers = 22
+   - Cost per ruler = ¥5.5
+   - Total cost of rulers = Number of rulers * Cost per ruler = 22 * ¥5.5 = ¥121"
+19,"In a 150-item quiz, 60% of the questions are history, and the rest are equally divided as literature and chemistry questions. If Mia is sure to get 40% of the history questions, and 1/10 of the literature and chemistry questions correctly, how many points is she sure to get?",42,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many points Mia is sure to get, we need to calculate the number of questions she will answer correctly in each category and then sum those amounts.
+
+1. **Calculate the number of history questions:**
+   - 60% of 150 questions are history.
+   - Number of history questions = 60% * 150 = 0.6 * 150 = 90 questions.
+
+2. **Calculate the number of literature and chemistry questions:**
+   - The remaining ","To find out how many points Mia is sure to get, we need to calculate the number of questions she will answer correctly in each category and then sum those amounts.
+
+1. Calculate the number of history questions:
+   - 70% of 150 questions are history.
+   - Number of history questions = 70% * 150 = 0.7 * 150 = 105 questions.
+
+2. Calculate the number of literature and chemistry questions:
+   - The remaining"
+20,"Liam picks 205 pineapples on Wednesday. Then he picks 97 pineapples on Thursday. On Friday, he picks quadruple the number of pineapples he did on Wednesday. How many pineapples does Liam have?",1122,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many pineapples Liam has in total, we need to add up the pineapples he picked on Wednesday, Thursday, and Friday.
+
+1. On Wednesday, Liam picked 205 pineapples.
+2. On Thursday, he picked 97 pineapples.
+3. On Friday, he picked quadruple the number of pineapples he did on Wednesday. Quadruple means four times, so we multiply the number of pineapples picked on Wednesday by 4.
+","To find out how many pineapples Liam has in total, we need to add up the pineapples he picked on Wednesday, Thursday, and Friday.
+
+1. On Wednesday, Liam picked 205 pineapples.
+2. On Thursday, he picked 97 pineapples.
+3. On Friday, he picked triple the number of pineapples he did on Wednesday. Triple means three times, so we multiply the number of pineapples picked on Wednesday by 3."
+21,"Benjamin watches TV after he finishes his homework every night. On Tuesday and Wednesday, he watched a 4-hour episode of his favorite show each night. On Thursday, he watched a few episodes of a 45-minute show. On Friday, he finished homework early and watched a 6-hour episode and a 15-minute show. On Saturday, he got to stay up late, so he watched two 4-hour episodes. If he watched 23 hours of TV in all, how many 45-minute episodes did he watch on Thursday?",1,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many 45-minute episodes Benjamin watched on Thursday, we first need to calculate the total time he spent watching TV on the other days and then subtract that from the total time (23 hours) to find out how much time he spent watching TV on Thursday. Afterward, we can convert that time into the number of 45-minute episodes.
+
+1. **Calculate the total time spent watching TV on Tuesday and Wednesday:**
+   - Each night he watched a 4-hour episode,","To find out how many 45-minute episodes Benjamin watched on Thursday, we first need to calculate the total time he spent watching TV on the other days and then subtract that from the total time (23 hours) to find out how much time he spent watching TV on Thursday. Afterward, we can convert that time into the number of 45-minute episodes.
+
+1. Calculate the total time spent watching TV on Tuesday and Wednesday:
+   - Each night he watched a 2-hour episode,"
+22,"Emma was preparing for a game night at her house, where she intended to serve stuffed peppers. She noticed that she was out of plastic spoons, so she bought a new package of spoons. Later, her husband also bought a package of 18 new spoons and gave them to Emma. While Emma was making the stuffed peppers, she used ten of the spoons to sample her stuffed peppers. Later, when she went to set the table, she had a total of 30 spoons. How many spoons were in the package that Emma bought?",22,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many spoons were in the package Emma bought, let's break down the information given:
+
+1. Emma bought a package of spoons, but the number of spoons in this package is unknown.
+2. Her husband bought a package of 18 spoons.
+3. Emma used 10 spoons to sample her stuffed peppers.
+4. After setting the table, Emma had a total of 30 spoons.
+
+Let's denote the number of spoons in the package Emma","To find out how many spoons were in the package Emma bought, let's break down the information given:
+
+1. Emma bought a package of spoons, but the number of spoons in this package is unknown.
+2. Her husband bought a package of 12 spoons.
+3. Emma used 10 spoons to sample her stuffed peppers.
+4. After setting the table, Emma had a total of 30 spoons.
+
+Let's denote the number of spoons in the package Emma"
+23,"Amelia is knitting winter wear for her 2 grandchildren. They're twins, so they're all the same size. She wants to make a vest, shawl, beanie, socks, and leg warmers for each of them. It takes 17 skeins of wool to make a vest, 11 for a shawl, 18 for a beanie, 12 for a pair of socks, and 6 for a pair of leg warmers. How many skeins of wool will she need to buy?",128,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many skeins of wool Amelia needs to buy, we need to calculate the total amount of wool required for each item for both grandchildren and then add those amounts together.
+
+Since the grandchildren are twins and thus the same size, the amount of wool needed for each item is the same for both. Therefore, we can calculate the total wool needed for one set of items and then multiply that by 2.
+
+1. Vest: 17 skeins
+2. Shawl: 11","To find out how many skeins of wool Amelia needs to buy, we need to calculate the total amount of wool required for each item for both grandchildren and then add those amounts together.
+
+Since the grandchildren are twins and thus the same size, the amount of wool needed for each item is the same for both. Therefore, we can calculate the total wool needed for one set of items and then multiply that by 3.
+
+1. Vest: 17 skeins
+2. Shawl: 11"
+24,"According to its nutritional info, a bag of breads has 475 calories per serving. If a 275 ounces bag has 5 servings, how many ounces can you eat if your daily calorie target is 2395 and you have already consumed 1350 calories?",121,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to follow these steps:
+
+1. Calculate the total calories you can still consume for the day.
+2. Determine the total calories in the entire bag of bread.
+3. Calculate how many ounces of bread you can eat based on your remaining calorie allowance.
+
+Step 1: Calculate the total calories you can still consume for the day.
+
+Daily calorie target = 2395 calories
+Calories already consumed = 1350 calories
+Remaining calorie allowance = Daily calorie target -","To solve this problem, we need to follow these steps:
+
+1. Calculate the total calories you can still consume for the day.
+2. Determine the total calories in the entire bag of bread.
+3. Calculate how many ounces of bread you can eat based on your remaining calorie allowance.
+
+Step 1: Calculate the total calories you can still consume for the day.
+
+Daily calorie target = 2595 calories
+Calories already consumed = 1350 calories
+Remaining calorie allowance = Daily calorie target -"
+25,"In Mr. Smith's class of 35 students, 20% of the class are basketball players. Out of the remaining class, 25% of the students are dancers or part of robotics club members. These 3 groups of students will need to leave early today to travel to an away tournament. How many students are leaving early?",14,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many students are leaving early, we need to calculate the number of students in each group that needs to leave.
+
+First, let's find out how many basketball players there are. Since 20% of the class are basketball players, we can calculate this as follows:
+
+Number of basketball players = 20% of 35 students
+= 0.20 x 35
+= 7 students
+
+Now, we need to find out how many students are dancers or part of robotics","To find out how many students are leaving early, we need to calculate the number of students in each group that needs to leave.
+
+First, let's find out how many basketball players there are. Since 30% of the class are basketball players, we can calculate this as follows:
+
+Number of basketball players = 30% of 35 students
+= 0.30 x 35
+= 10.5 students
+
+Now, we need to find out how many students are dancers or part of robotics"
+26,"A grandfather eats 6 tacos per day, his partner eats 3 tacos per day, and their son eats 6 tacos per day. How many tacos does this family eat in one week?",105,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many tacos the family eats in one week, we first need to calculate how many tacos they eat in one day and then multiply that number by 7 (since there are 7 days in a week).
+
+1. Calculate the total number of tacos eaten by the family in one day:
+   - Grandfather eats 6 tacos per day.
+   - His partner eats 3 tacos per day.
+   - Their son eats 6 tacos per day.
+   - Total tacos per day","To find out how many tacos the family eats in one week, we first need to calculate how many tacos they eat in one day and then multiply that number by 7 (since there are 7 days in a week).
+
+1. Calculate the total number of tacos eaten by the family in one day:
+   - Grandfather eats 6 tacos per day.
+   - His partner eats 3 tacos per day.
+   - Their son eats 2 tacos per day.
+   - Total tacos per day"
+27,Sanjay receives 150 emails a day. 32% of those emails don't require any response. Sanjay responds to the rest of them. How many emails does Sanjay respond to in a 6 day work week?,612,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many emails Sanjay responds to in a 6-day work week, we first need to calculate how many emails he responds to in a single day and then multiply that number by 6.
+
+1. Calculate the number of emails that don't require a response in a day:
+   32% of 150 emails = 0.32 * 150 = 48 emails.
+
+2. Calculate the number of emails Sanjay responds to in a day:
+   Total emails - Emails","To find out how many emails Sanjay responds to in a 6-day work week, we first need to calculate how many emails he responds to in a single day and then multiply that number by 6.
+
+1. Calculate the number of emails that don't require a response in a day:
+   23% of 150 emails = 0.23 * 150 = 34.5 emails.
+
+2. Calculate the number of emails Sanjay responds to in a day:
+   Total emails - Emails"
+28,"A clinic has a capacity of 1800 rooms with 1/4 occupied. Due to the natural disaster, 40 patients are admitted into the clinic each day. Calculate the total number of unoccupied rooms in the clinic after 3 weeks.",510,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of unoccupied rooms in the clinic after 3 weeks, we first need to determine the initial number of unoccupied rooms and then subtract the total number of patients admitted over the 3-week period.
+
+1. Calculate the initial number of occupied rooms:
+   Since 1/4 of the rooms are occupied, we can find this by multiplying the total capacity by 1/4.
+   Initial occupied rooms = 1800 * (1/4) = 450 rooms","To find the total number of unoccupied rooms in the clinic after 3 weeks, we first need to determine the initial number of unoccupied rooms and then subtract the total number of patients admitted over the 3-week period.
+
+1. Calculate the initial number of occupied rooms:
+   Since 3/4 of the rooms are occupied, we can find this by multiplying the total capacity by 3/4.
+   Initial occupied rooms = 1800 * (3/4) = 1350 rooms"
+29,Pavel is 13 years old. In 3 years his sister Valentina will be 3 times as old as Pavel is now. How old is Valentina right now?,36,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find Valentina's current age, we first need to understand the information given and apply it step by step.
+
+1. Pavel is currently 13 years old.
+2. In 3 years, Valentina will be 3 times as old as Pavel is now.
+
+First, let's calculate what Valentina's age will be in 3 years, based on the information that she will be 3 times as old as Pavel is now. Since Pavel is 13 years old now, in ","To find Valentina's current age, we first need to understand the information given and apply it step by step.
+
+1. Pavel is currently 13 years old.
+2. In 3 years, Valentina will be 4 times as old as Pavel is now.
+
+First, let's calculate what Valentina's age will be in 3 years, based on the information that she will be 4 times as old as Pavel is now. Since Pavel is 13 years old now, in"
+30,Yusuf has ₣102.5 and wants to buy 25 washers from a bin at the construction supply store. Each washer costs ₣0.98. How much money does Yusuf have left after paying for the washers?,78,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Yusuf has left after buying the washers, we first need to calculate the total cost of the washers.
+
+Number of washers Yusuf wants to buy = 25
+Cost of each washer = ₣0.98
+
+Total cost of the washers = Number of washers * Cost of each washer
+Total cost of the washers = 25 * ₣0.98
+Total cost of the washers = ₣24.5
+
+Now","To find out how much money Yusuf has left after buying the washers, we first need to calculate the total cost of the washers.
+
+Number of washers Yusuf wants to buy = 25
+Cost of each washer = ₣1.98
+
+Total cost of the washers = Number of washers * Cost of each washer
+Total cost of the washers = 25 * ₣1.98
+Total cost of the washers = ₣49.5
+
+Now"
+31,"Mateo and Santiago are currently 10 years apart in age. If Mateo, who is younger than Santiago, is 35 years old, what's the average of their ages?",40,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the average of Mateo and Santiago's ages, we first need to determine Santiago's age. Since Mateo is 35 years old and they are 10 years apart in age, Santiago is 35 + 10 = 45 years old.
+
+Now, we can find the average of their ages by adding their ages together and dividing by 2:
+
+Average = (Mateo's age + Santiago's age) / 2
+Average = (35 + 45) / 2","To find the average of Mateo and Santiago's ages, we first need to determine Santiago's age. Since Mateo is 35 years old and they are 15 years apart in age, Santiago is 35 + 15 = 50 years old.
+
+Now, we can find the average of their ages by adding their ages together and dividing by 2:
+
+Average = (Mateo's age + Santiago's age) / 2
+Average = (35 + 50) / 2"
+32,"Mrs. Lee is looking for a townhouse that will not go beyond her $360000 budget. She saw a property that has a selling price of $340000. On top of that, the buyer has to pay a brokerage fee which is 3% of the selling price, and also the transfer fee that is 10% of the selling price. How much more is the total price of the townhouse than Mrs. Lee's budget?",24200,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much more the total price of the townhouse is than Mrs. Lee's budget, we first need to calculate the total price of the townhouse including the brokerage fee and the transfer fee.
+
+1. **Calculate the brokerage fee:**
+   - Brokerage fee = 3% of the selling price
+   - Brokerage fee = 0.03 * $340,000 = $10,200
+
+2. **Calculate the transfer fee:**
+   - Transfer fee =","To find out how much more the total price of the townhouse is than Mrs. Lee's budget, we first need to calculate the total price of the townhouse including the brokerage fee and the transfer fee.
+
+1. Calculate the brokerage fee:
+   - Brokerage fee = 5% of the selling price
+   - Brokerage fee = 0.05 * $340,000 = $17,000
+
+2. Calculate the transfer fee:
+   - Transfer fee ="
+33,"Daphne and Uma are sisters from Singapore who love collecting signatures from politicians. During their winter break from school, the sisters spend every afternoon collecting signatures. After 4 weeks, Daphne and Uma compare their autograph books, counting up the number of signatures each sister has collected. Daphne has 35 signatures in her book, and Uma has 30. The sisters have 2 more weeks of winter break, and they decide they want to reach 120 signatures between them by the end of the break. How many signatures do the sisters need to collect to reach their goal?",55,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many signatures the sisters need to collect to reach their goal, we first need to determine the total number of signatures they currently have and then subtract that from their goal of 120 signatures.
+
+Step 1: Calculate the total number of signatures Daphne and Uma currently have.
+- Daphne has 35 signatures.
+- Uma has 30 signatures.
+- Total signatures currently = 35 (Daphne) + 30 (Uma) = 65 signatures.
+
+Step","To find out how many signatures the sisters need to collect to reach their goal, we first need to determine the total number of signatures they currently have and then subtract that from their goal of 120 signatures.
+
+Step 1: Calculate the total number of signatures Daphne and Uma currently have.
+- Daphne has 35 signatures.
+- Uma has 50 signatures.
+- Total signatures currently = 35 (Daphne) + 50 (Uma) = 85 signatures.
+
+Step"
+34,"Prof. Martinez sold his cottage for $880000. He paid the registration fees that amount to 3% of the selling price and also paid a agent fee that is 5% of the selling price. If he also paid $440000 for the remaining loan amount of the cottage, how much is Prof. Martinez's net proceeds from selling the cottage?",369600,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find Prof. Martinez's net proceeds from selling the cottage, we need to subtract the total amount he paid (registration fees, agent fee, and the remaining loan amount) from the selling price of the cottage.
+
+First, let's calculate the registration fees and agent fee:
+
+Registration fees = 3% of $880,000 = 0.03 x $880,000 = $26,400
+Agent fee = 5% of $880,000 = 0.05 x $","To find Prof. Martinez's net proceeds from selling the cottage, we need to subtract the total amount he paid (registration fees, agent fee, and the remaining loan amount) from the selling price of the cottage.
+
+First, let's calculate the registration fees and agent fee:
+
+Registration fees = 3% of $880,000 = 0.03 x $880,000 = $26,400
+Agent fee = 8% of $880,000 = 0.08 x $"
+35,"Wei is raising money for a conference. He has applied for help from the local charity, which has decided to cover a fifth of the cost of the conference. How much money is Wei missing if he has ₣30 and the conference costs ₣210?",138,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Wei is missing, we first need to calculate how much the charity will cover and then subtract the amount Wei already has from the remaining cost.
+
+1. Calculate the amount the charity will cover:
+   - The conference costs ₣210.
+   - The charity covers a fifth of the cost, which is 1/5 * ₣210 = ₣42.
+
+2. Calculate the remaining cost after the charity's contribution:
+   - Total cost minus the charity's contribution","To find out how much money Wei is missing, we first need to calculate how much the charity will cover and then subtract the amount Wei already has from the remaining cost.
+
+1. Calculate the amount the charity will cover:
+   - The conference costs ₣210.
+   - The charity covers a fourth of the cost, which is 1/4 * ₣210 = ₣52.50.
+
+2. Calculate the remaining cost after the charity's contribution:
+   - Total cost minus the charity's contribution"
+36,"Ava went to the cafe and bought various types of treats. She bought 1 dozen danishes which cost $17 per dozen, 8 dozen tarts which cost $74 per dozen, and 3 dozen scones for $113 per dozen. How much was the total cost?",948,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total cost, we need to calculate the cost of each type of treat and then add them together.
+
+1. Danishes: Ava bought 1 dozen danishes at $17 per dozen, so the cost of danishes is:
+   1 dozen * $17/dozen = $17
+
+2. Tarts: Ava bought 8 dozen tarts at $74 per dozen, so the cost of tarts is:
+   8 dozen * $74/dozen = $592","To find the total cost, we need to calculate the cost of each type of treat and then add them together.
+
+1. Danishes: Ava bought 1 dozen danishes at $17 per dozen, so the cost of danishes is:
+   1 dozen * $17/dozen = $17
+
+2. Tarts: Ava bought 6 dozen tarts at $74 per dozen, so the cost of tarts is:
+   6 dozen * $74/dozen = $444"
+37,"A lasagna has 30 pieces. If Nadia can eat 5 pieces a day while Leon can eat five times as much, how many days will the lasagna last?",1,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to determine how many pieces of lasagna Nadia and Leon can eat in total per day, and then divide the total number of pieces by their combined daily consumption.
+
+Nadia can eat 5 pieces a day. Since Leon can eat five times as much as Nadia, Leon can eat 5 * 5 = 25 pieces a day.
+
+The combined daily consumption of Nadia and Leon is 5 (Nadia) + 25 (Leon) =","To solve this problem, we need to determine how many pieces of lasagna Nadia and Leon can eat in total per day, and then divide the total number of pieces by their combined daily consumption.
+
+Nadia can eat 5 pieces a day. Since Leon can eat three times as much as Nadia, Leon can eat 5 * 3 = 15 pieces a day.
+
+The combined daily consumption of Nadia and Leon is 5 (Nadia) + 15 (Leon) ="
+38,A loaf of sourdough at the cafe costs €8. Muffins cost €4 each. How much more do 6 loaves of sourdough cost than 4 muffins?,32,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much more 6 loaves of sourdough cost than 4 muffins, we first need to calculate the cost of each item separately and then find the difference.
+
+1. Calculate the cost of 6 loaves of sourdough:
+   Each loaf costs €8.
+   So, 6 loaves cost 6 * €8 = €48.
+
+2. Calculate the cost of 4 muffins:
+   Each muffin costs €4.
+   So, ","To find out how much more 6 loaves of sourdough cost than 4 muffins, we first need to calculate the cost of each item separately and then find the difference.
+
+1. Calculate the cost of 6 loaves of sourdough:
+   Each loaf costs €8.
+   So, 6 loaves cost 6 * €8 = €48.
+
+2. Calculate the cost of 4 muffins:
+   Each muffin costs €2.
+   So,"
+39,"A maintenance worker has to clean a university with 210 floors. They have 10 days to get it done. It takes them 20 minutes per floor. If they work 10 hours each day, what percentage of their day, on average, is spent cleaning floors?",70,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the percentage of the day spent cleaning floors, we need to calculate the total time spent cleaning floors and divide it by the total time available for work.
+
+First, let's calculate the total time spent cleaning floors:
+
+Total floors = 210
+Time per floor = 20 minutes
+Total time spent cleaning floors = Total floors x Time per floor
+Total time spent cleaning floors = 210 x 20 minutes
+Total time spent cleaning floors = 4200 minutes
+
+Since there are 60","To find the percentage of the day spent cleaning floors, we need to calculate the total time spent cleaning floors and divide it by the total time available for work.
+
+First, let's calculate the total time spent cleaning floors:
+
+Total floors = 210
+Time per floor = 15 minutes
+Total time spent cleaning floors = Total floors x Time per floor
+Total time spent cleaning floors = 210 x 15 minutes
+Total time spent cleaning floors = 3150 minutes
+
+Since there are 60"
+40,"Daphne went to the coast for vacation. Her parents gave her ₣1400 to buy whatever she wanted. At the seaside store, cotton candy was on sale for ""Buy 15 pounds at ₣23 per pound, get 5 pounds 1/4 off."" She scooped up 22 pounds. She also bought a mixed bag of coral pieces for ₣11.75 and 11 pins that were ₣21.0 each. How much money does Daphne have left?",680,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Daphne has left, we need to calculate the total amount she spent and subtract it from the initial amount her parents gave her.
+
+1. **Cotton Candy Cost:**
+   - For the first 15 pounds, the cost is 15 * ₣23 = ₣345.
+   - For the next 5 pounds, there's a 1/4 discount. So, the price per pound for these 5 pounds is ₣23 * (","To find out how much money Daphne has left, we need to calculate the total amount she spent and subtract it from the initial amount her parents gave her.
+
+1. Cotton Candy Cost:
+   - For the first 15 pounds, the cost is 15 * ₣23 = ₣345.
+   - For the next 5 pounds, there's a 1/2 discount. So, the price per pound for these 5 pounds is ₣23 * ("
+41,"A stack is made out of 8 white tiles, thrice as many orange tiles, and an unknown number of green tiles. If there are 38 tiles in the stack in total, how many green tiles are there?",6,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the number of green tiles in the stack, we first need to determine the total number of white and orange tiles, and then subtract this total from the overall number of tiles in the stack.
+
+1. **Number of white tiles:** We are told there are 8 white tiles.
+
+2. **Number of orange tiles:** The problem states there are thrice as many orange tiles as white tiles. Therefore, the number of orange tiles is 3 times the number of white tiles, which is","To find the number of green tiles in the stack, we first need to determine the total number of white and orange tiles, and then subtract this total from the overall number of tiles in the stack.
+
+1. **Number of white tiles:** We are told there are 8 white tiles.
+
+2. **Number of orange tiles:** The problem states there are four times as many orange tiles as white tiles. Therefore, the number of orange tiles is 4 times the number of white tiles, which is"
+42,Hiroshi goes to the store to buy some tea. The normal brand of tea he buys costs ₺20 per kilogram. He had to buy a more expensive brand that costs 45% more since his favorite brand was sold out. He decides to buy a week's worth of tea and he uses 1 kilogram of tea per day. He also decided to buy himself a bagel for ₺3. How much did everything cost?,206,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total cost of everything Hiroshi bought, we first need to calculate the cost of the more expensive brand of tea and then add the cost of the bagel.
+
+1. Calculate the cost of the more expensive brand of tea per kilogram:
+   - The normal brand costs ₺20 per kilogram.
+   - The more expensive brand costs 45% more than the normal brand.
+   - To find 45% of ₺20, we multiply 20 by 0.","To find the total cost of everything Hiroshi bought, we first need to calculate the cost of the more expensive brand of tea and then add the cost of the bagel.
+
+1. Calculate the cost of the more expensive brand of tea per kilogram:
+   - The normal brand costs ₺20 per kilogram.
+   - The more expensive brand costs 45% more than the normal brand.
+   - To find 45% of ₺20, we multiply 20 by 0.25."
+43,"Bodhi went to their orchard to pick some strawberries and found 3/5 as many caterpillars as grasshoppers in the garden. If there were 25 grasshoppers, calculate the total number of insects in the garden.",40,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of insects in the garden, we need to first calculate the number of caterpillars.
+
+We are given that there are 3/5 as many caterpillars as grasshoppers. Since there are 25 grasshoppers, we can calculate the number of caterpillars as follows:
+
+Number of caterpillars = 3/5 * Number of grasshoppers
+= 3/5 * 25
+= 3 * 5
+= 15","To find the total number of insects in the garden, we need to first calculate the number of caterpillars.
+
+We are given that there are 4/5 as many caterpillars as grasshoppers. Since there are 25 grasshoppers, we can calculate the number of caterpillars as follows:
+
+Number of caterpillars = 4/5 * Number of grasshoppers
+= 4/5 * 25
+= 4 * 5
+= 20"
+44,"There are 18 girls in the park. If there are two-thirds the number of boys in the park, how many kids are in the park?",30,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of kids in the park, we first need to determine the number of boys. We are told that there are two-thirds the number of boys as there are girls. Since there are 18 girls, we can calculate the number of boys as follows:
+
+Number of boys = 2/3 * Number of girls
+= 2/3 * 18
+= 12
+
+Now that we know there are 12 boys, we can find the total number of kids by","To find the total number of kids in the park, we first need to determine the number of boys. We are told that there are two-thirds the number of boys as there are girls. Since there are 18 girls, we can calculate the number of boys as follows:
+
+Number of boys = 3/2 * Number of girls
+= 3/2 * 18
+= 27
+
+Now that we know there are 27 boys, we can find the total number of kids by"
+45,"Valentina has a flower bed that is 217 meters long. Valentina wants to fill her flower bed with plants. Valentina's flowers grow 3 meters wide so she needs to leave 15.5 meters between every plant. Valentina already owns 11 flowers. Each flowering plant costs €14 at the store, how much money will Valentina spend at the store to fill up her flower bed?",42,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Valentina will spend, we first need to calculate how many flowers she needs to buy to fill up her flower bed.
+
+Each flower takes up 3 meters, and there needs to be 15.5 meters between each flower. So, the total space taken up by each flower is 3 + 15.5 = 18.5 meters.
+
+Valentina's flower bed is 217 meters long. To find out how many flowers she can fit, we divide","To find out how much money Valentina will spend, we first need to calculate how many flowers she needs to buy to fill up her flower bed.
+
+Each flower takes up 3 meters, and there needs to be 15.5 meters between each flower. So, the total space taken up by each flower is 3 + 15.5 = 18.5 meters.
+
+Valentina's flower bed is 187 meters long. To find out how many flowers she can fit, we divide"
+46,"Oakwood High School is holding graduation in their Auditorium this year which has space for 7300 people. After accounting for 1200 seats for graduates and 100 seats for faculty attending, how many tickets would each graduate receive to give to their friends and family if the tickets are split equally?",5,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many tickets each graduate would receive, we first need to determine the total number of tickets available for friends and family. 
+
+1. Calculate the total space taken up by graduates and faculty:
+   - Graduates: 1200 seats
+   - Faculty: 100 seats
+   - Total seats taken = 1200 + 100 = 1300 seats
+
+2. Subtract the total seats taken from the total capacity of the auditorium to find out how many seats are available","To find out how many tickets each graduate would receive, we first need to determine the total number of tickets available for friends and family. 
+
+1. Calculate the total space taken up by graduates and faculty:
+   - Graduates: 1200 seats
+   - Faculty: 200 seats
+   - Total seats taken = 1200 + 200 = 1400 seats
+
+2. Subtract the total seats taken from the total capacity of the auditorium to find out how many seats are available"
+47,"Umar hid 6 dozen eggs in the yard for the Easter egg hunt. Quinn finds 12 eggs. Isabella finds two times as many as Quinn. Mia finds 4 less than Isabella, and Nia finds a quarter as many as Mia. How many eggs are still hidden in the yard?",11,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the total number of eggs found by each child and subtract that from the total number of eggs hidden.
+
+First, let's calculate the total number of eggs hidden:
+6 dozen eggs = 6 x 12 = 72 eggs
+
+Now, let's calculate the number of eggs found by each child:
+
+1. Quinn finds 12 eggs.
+2. Isabella finds two times as many as Quinn, so Isabella finds 2 x 12 = ","To solve this problem, we need to calculate the total number of eggs found by each child and subtract that from the total number of eggs hidden.
+
+First, let's calculate the total number of eggs hidden:
+6 dozen eggs = 6 x 12 = 72 eggs
+
+Now, let's calculate the number of eggs found by each child:
+
+1. Quinn finds 12 eggs.
+2. Isabella finds three times as many as Quinn, so Isabella finds 3 x 12 ="
+48,Kayla can peel 6 mushrooms a minute and saute 40 mushrooms in 17 minutes. How long will it take her to peel and saute 120 mushrooms?,71,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the time it takes Kayla to peel 120 mushrooms and the time it takes her to saute 120 mushrooms, then add these two times together.
+
+1. **Time to peel 120 mushrooms:**
+
+   Since Kayla can peel 6 mushrooms a minute, to find out how long it takes her to peel 120 mushrooms, we divide the total number of mushrooms by the rate at which she peels them.
+
+   Time to peel 120","To solve this problem, we need to calculate the time it takes Kayla to peel 120 mushrooms and the time it takes her to saute 120 mushrooms, then add these two times together.
+
+1. Time to peel 120 mushrooms:
+
+   Since Kayla can peel 4 mushrooms a minute, to find out how long it takes her to peel 120 mushrooms, we divide the total number of mushrooms by the rate at which she peels them.
+
+   Time to peel 120"
+49,Umar collects garbage from 3 different apartment complexes. The first 2 have 450 apartments each and the last one is 20% bigger than the other 2 combined. Umar collects garbage 2 times a week from each place and he gets paid ₣0.45 per collection for each apartment. How much money does he make in a week?,1782,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Umar makes in a week, we first need to determine the total number of apartments he collects garbage from and then calculate his earnings based on the collection fee per apartment.
+
+1. Calculate the total number of apartments in the first two complexes:
+   - Each of the first two complexes has 450 apartments. So, together they have 450 + 450 = 900 apartments.
+
+2. Calculate the size of the third apartment complex:
+   - The third complex is ","To find out how much money Umar makes in a week, we first need to determine the total number of apartments he collects garbage from and then calculate his earnings based on the collection fee per apartment.
+
+1. Calculate the total number of apartments in the first two complexes:
+   - Each of the first two complexes has 550 apartments. So, together they have 550 + 550 = 1100 apartments.
+
+2. Calculate the size of the third apartment complex:
+   - The third complex is"
+50,"The area of Diego's rectangular kitchen is 390 square meters. If the length of his room is 5 meters, what is the perimeter of the room in meters?",166,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the perimeter of the room, we need to know the length and width of the room. We are given the length as 5 meters, but we don't know the width. However, we are given the area of the room, which is 390 square meters.
+
+The formula for the area of a rectangle is:
+
+Area = Length x Width
+
+We can rearrange this formula to solve for the width:
+
+Width = Area / Length
+
+Plugging in the values we know, we get","To find the perimeter of the room, we need to know the length and width of the room. We are given the length as 6 meters, but we don't know the width. However, we are given the area of the room, which is 390 square meters.
+
+The formula for the area of a rectangle is:
+
+Area = Length x Width
+
+We can rearrange this formula to solve for the width:
+
+Width = Area / Length
+
+Plugging in the values we know, we get"
+51,"Viktor has a plant stand at the town square. He sells three kinds of plants: tulips, roses and sunflowers. He usually sells tulips for €2.25 per bundle, roses for €5.13 per bundle and sunflowers for €5.47 per bundle. Viktor has no change today, so he has decided to round all his prices to the nearest dollar. If Viktor sells 12 bundles of tulips, 29 bundles of roses and 37 bundles of sunflowers, how much will he make?",354,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much Viktor will make, we need to first round the prices of each type of plant to the nearest dollar and then calculate the total amount made from selling each type of plant.
+
+1. **Round the prices to the nearest dollar:**
+   - Tulips: €2.25 rounded to the nearest dollar is €2.
+   - Roses: €5.13 rounded to the nearest dollar is €5.
+   - Sunflowers: €5.47 rounded to the nearest dollar","To find out how much Viktor will make, we need to first round the prices of each type of plant to the nearest dollar and then calculate the total amount made from selling each type of plant.
+
+1. Round the prices to the nearest dollar:
+   - Tulips: €2.25 rounded to the nearest dollar is €2.
+   - Roses: €5.13 rounded to the nearest dollar is €5.
+   - Sunflowers: €5.47 rounded to the nearest dollar is €6."
+52,Qasim has 5 ₣50 bills. He buys 6 coloring books for ₣8 each. He also buys 5 packs of trading cards for ₣4 each. How much money does he have left?,182,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Qasim has left, we need to calculate the total amount of money he spent and subtract it from the initial amount of money he had.
+
+First, let's calculate the total amount of money Qasim had initially:
+
+5 ₣50 bills = 5 x ₣50 = ₣250
+
+Next, let's calculate the total amount of money Qasim spent on coloring books:
+
+6 coloring books x ₣8 each = ₣48
+
+Then","To find out how much money Qasim has left, we need to calculate the total amount of money he spent and subtract it from the initial amount of money he had.
+
+First, let's calculate the total amount of money Qasim had initially:
+
+5 ₣50 bills = 5 x ₣50 = ₣250
+
+Next, let's calculate the total amount of money Qasim spent on coloring books:
+
+6 coloring books + ₣8 each = ₣14
+
+Then"
+53,Oliver scored 354 points in one game of darts. Camila scored 42 points more than two-fourths as many as Oliver. How many points did Oliver and Camila have in total?,573,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total points scored by Oliver and Camila, we first need to calculate Camila's score.
+
+Oliver scored 354 points. Two-fourths of Oliver's score is (2/4) * 354 = 177 points.
+
+Camila scored 42 points more than two-fourths of Oliver's score, so Camila's score is 177 + 42 = 219 points.
+
+Now, we add Oliver's score and Camila's score to find the total points:","To find the total points scored by Oliver and Camila, we first need to calculate Camila's score.
+
+Oliver scored 354 points. Two-fourths of Oliver's score is (3/4) * 354 = 265.5 points.
+
+Camila scored 42 points more than two-fourths of Oliver's score, so Camila's score is 265.5 + 42 = 307.5 points.
+
+Now, we add Oliver's score and Camila's score to find the total points:"
+54,"Yara sliced a whole kiwi into 31 pieces. She ate 4 slices, her sister ate 6 more than her, and her cousin ate 3 more than her sister. How many slices of kiwi did they all eat?",27,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many slices of kiwi they all ate, we need to calculate the number of slices each person ate and then add them together.
+
+1. Yara ate 4 slices.
+2. Her sister ate 6 more slices than Yara, so her sister ate 4 + 6 = 10 slices.
+3. Her cousin ate 3 more slices than her sister, so her cousin ate 10 + 3 = 13 slices.
+
+Now, we add the slices eaten","To find out how many slices of kiwi they all ate, we need to calculate the number of slices each person ate and then add them together.
+
+1. Yara ate 4 slices.
+2. Her sister ate 2 more slices than Yara, so her sister ate 4 + 2 = 6 slices.
+3. Her cousin ate 3 more slices than her sister, so her cousin ate 6 + 3 = 9 slices.
+
+Now, we add the slices eaten"
+55,"Gabrielle is learning to write and decides to keep re-writing the alphabet until she knows it. She writes it in full two times, writes two-fourths of it once, then re-writes everything she has already written. How many letters has Gabrielle written in total?",130,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of letters Gabrielle has written, we need to break down her writing process step by step.
+
+1. **Writes the alphabet in full two times**: The alphabet has 26 letters. Writing it twice gives us 2 * 26 = 52 letters.
+
+2. **Writes two-fourths of it once**: Two-fourths is equivalent to one-half. Half of the alphabet is 26 / 2 = 13 letters.
+
+3. **Re-writes everything she","To find the total number of letters Gabrielle has written, we need to break down her writing process step by step.
+
+1. Writes the alphabet in full two times: The alphabet has 26 letters. Writing it twice gives us 2 * 26 = 52 letters.
+
+2. Writes two-fourths of it once: Two-fourths is equivalent to one-half. Half of the alphabet is 26 * 2 = 52 letters.
+
+3. Re-writes everything she"
+56,A carton of lemonade is 13 ozs of lemonade. Pavel drinks 4 cartons of lemonade. If lemonade has 8 calories per oz how many calories did he consume?,416,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many calories Pavel consumed, we need to calculate the total amount of lemonade he drank in ounces and then multiply it by the number of calories per ounce.
+
+Step 1: Calculate the total amount of lemonade Pavel drank in ounces.
+Pavel drank 4 cartons of lemonade, and each carton contains 13 ounces of lemonade. So, the total amount of lemonade he drank is:
+4 cartons * 13 ounces/carton = 52 ounces
+
+","To find out how many calories Pavel consumed, we need to calculate the total amount of lemonade he drank in ounces and then multiply it by the number of calories per ounce.
+
+Step 1: Calculate the total amount of lemonade Pavel drank in ounces.
+Pavel drank 4 cartons of lemonade, and each carton contains 16 ounces of lemonade. So, the total amount of lemonade he drank is:
+4 cartons * 16 ounces/carton = 64 ounces"
+57,"Viktor has 18 tubes of black paint and 16 tubes of magenta paint. Alejandro has 1/3 as many tubes of black paint as Viktor, and eight times as many tubes of magenta paint as Viktor. How many tubes of paint does Alejandro have?",134,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many tubes of paint Alejandro has, we first need to calculate the number of tubes of black and magenta paint he has separately.
+
+1. **Black Paint Tubes:**
+   - Viktor has 18 tubes of black paint.
+   - Alejandro has 1/3 as many tubes of black paint as Viktor.
+   - Therefore, Alejandro has \(18 \times \frac{1}{3} = 6\) tubes of black paint.
+
+2. **Magenta Paint Tubes:","To find out how many tubes of paint Alejandro has, we first need to calculate the number of tubes of black and magenta paint he has separately.
+
+1. **Black Paint Tubes:**
+   - Viktor has 18 tubes of black paint.
+   - Alejandro has 2/3 as many tubes of black paint as Viktor.
+   - Therefore, Alejandro has \(18 \times \frac{2}{3} = 12\) tubes of black paint.
+
+2. **Magenta Paint Tubes:"
+58,One troll can mine 5 kgs of ore per day with basic shovel. He can mine twice as much with a bronze pickaxe and 60% more with a titanium pickaxe than with a bronze pickaxe. How many kgs of ore can 20 trolls with titanium pickaxes mine in a month with 31 days?,9920,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the amount of ore one troll can mine with a titanium pickaxe in one day and then multiply that by the number of trolls and the number of days in the month.
+
+1. First, let's determine how much ore a troll can mine with a bronze pickaxe. Since a troll can mine twice as much with a bronze pickaxe as with a basic shovel, and he can mine 5 kgs with a basic shovel, with a bronze pickaxe","To solve this problem, we need to calculate the amount of ore one troll can mine with a titanium pickaxe in one day and then multiply that by the number of trolls and the number of days in the month.
+
+1. First, let's determine how much ore a troll can mine with a bronze pickaxe. Since a troll can mine twice as much with a bronze pickaxe as with a basic shovel, and he can mine 3 kgs with a basic shovel, with a bronze pickaxe"
+59,"I have 18 liters of peach drink that are 2/3 water and I wish to add it to 21 liters of grape drink that is two-thirds water. But as I pour it, I spill 3 liters of the peach drink. How much water is in the remaining 36 liters?",24,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much water is in the remaining 36 liters after mixing the peach and grape drinks and accounting for the spill, we need to calculate the amount of water in each drink separately and then add those amounts together.
+
+1. **Calculate the amount of water in the peach drink before spilling:**
+
+   The peach drink is 2/3 water. Initially, there are 18 liters of peach drink.
+
+   Water in peach drink = 18 liters * (2/3) =","To find out how much water is in the remaining 36 liters after mixing the peach and grape drinks and accounting for the spill, we need to calculate the amount of water in each drink separately and then add those amounts together.
+
+1. Calculate the amount of water in the peach drink before spilling:
+
+   The peach drink is 3/4 water. Initially, there are 18 liters of peach drink.
+
+   Water in peach drink = 18 liters * (3/4) ="
+60,"Sanjay works a 7-hour shift each day, 3 days a week. He earns ₺17 per hour and gets a ₺582 bonus each week if the company performs well. How much money did Sanjay make in June if the company performed very well for the whole month?",3756,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much money Sanjay made in June, we need to calculate his total earnings from his hourly wage and the weekly bonus, considering the company performed well for the whole month.
+
+1. First, calculate Sanjay's daily earnings:
+   - Sanjay works 7 hours a day.
+   - He earns ₺17 per hour.
+   - Daily earnings = 7 hours * ₺17/hour = ₺119 per day.
+
+2. Next, calculate Sanjay's weekly","To find out how much money Sanjay made in June, we need to calculate his total earnings from his hourly wage and the weekly bonus, considering the company performed well for the whole month.
+
+1. First, calculate Sanjay's daily earnings:
+   - Sanjay works 6 hours a day.
+   - He earns ₺17 per hour.
+   - Daily earnings = 6 hours * ₺17/hour = ₺102 per day.
+
+2. Next, calculate Sanjay's weekly"
+61,"Mohammed has a bag of pebbles with 62 inside. He tripped over root while carrying it and dropped 2/4 of them. He scrambled to search for them but only came up with 18. When he went back home, he inspected the pebbles further. Five of them he picked up weren't pebbles, but actually beads so he got rid of it. How many pebbles did Mohammed end up with?",44,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to follow the sequence of events and calculate the number of pebbles Mohammed has at each step.
+
+1. Initially, Mohammed has 62 pebbles in his bag.
+
+2. He drops 2/4 of them. To find out how many pebbles he dropped, we calculate 2/4 of 62.
+   Since 2/4 simplifies to 1/2, we find half of 62, which is 31 pe","To solve this problem, we need to follow the sequence of events and calculate the number of pebbles Mohammed has at each step.
+
+1. Initially, Mohammed has 62 pebbles in his bag.
+
+2. He drops 3/4 of them. To find out how many pebbles he dropped, we calculate 3/4 of 62.
+   Since 3/4 does not simplify to 1/2, we find three-quarters of 62, which is 46.5 pe"
+62,"In a set of artist's cards, there are 30 purple cards, and 50% more yellow cards. Blue cards are as many as the sum of purple and yellow cards. How many cards of all mentioned colors are there?",150,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of cards of all mentioned colors, we need to calculate the number of purple, yellow, and blue cards.
+
+1. **Purple cards**: We are given that there are 30 purple cards.
+
+2. **Yellow cards**: We are told there are 50% more yellow cards than purple cards. To find the number of yellow cards, we calculate 50% of the number of purple cards and then add that to the number of purple cards.
+   - 50%","To find the total number of cards of all mentioned colors, we need to calculate the number of purple, yellow, and blue cards.
+
+1. **Purple cards**: We are given that there are 30 purple cards.
+
+2. **Yellow cards**: We are told there are 25% more yellow cards than purple cards. To find the number of yellow cards, we calculate 25% of the number of purple cards and then add that to the number of purple cards.
+   - 25%"
+63,A student has 20 marbles. His sister has 5 fewer marbles than he has. How many marbles do they have together?,35,meta-llama/llama-3.1-405b-instruct,DeepInfra,"Step 1:  The problem states that a student has 20 marbles, and his sister has 5 fewer marbles than he does. To find out how many marbles they have together, we need to first determine the number of marbles his sister has.
+Step 2:  Since his sister has 5 fewer marbles than the student, we subtract 5 from the number of marbles the student has. So, the sister has 20 - 5 = 15","Step 1:  The problem states that a student has 20 marbles, and his sister has 3 fewer marbles than he does. To find out how many marbles they have together, we need to first determine the number of marbles his sister has.
+Step 2:  Since his sister has 3 fewer marbles than the student, we subtract 3 from the number of marbles the student has. So, the sister has 20 - 3 = 17"
+64,"Beatriz has 9 jars of chocolate chips in her storage room. Each jar of chocolate chips can decorate 11 muffins. Beatriz wants to bake enough muffins to use up all of her chocolate chips. If each rack holds 11 muffins, how many racks worth of muffins should she bake?",9,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To determine how many racks worth of muffins Beatriz should bake, we need to calculate the total number of muffins she can decorate with her chocolate chips and then divide that number by the number of muffins each rack can hold.
+
+First, let's calculate the total number of muffins Beatriz can decorate:
+
+Number of jars of chocolate chips = 9
+Number of muffins each jar can decorate = 11
+Total number of muffins = Number of jars * Number of muffins per","To determine how many racks worth of muffins Beatriz should bake, we need to calculate the total number of muffins she can decorate with her chocolate chips and then divide that number by the number of muffins each rack can hold.
+
+First, let's calculate the total number of muffins Beatriz can decorate:
+
+Number of jars of chocolate chips = 9
+Number of muffins each jar can decorate = 15
+Total number of muffins = Number of jars * Number of muffins per"
+65,"Elena is trying to decide whether to do her business accounting herself or hire one bookkeeper. If she does it herself, she'll be able to do 7 fewer hours of contract work, losing ¥42/hour in missed income. The bookkeeper charges ¥78. How much more money will she have if she hires the bookkeeper?",216,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to compare the cost of hiring a bookkeeper with the income Elena would lose if she did the accounting herself.
+
+If Elena does the accounting herself, she will lose 7 hours of contract work, which would have earned her ¥42/hour. So, the total income she would lose is:
+
+7 hours x ¥42/hour = ¥294
+
+On the other hand, if she hires the bookkeeper, she will pay ¥78.
+
+To find out how much","To solve this problem, we need to compare the cost of hiring a bookkeeper with the income Elena would lose if she did the accounting herself.
+
+If Elena does the accounting herself, she will lose 7 hours of contract work, which would have earned her ¥60/hour. So, the total income she would lose is:
+
+7 hours x ¥60/hour = ¥420
+
+On the other hand, if she hires the bookkeeper, she will pay ¥78.
+
+To find out how much"
+66,"Aisha has 47 light white spools of thread, 73 dark white spools of thread, 32 light brown spools of thread, and 88 dark brown spools of thread. What percent of the spools are white?",50,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the percentage of white spools, we first need to find the total number of white spools and the total number of spools in general.
+
+Total number of white spools = light white spools + dark white spools
+Total number of white spools = 47 + 73
+Total number of white spools = 120
+
+Total number of spools = light white spools + dark white spools + light brown spools + dark brown spools
+Total number of","To find the percentage of white spools, we first need to find the total number of white spools and the total number of spools in general.
+
+Total number of white spools = light white spools - dark white spools
+Total number of white spools = 47 - 73
+Total number of white spools = -26
+
+Total number of spools = light white spools + dark white spools + light brown spools + dark brown spools
+Total number of"
+67,"Mateo's van breaks down. The van weighs 2000 kilograms and he has groceries in it weighing 250 kilograms. He also has his 2 young friends who weigh 75 kilograms each in it. If the force to move the van is 3% of the weight, how much force does he need to push the van?",72,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total force Mateo needs to push the van, we first need to calculate the total weight of the van, including the groceries and his friends. Then, we'll find 3% of this total weight to determine the force required.
+
+1. Calculate the total weight:
+   - Van weight: 2000 kilograms
+   - Groceries weight: 250 kilograms
+   - Friends' weight: 2 friends * 75 kilograms each = 150 kilograms
+   - Total weight","To find the total force Mateo needs to push the van, we first need to calculate the total weight of the van, including the groceries and his friends. Then, we'll find 3% of this total weight to determine the force required.
+
+1. Calculate the total weight:
+   - Van weight: 2000 kilograms
+   - Groceries weight: 500 kilograms
+   - Friends' weight: 2 friends * 75 kilograms each = 150 kilograms
+   - Total weight"
+68,It takes Sakura 28 minutes to finish a brain teaser and 4 minutes to finish a chess puzzle. Over the vacation she solved 4 brain teasers and 7 chess puzzles. How much time did she spend playing these games?,140,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total time Sakura spent playing these games, we need to calculate the time spent on brain teasers and chess puzzles separately and then add them together.
+
+First, let's calculate the time spent on brain teasers:
+Time per brain teaser = 28 minutes
+Number of brain teasers = 4
+Total time spent on brain teasers = Time per brain teaser * Number of brain teasers
+Total time spent on brain teasers = 28 * 4
+Total time spent on","To find the total time Sakura spent playing these games, we need to calculate the time spent on brain teasers and chess puzzles separately and then add them together.
+
+First, let's calculate the time spent on brain teasers:
+Time per brain teaser = 28 minutes
+Number of brain teasers = 4
+Total time spent on brain teasers = Time per brain teaser / Number of brain teasers
+Total time spent on brain teasers = 28 / 4
+Total time spent on"
+69,"On Tuesday, Ibrahim wants to exercise for seven times the amount of time he did on Monday and Sunday combined. On Sunday he exercised for 23 minutes. On Monday he exercised for 55 minutes. How many minutes does he have to exercise on Tuesday to reach his goal?",546,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many minutes Ibrahim needs to exercise on Tuesday, we first need to calculate the total amount of time he exercised on Sunday and Monday combined.
+
+On Sunday, Ibrahim exercised for 23 minutes.
+On Monday, Ibrahim exercised for 55 minutes.
+
+Total time exercised on Sunday and Monday = 23 minutes + 55 minutes = 78 minutes.
+
+Ibrahim wants to exercise for seven times the amount of time he did on Monday and Sunday combined. Therefore, we multiply the total time by ","To find out how many minutes Ibrahim needs to exercise on Tuesday, we first need to calculate the total amount of time he exercised on Sunday and Monday combined.
+
+On Sunday, Ibrahim exercised for 23 minutes.
+On Monday, Ibrahim exercised for 55 minutes.
+
+Total time exercised on Sunday and Monday = 23 minutes + 55 minutes = 78 minutes.
+
+Ibrahim wants to exercise for nine times the amount of time he did on Monday and Sunday combined. Therefore, we multiply the total time by"
+70,"A painter works for 2 weeks every month and for 6 days every week. If he gets paid ₣150 every day, how much does he earn if he works for a year?",21600,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the total number of days the painter works in a year and then multiply it by his daily wage.
+
+1. First, let's calculate the number of days the painter works in a month:
+   - The painter works for 2 weeks every month.
+   - Each week has 6 working days.
+   - So, the total number of working days in a month = 2 weeks/month * 6 days/week = 12 days/month.
+
+2","To solve this problem, we need to calculate the total number of days the painter works in a year and then multiply it by his daily wage.
+
+1. First, let's calculate the number of days the painter works in a month:
+   - The painter works for 2 weeks every month.
+   - Each week has 5 working days.
+   - So, the total number of working days in a month = 2 weeks/month * 5 days/week = 10 days/month.
+
+2"
+71,"Yuki is feeding his livestock hay. Each alpaca needs 9 kg, and each horse needs 6 kg less than twice the amount each alpaca needs. If there are 35 alpacas and 22 horses, how many kg of hay does Yuki need?",579,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much hay Yuki needs, we first need to calculate the amount of hay each horse needs, then calculate the total amount needed for all alpacas and all horses, and finally add those two totals together.
+
+1. Calculate the amount of hay each horse needs:
+   - Each alpaca needs 9 kg.
+   - Twice the amount each alpaca needs is 2 * 9 kg = 18 kg.
+   - Each horse needs 6 kg less than","To find out how much hay Yuki needs, we first need to calculate the amount of hay each horse needs, then calculate the total amount needed for all alpacas and all horses, and finally add those two totals together.
+
+1. Calculate the amount of hay each horse needs:
+   - Each alpaca needs 12 kg.
+   - Twice the amount each alpaca needs is 2 * 12 kg = 24 kg.
+   - Each horse needs 6 kg less than"
+72,Diego was a pen pal with 7 people. He stopped being penpals with 3 of them. They each send 3 letters a week that are 9 pages long. He responds in kind. He can write a page every 5 minutes. How many hours does he spend writing a week?,9,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many hours Diego spends writing a week, we first need to calculate the total number of pages he writes in a week.
+
+Initially, Diego had 7 pen pals, but he stopped being pen pals with 3 of them. So, he is left with 7 - 3 = 4 pen pals.
+
+Each of his 4 pen pals sends 3 letters a week, and each letter is 9 pages long. Since Diego responds in kind, he also sends 3","To find out how many hours Diego spends writing a week, we first need to calculate the total number of pages he writes in a week.
+
+Initially, Diego had 7 pen pals, but he stopped being pen pals with 3 of them. So, he is left with 7 - 3 = 4 pen pals.
+
+Each of his 4 pen pals sends 3 letters a week, and each letter is 6 pages long. Since Diego responds in kind, he also sends 3"
+73,Comet Hyakutake orbits the sun every 75 years. Diego's uncle saw the Comet when he was 46 years old. Diego saw the comet a second time when he was two times the age his uncle was when he saw the Comet. How old was Diego when he saw the Comet for the first time?,17,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to break it down step by step.
+
+1. **First, calculate the age of Diego when he saw the comet the second time.**
+
+   - Diego's uncle saw the comet when he was 46 years old.
+   - Diego saw the comet a second time when he was two times the age his uncle was when he saw the comet.
+   - Therefore, Diego's age when he saw the comet the second time = 2 * 46 = 92","To solve this problem, we need to break it down step by step.
+
+1. First, calculate the age of Diego when he saw the comet the second time.
+
+   - Diego's uncle saw the comet when he was 46 years old.
+   - Diego saw the comet a second time when he was three times the age his uncle was when he saw the comet.
+   - Therefore, Diego's age when he saw the comet the second time = 3 * 46 = 138"
+74,"There are 172 fourth-graders at Pine Valley School. 83 of them are girls. On Thursday, 3 fourth-grade girls and 4 fourth-grade boys were absent. How many fourth grade boys were at Pine Valley School on Thursday?",85,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the number of fourth-grade boys at Pine Valley School on Thursday, we first need to determine the total number of fourth-grade boys and then subtract the number of boys who were absent.
+
+1. Calculate the total number of fourth-grade boys:
+   Total fourth-graders = 172
+   Total fourth-grade girls = 83
+   Total fourth-grade boys = Total fourth-graders - Total fourth-grade girls
+   Total fourth-grade boys = 172 - 83 = 89
+
+2.","To find the number of fourth-grade boys at Pine Valley School on Thursday, we first need to determine the total number of fourth-grade boys and then subtract the number of boys who were absent.
+
+1. Calculate the total number of fourth-grade boys:
+   Total fourth-graders = 172
+   Total fourth-grade girls = 63
+   Total fourth-grade boys = Total fourth-graders - Total fourth-grade girls
+   Total fourth-grade boys = 172 - 63 = 109
+
+2."
+75,"There are currently 19 red balls, 29 green balls, and 48 yellow balls in the shop. Red balls cost ¥13, yellow balls cost ¥6, and green balls cost ¥7. How much will the shop have received after all the balls are sold?",738,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total amount of money the shop will receive after all the balls are sold, we need to calculate the total cost of each type of ball and then add them together.
+
+1. Calculate the total cost of the red balls:
+   Number of red balls = 19
+   Cost per red ball = ¥13
+   Total cost of red balls = 19 * 13 = ¥247
+
+2. Calculate the total cost of the green balls:
+   Number of green balls = 29","To find the total amount of money the shop will receive after all the balls are sold, we need to calculate the total cost of each type of ball and then add them together.
+
+1. Calculate the total cost of the red balls:
+   Number of red balls = 19
+   Cost per red ball = ¥15
+   Total cost of red balls = 19 * 15 = ¥285
+
+2. Calculate the total cost of the green balls:
+   Number of green balls = 29"
+76,"Wei caught 4 trouts last Sunday, the first trout he caught weighs 70 kilograms, the second trout he caught weighs 33 kilograms, and the last trout he caught weighs 32 kilograms. If a kilogram of trout costs €1.0, how much will he earn after selling all the trouts to the market?",167,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much Wei will earn after selling all the trouts, we first need to calculate the total weight of the trouts he caught and then multiply that by the cost per kilogram.
+
+Wei caught 4 trouts, but the weights of only three trouts are given. Let's calculate the total weight of these three trouts first:
+
+1. First trout: 70 kilograms
+2. Second trout: 33 kilograms
+3. Last trout: 32 kilograms
+
+Total weight","To find out how much Wei will earn after selling all the trouts, we first need to calculate the total weight of the trouts he caught and then multiply that by the cost per kilogram.
+
+Wei caught 4 trouts, but the weights of only three trouts are given. Let's calculate the total weight of these three trouts first:
+
+1. First trout: 70 kilograms
+2. Second trout: 63 kilograms
+3. Last trout: 32 kilograms
+
+Total weight"
+77,Leilani is required to submit a 160-page thesis. She already finished writing one-fifth of the thesis. How many pages does she have left to write?,128,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many pages Leilani has left to write, we first need to determine how many pages she has already written.
+
+Since Leilani has finished writing one-fifth of the thesis, and the thesis is 160 pages long, we can calculate the number of pages she has written as follows:
+
+One-fifth of 160 pages = (1/5) * 160 = 32 pages
+
+So, Leilani has already written 32 pages.
+
+To find out how","To find out how many pages Leilani has left to write, we first need to determine how many pages she has already written.
+
+Since Leilani has finished writing one-fourth of the thesis, and the thesis is 160 pages long, we can calculate the number of pages she has written as follows:
+
+One-fourth of 160 pages = (1/4) * 160 = 40 pages
+
+So, Leilani has already written 40 pages.
+
+To find out how"
+78,There are 6 periods in the day for a normal student but Liam has to take 1 extra classes. Each class is 60 minutes long. He goes to class for 6 days a week. He then spends 1/7 of his weekly minutes each on Saturday and Sunday as extra learning time. How many hours a week does he spend learning?,54,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many hours a week Liam spends learning, we need to calculate the total minutes he spends in class and in extra learning time, then convert those minutes to hours.
+
+1. **Calculate the total minutes Liam spends in class per week:**
+
+- A normal student has 6 periods a day, but Liam has an extra class, so he has 7 periods a day.
+- Each class is 60 minutes long, so Liam spends 7 * 60 = 420 minutes per","To find out how many hours a week Liam spends learning, we need to calculate the total minutes he spends in class and in extra learning time, then convert those minutes to hours.
+
+1. Calculate the total minutes Liam spends in class per week:
+
+- A normal student has 6 periods a day, but Liam has an extra class, so he has 7 periods a day.
+- Each class is 45 minutes long, so Liam spends 7 * 45 = 315 minutes per"
+79,"Elena finished 1/3 of a 315 piece puzzle, and then started and finished another 481 piece puzzle within an hour. How many puzzle pieces did Elena place during that hour?",586,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many puzzle pieces Elena placed during that hour, we need to calculate the total number of pieces she placed from both puzzles.
+
+First, let's find out how many pieces she placed from the 315 piece puzzle. Since she finished 1/3 of it, we can calculate the number of pieces as follows:
+
+1/3 * 315 = 105
+
+So, Elena placed 105 pieces from the 315 piece puzzle.
+
+Next, let's consider the 481 piece puzzle","To find out how many puzzle pieces Elena placed during that hour, we need to calculate the total number of pieces she placed from both puzzles.
+
+First, let's find out how many pieces she placed from the 315 piece puzzle. Since she finished 1/2 of it, we can calculate the number of pieces as follows:
+
+1/2 * 315 = 157.5
+
+So, Elena placed 157.5 pieces from the 315 piece puzzle.
+
+Next, let's consider the 481 piece puzzle"
+80,The vending machines sell cookies for 50 cents and pretzels for 75 cents. Jamal spent $1200 and got 6 bags of cookies and had 7% of his money left in change. How many pretzels did he buy?,1484,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to follow these steps:
+
+1. Calculate the total amount of money Jamal spent on cookies.
+2. Determine the amount of money Jamal had left after buying the cookies.
+3. Calculate the amount of money Jamal spent on pretzels.
+4. Find out how many pretzels Jamal bought with the money he spent.
+
+Step 1: Calculate the total amount of money Jamal spent on cookies.
+
+Jamal bought 6 bags of cookies at 50 cents per bag","To solve this problem, we need to follow these steps:
+
+1. Calculate the total amount of money Jamal spent on cookies.
+2. Determine the amount of money Jamal had left after buying the cookies.
+3. Calculate the amount of money Jamal spent on pretzels.
+4. Find out how many pretzels Jamal bought with the money he spent.
+
+Step 1: Calculate the total amount of money Jamal spent on cookies.
+
+Jamal bought 6 bags of cookies at 25 cents per bag"
+81,The Charity fundraiser team hid 180 coins. The Lopez twins each found 43 coins. All the other coins except 17 were found by their friends. How many coins did the friends find?,77,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many coins the friends found, we first need to determine the total number of coins found by the Lopez twins and then subtract that, along with the 17 coins that were not found, from the total number of hidden coins.
+
+1. Calculate the total number of coins found by the Lopez twins:
+   Each twin found 43 coins, so together they found 43 * 2 = 86 coins.
+
+2. Subtract the coins found by the Lopez twins and the coins that were","To find out how many coins the friends found, we first need to determine the total number of coins found by the Lopez twins and then subtract that, along with the 17 coins that were not found, from the total number of hidden coins.
+
+1. Calculate the total number of coins found by the Lopez twins:
+   Each twin found 63 coins, so together they found 63 * 2 = 126 coins.
+
+2. Subtract the coins found by the Lopez twins and the coins that were"
+82,"At the beginning of the conference, there were 63 nurses and 63 engineers. After 45 minutes, 1/2 of the total number of people left. How many engineers are left if 22 nurses stayed at the conference?",41,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to first determine the total number of people at the beginning of the conference and then calculate how many left after 45 minutes. We're given that there were 63 nurses and 63 engineers, so the total number of people at the start is 63 + 63 = 126.
+
+After 45 minutes, 1/2 of the total number of people left. So, 1/2 of 126 is 63. This means 63 people","To solve this problem, we need to first determine the total number of people at the beginning of the conference and then calculate how many left after 45 minutes. We're given that there were 63 nurses and 63 engineers, so the total number of people at the start is 63 + 63 = 126.
+
+After 45 minutes, 1/3 of the total number of people left. So, 1/3 of 126 is 42. This means 42 people"
+83,"The Jones family is busy making brownies. So far, they've made 7000 brownies. They have 1027 lemon brownies, 2009 strawberry brownies, and some peanut butter brownies. How many peanut butter brownies have they made?",3964,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the number of peanut butter brownies, we need to subtract the number of lemon and strawberry brownies from the total number of brownies.
+
+Total number of brownies = 7000
+Number of lemon brownies = 1027
+Number of strawberry brownies = 2009
+
+Total number of lemon and strawberry brownies = 1027 + 2009 = 3036
+
+Now, subtract the total number of lemon and strawberry brownies from the total number of brownies","To find the number of peanut butter brownies, we need to subtract the number of lemon and strawberry brownies from the total number of brownies.
+
+Total number of brownies = 7000
+Number of lemon brownies = 1027
+Number of strawberry brownies = 2009
+
+Total number of lemon and strawberry brownies = 1027 - 2009 = -982
+
+Now, subtract the total number of lemon and strawberry brownies from the total number of brownies"
+84,"Kayla buys 10 shares of a stock for €56 each. The stock price increases 30% the first year Kayla holds it, then decreases 25% in the second year. What is the final value of all Kayla's shares?",546,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the final value of all Kayla's shares, we need to calculate the value of the shares after the first year's increase and then after the second year's decrease.
+
+1. **Initial Purchase:**
+   - Number of shares bought = 10
+   - Price per share = €56
+   - Total initial value = Number of shares * Price per share = 10 * €56 = €560
+
+2. **First Year Increase (30%):**
+   - Increase amount","To find the final value of all Kayla's shares, we need to calculate the value of the shares after the first year's increase and then after the second year's decrease.
+
+1. **Initial Purchase:**
+   - Number of shares bought = 10
+   - Price per share = €56
+   - Total initial value = Number of shares * Price per share = 10 * €56 = €560
+
+2. **First Year Increase (50%):**
+   - Increase amount"
+85,"If Kai and Mateo have 860 yards of fence between them, and they agree to split it with Mateo getting 100 yards more than Kai, how much is left over for Kai?",380,meta-llama/llama-3.1-405b-instruct,DeepInfra,"Let's break down the problem step by step.
+
+We know that Kai and Mateo have a total of 860 yards of fence between them. We also know that Mateo gets 100 yards more than Kai.
+
+Let's say Kai gets x yards of fence. Then, Mateo gets x + 100 yards of fence.
+
+Since the total amount of fence is 860 yards, we can set up the equation:
+
+x + (x + 100) = 860
+
+Combine like terms:
+
+","Let's break down the problem step by step.
+
+We know that Kai and Mateo have a total of 960 yards of fence between them. We also know that Mateo gets 100 yards more than Kai.
+
+Let's say Kai gets x yards of fence. Then, Mateo gets x + 100 yards of fence.
+
+Since the total amount of fence is 960 yards, we can set up the equation:
+
+x + (x + 100) = 960
+
+Combine like terms:"
+86,"Nadia qualified for a spot on the swimming team, so she went shopping for some athletic gear. She bought a jersey for $21, a pair of swimming leggings for $4 more than the jersey cost, and a pair of cleats that were originally $32 but were on sale for one-eighth price. She had a coupon for $3 off the package of $9 athletic headbands that she also bought. How much did she spend on athletic gear?",56,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much Nadia spent on athletic gear, we need to calculate the cost of each item and then add them up.
+
+1. The jersey cost $21.
+2. The swimming leggings cost $4 more than the jersey, so they cost $21 + $4 = $25.
+3. The cleats were originally $32 but were on sale for one-eighth of the price. One-eighth of $32 is $32 / 8 = $4. So, the","To find out how much Nadia spent on athletic gear, we need to calculate the cost of each item and then add them up.
+
+1. The jersey cost $21.
+2. The swimming leggings cost $4 more than the jersey, so they cost $21 + $4 = $25.
+3. The cleats were originally $32 but were on sale for one-quarter of the price. One-quarter of $32 is $32 / 4 = $8. So, the"
+87,"The biggest waterslide at Neptunes Kingdom is 330 meters long, and people slide down at 55 meters/minute. The second biggest waterslide is 240 meters long, but steeper, so people slide down at 80 meters/minute. How much longer does it take to ride the biggest slide compared to the second biggest slide?",3,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how much longer it takes to ride the biggest slide compared to the second biggest slide, we first need to calculate the time it takes to ride each slide.
+
+For the biggest slide:
+Length = 330 meters
+Speed = 55 meters/minute
+Time = Length / Speed = 330 / 55 = 6 minutes
+
+For the second biggest slide:
+Length = 240 meters
+Speed = 80 meters/minute
+Time = Length / Speed = 240 / 80","To find out how much longer it takes to ride the biggest slide compared to the second biggest slide, we first need to calculate the time it takes to ride each slide.
+
+For the biggest slide:
+Length = 330 meters
+Speed = 55 meters/minute
+Time = Length / Speed = 330 / 55 = 6 minutes
+
+For the second biggest slide:
+Length = 240 meters
+Speed = 40 meters/minute
+Time = Length / Speed = 240 / 40"
+88,"Keisha can run eight times faster than she can walk, but she can skip at a rate of speed that is 3/4 as fast as she can run. If she can skip at 3 miles per hour, how many miles can she travel in 8 hours if she spends one-half of the time running and 1/2 of the time walking?",18,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to first determine Keisha's running and walking speeds.
+
+Given that Keisha can skip at 3 miles per hour and that her skipping speed is 3/4 of her running speed, we can calculate her running speed as follows:
+
+Running speed = Skipping speed / (3/4)
+Running speed = 3 / (3/4)
+Running speed = 3 * (4/3)
+Running speed = 4 miles per hour
+
+Since Keisha can","To solve this problem, we need to first determine Keisha's running and walking speeds.
+
+Given that Keisha can skip at 3 miles per hour and that her skipping speed is 3/4 of her running speed, we can calculate her running speed as follows:
+
+Running speed = Skipping speed / (4/3)
+Running speed = 3 / (4/3)
+Running speed = 3 * (3/4)
+Running speed = 9/4 miles per hour
+
+Since Keisha can"
+89,Kai hires a luxury car from 1 PM to 5 PM. He gets 2 hours free. The first paid hour is $10 and each hour after that is twice the cost. How much did he pay?,30,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, let's break it down step by step.
+
+1. **Total Hours Used**: Kai hires the car from 1 PM to 5 PM, which is a total of 4 hours.
+
+2. **Free Hours**: He gets 2 hours free. So, out of the 4 hours, he only pays for 2 hours.
+
+3. **Cost Calculation**:
+   - The first paid hour costs $10.
+   - Each subsequent hour costs twice the cost of","To solve this problem, let's break it down step by step.
+
+1. **Total Hours Used**: Kai hires the car from 1 PM to 5 PM, which is a total of 4 hours.
+
+2. **Free Hours**: He gets 1 hour free. So, out of the 4 hours, he only pays for 3 hours.
+
+3. **Cost Calculation**:
+   - The first paid hour costs $10.
+   - Each subsequent hour costs twice the cost of"
+90,"Amelia has three times as many LinkedIn friends as Zahra. Mei has ten times as many friends on LinkedIn as Zahra. If Amelia has 45 friends on LinkedIn, how many LinkedIn friends does Mei have?",150,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we can follow these steps:
+
+1. Determine the number of LinkedIn friends Zahra has.
+2. Calculate the number of LinkedIn friends Mei has.
+
+Step 1: Since Amelia has three times as many LinkedIn friends as Zahra and Amelia has 45 friends, we can find the number of friends Zahra has by dividing Amelia's number of friends by 3.
+
+Zahra's friends = Amelia's friends / 3
+Zahra's friends = 45 /","To solve this problem, we can follow these steps:
+
+1. Determine the number of LinkedIn friends Zahra has.
+2. Calculate the number of LinkedIn friends Mei has.
+
+Step 1: Since Amelia has three times as many LinkedIn friends as Zahra and Amelia has 45 friends, we can find the number of friends Zahra has by dividing Amelia's number of friends by 4.
+
+Zahra's friends = Amelia's friends / 4
+Zahra's friends = 45 / 4"
+91,"At Kai's house, there are seven times as many apples as bananas. He has a total of 53 bananas in his house. Kai bought 60 more bananas at the store and 36 fewer apples than the number of bananas. Find the combined total of the number of apples and bananas Kai has in the house?",508,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the combined total of the number of apples and bananas Kai has in the house, we need to follow these steps:
+
+1. Determine the initial number of apples and bananas.
+2. Calculate the number of apples and bananas after the purchase.
+
+Step 1: Initial number of apples and bananas.
+
+We know there are 53 bananas initially. Since there are seven times as many apples as bananas, the initial number of apples is 7 * 53 = 371 apples.
+
+Step 2:","To find the combined total of the number of apples and bananas Kai has in the house, we need to follow these steps:
+
+1. Determine the initial number of apples and bananas.
+2. Calculate the number of apples and bananas after the purchase.
+
+Step 1: Initial number of apples and bananas.
+
+We know there are 53 bananas initially. Since there are five times as many apples as bananas, the initial number of apples is 5 * 53 = 265 apples.
+
+Step 2:"
+92,"Jin slew 150 goblins with his mighty sword, while DeShawn, using a spear, slew five-sixths as many goblins as Jin. Using a rusty iron axe, Gabriel slew two times as many goblins as DeShawn. But Oscar, having forgotten his sword at home, slew three-sixths as many goblins as Gabriel using a nail file. How many goblins has Oscar slain?",125,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many goblins Oscar slew, we need to follow the information step by step.
+
+1. Jin slew 150 goblins.
+2. DeShawn slew five-sixths as many goblins as Jin. So, DeShawn slew (5/6) * 150 = 125 goblins.
+3. Gabriel slew two times as many goblins as DeShawn. So, Gabriel slew 2 * 125 = 250 goblins.
+4. Oscar slew three","To find out how many goblins Oscar slew, we need to follow the information step by step.
+
+1. Jin slew 150 goblins.
+2. DeShawn slew five-sixths as many goblins as Jin. So, DeShawn slew (5/6) * 150 = 125 goblins.
+3. Gabriel slew three times as many goblins as DeShawn. So, Gabriel slew 3 * 125 = 375 goblins.
+4. Oscar slew three"
+93,When the water is cold Wei swims a mile in 26 minutes. When the water is warm Wei swims a mile in 5 minutes more than twice as long. How much longer does Wei take to swim 6 miles on a hot day than a cold day?,186,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to first determine how long it takes Wei to swim a mile in warm water, then calculate the time it takes to swim 6 miles in both cold and warm water, and finally find the difference between these two times.
+
+1. **Time to swim a mile in cold water:** 26 minutes.
+2. **Time to swim a mile in warm water:** This is 5 minutes more than twice as long as in cold water. So, it's (2","To solve this problem, we need to first determine how long it takes Wei to swim a mile in warm water, then calculate the time it takes to swim 6 miles in both cold and warm water, and finally find the difference between these two times.
+
+1. **Time to swim a mile in cold water:** 26 minutes.
+2. **Time to swim a mile in warm water:** This is 5 minutes less than twice as long as in cold water. So, it's (2"
+94,"1000 people apply for a job at Amazon. Of the people that apply, only 40% receive interviews. Of those who receive interviews, 49% receive a job offer. Of those who receive a job offer, two-fourths of the people accept the position. How many people accept the position?",98,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many people accept the position, we need to calculate the number of people at each stage of the hiring process.
+
+Step 1: Calculate the number of people who receive interviews.
+40% of 1000 people receive interviews.
+Number of people who receive interviews = 1000 * 0.4 = 400
+
+Step 2: Calculate the number of people who receive a job offer.
+49% of those who receive interviews receive a job offer.
+Number of people who receive","To find out how many people accept the position, we need to calculate the number of people at each stage of the hiring process.
+
+Step 1: Calculate the number of people who receive interviews.
+40% of 1000 people receive interviews.
+Number of people who receive interviews = 1000 * 0.4 = 400
+
+Step 2: Calculate the number of people who receive a job offer.
+69% of those who receive interviews receive a job offer.
+Number of people who receive"
+95,"There are 15 students playing football and two times that number playing badminton. There are 19 boys and 28 girls playing table tennis. If each student only participates in one group, how many students are there in total?",92,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total number of students, we need to calculate the number of students playing football, badminton, and table tennis, and then add them together.
+
+1. **Number of students playing football:** Given as 15.
+
+2. **Number of students playing badminton:** Two times the number playing football, so 2 * 15 = 30.
+
+3. **Number of students playing table tennis:** Given as 19 boys and 28 girls, so 19 + ","To find the total number of students, we need to calculate the number of students playing football, badminton, and table tennis, and then add them together.
+
+1. Number of students playing football: Given as 15.
+
+2. Number of students playing badminton: Three times the number playing football, so 3 * 15 = 45.
+
+3. Number of students playing table tennis: Given as 19 boys and 28 girls, so 19 +"
+96,"Mia's aunt said that she had ₺300 budgeted for her birthday party. She wants to make sure she and her friends all get to play one round of laser tag, have ₺5 in pinball tokens, and get to ride the roller coaster seven times. A round of laser tag is ₺10. The roller coaster cost ₺5 a ride. How many friends can she invite?",5,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To determine how many friends Mia can invite, we need to calculate the total cost of the activities she wants to do and subtract that from her budget of ₺300.
+
+1. Cost of laser tag for Mia and her friends: ₺10 per person. Since we don't know how many friends she can invite yet, let's call the number of friends ""F"". The total cost for laser tag will be ₺10 * (F + 1), because we have to include Mia.
+","To determine how many friends Mia can invite, we need to calculate the total cost of the activities she wants to do and subtract that from her budget of ₺300.
+
+1. Cost of laser tag for Mia and her friends: ₺15 per person. Since we don't know how many friends she can invite yet, let's call the number of friends ""F"". The total cost for laser tag will be ₺15 * (F + 1), because we have to include Mia."
+97,"Nia operates the cash register exactly three times as fast as her less-experienced colleague Sakura. Daily, Sakura processes 55 customers. What is the total weekly production for the two if they work all days of the week?",1540,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find the total weekly production for both Nia and Sakura, we first need to determine how many customers each can process in a day and then multiply that by the number of days in a week.
+
+1. **Daily Production:**
+   - Sakura processes 55 customers per day.
+   - Since Nia operates exactly three times as fast as Sakura, Nia processes 3 * 55 = 165 customers per day.
+
+2. **Weekly Production:**
+   - There are 7 days","To find the total weekly production for both Nia and Sakura, we first need to determine how many customers each can process in a day and then multiply that by the number of days in a week.
+
+1. Daily Production:
+   - Sakura processes 55 customers per day.
+   - Since Nia operates exactly twice as fast as Sakura, Nia processes 2 * 55 = 110 customers per day.
+
+2. Weekly Production:
+   - There are 7 days"
+98,"A new virus infects 16 people. Every day, each infected person infects 3 others. How many people are infected after 3 days?",1024,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To solve this problem, we need to calculate the number of people infected each day and add them to the total number of infected people.
+
+Day 1:
+Initially, 16 people are infected. Each of these 16 people infects 3 others, so the number of new infections on Day 1 is:
+16 * 3 = 48
+Total infected people after Day 1 = 16 (initially infected) + 48 (newly infected) = 64
+
+Day ","To solve this problem, we need to calculate the number of people infected each day and add them to the total number of infected people.
+
+Day 1:
+Initially, 16 people are infected. Each of these 16 people infects 4 others, so the number of new infections on Day 1 is:
+16 * 4 = 64
+Total infected people after Day 1 = 16 (initially infected) + 64 (newly infected) = 80
+
+Day"
+99,"If Nia eats 5 eggs a day for 84 days and then increases it to 7 eggs a day for 24 days, how many dozens of eggs will Nia need for 108 days?",49,meta-llama/llama-3.1-405b-instruct,DeepInfra,"To find out how many dozens of eggs Nia will need for 108 days, we first need to calculate the total number of eggs she will eat during this period.
+
+1. **First Period (84 days at 5 eggs a day):**
+   - Total eggs = 5 eggs/day * 84 days = 420 eggs
+
+2. **Second Period (24 days at 7 eggs a day):**
+   - Total eggs = 7 eggs/day * 24 days = 168","To find out how many dozens of eggs Nia will need for 108 days, we first need to calculate the total number of eggs she will eat during this period.
+
+1. **First Period (90 days at 5 eggs a day):**
+   - Total eggs = 5 eggs/day * 90 days = 450 eggs
+
+2. **Second Period (24 days at 7 eggs a day):**
+   - Total eggs = 7 eggs/day * 24 days = 168"
