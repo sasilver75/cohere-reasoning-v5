@@ -45,7 +45,7 @@ MODELS = [
     OpenRouterModel.DEEPSEEK_R1
 ]
 
-INPUT_FILENAME = "gsm8k/datasets/original/gsm-symbolic.csv"
+INPUT_FILENAME = "gsm8k/datasets/original/gsm8k_matched_gsm_symbolic.csv"
 OUTPUT_FILENAME = "gsm8k/datasets/gsm8k_stubs_and_perturbations_on_policy.csv"
 
 # ~ Rate limiting
